@@ -24,7 +24,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     // login berhasil
     echo "<h2>Login berhasil! Selamat datang, $username</h2>";
-    echo "<a href='index.html'>Logout</a>";
+    echo "<a href='https://www.sipenata.sukoharjokab.go.id/halaman-awal'>Logout</a>";
 } else {
     // login gagal
     echo "<script>alert('Username atau password salah!'); window.location='index.html';</script>";
@@ -32,3 +32,4 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
+
