@@ -104,19 +104,39 @@ body {
   background-color: #28a745;
 }
     
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
   .container {
-    flex-direction: column !important;
+    flex-direction: row !important;
     max-width: 95%;
   }
 
   .left-side, .right-side {
-    width: 100%;
     flex: unset;
+    width: 100%;
     padding: 20px;
     text-align: center;
   }
+
+  .left-side .logo {
+    width: 100px;
+  }
 }
+
+@media (max-width: 480px) {
+  .left-side h1 {
+    font-size: 20px;
+  }
+
+  .left-side p {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+    
 </style>
 
 </head>
@@ -155,6 +175,7 @@ body {
 </body>
 
 </html>
+
 
 
 
