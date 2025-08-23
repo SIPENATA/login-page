@@ -214,19 +214,7 @@ body {
       </form>
     </div>
   
-  <script>
-    const togglePassword = document.querySelector("#togglePassword");
-    const password = document.querySelector("#password");
-
-    togglePassword.addEventListener("click", function () {
-      const type = password.getAttribute("type") === "password" ? "text" : "password";
-      password.setAttribute("type", type);
-     
-      this.textContent = type === "password" ? "Lihat Password" : "Sembunyikan";
-
-    });
-  </script>
-
+  
  <script>
     const validUsername = "admin";
     const validPassword = "123456";
@@ -247,6 +235,20 @@ body {
       }
 });
   </script>
+
+  <script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function () {
+      const type = password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+     
+      this.textContent = type === "password" ? "Lihat Password" : "Sembunyikan";
+
+    });
+  </script>
+
 </body>
 
 </html>
