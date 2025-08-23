@@ -23,10 +23,9 @@ body {
   background: url("background.jpg") no-repeat center center fixed;
   background-size: cover;
   font-family: Montserrat;
-  flex-direction: column; /* Ini sudah benar untuk menumpuk kontainer */
+  flex-direction: column;
 }
 
-/* Menggabungkan properti umum untuk kedua kontainer */
 .login-container, .mooc-container {
   display: flex;
   background: #f7f7f7;
@@ -37,9 +36,8 @@ body {
   max-width: 95%;
 }
 
-/* Menambahkan jarak antar kontainer dengan satuan yang benar */
 .login-container {
-  margin-bottom: 20px; /* Jarak antara login dan mooc kontainer */
+  margin-bottom: 20px;
 }
 
 .left-side {
@@ -117,7 +115,8 @@ body {
 }
     
 .mooc-container {
-  /* Gaya umum sudah ada di atas */
+  /* Menggabungkan gaya ke dalam satu aturan agar konsisten */
+  margin-top: 20px;
 }
 .mooc-container h3 {
   font-size: 20px;
@@ -260,14 +259,13 @@ body {
     const form = document.getElementById("loginForm");
 
     form.addEventListener("submit", function(e) {
-      e.preventDefault(); // mencegah form reload halaman
+      e.preventDefault();
       
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
       if(username === validUsername && password === validPassword) {
-        // jika login berhasil, redirect ke halaman lain
-        window.location.href = "https://www.sipenata.sukoharjokab.go.id/"; // ganti dengan link tujuan
+        window.location.href = "https://www.sipenata.sukoharjokab.go.id/";
       } else {
         alert("Username atau password salah!");
       }
