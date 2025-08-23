@@ -6,6 +6,12 @@
   <title>Login Page</title>
   <link rel="stylesheet" href="style.css">
   <style>
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+    
 body {
   display: flex;
   justify-content: center;
@@ -97,6 +103,39 @@ body {
 .right-side button[type="submit"]:hover {
   background-color: #28a745;
 }
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* jadi 1 kolom */
+    max-width: 95%;
+  }
+
+  .left-side, .right-side {
+    flex: unset;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .left-side .logo {
+    width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .left-side h1 {
+    font-size: 20px;
+  }
+
+  .left-side p {
+    font-size: 14px;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 12px;
+  }
+}
+
 </style>
 
 </head>
@@ -135,5 +174,6 @@ body {
 </body>
 
 </html>
+
 
 
