@@ -23,9 +23,18 @@ body {
   background: url("background.jpg") no-repeat center center fixed;
   background-size: cover;
   font-family: Montserrat;
-  flex-direction: row;
+  flex-direction: column;
 }
-
+.login-container, .mooc-container {
+  display: flex;
+  background: #f7f7f7;
+  padding: 40px 20px;
+  border-radius: 10px;
+  box-shadow: 0 20px 20px rgba(0,0,0,0.15);
+  width: 800px;
+  max-width: 95%;
+  margin: 20px 10px;
+}
 .login-container {
   display: flex;
   background: #f7f7f7;
@@ -44,7 +53,7 @@ body {
 .left-side .logo {
   width: 200px;
   margin-bottom: 10px;
-  filter: drop-shadow(1px 1px 2px #1B3C53);
+  filter: drop-shadow(1px 1px 2px #D7D7D7);
 }
 .left-side h1 {
   margin: 0 0 0px 0;
@@ -136,7 +145,7 @@ body {
 .left-side .logo {
   width: 180px;
   margin-bottom: 10px;
-  filter: drop-shadow(1px 1px 2px #1B3C53);
+  filter: drop-shadow(1px 1px 2px #D7D7D7);
 }
 .left-side h1 {
   margin: 0 0 0px 0;
@@ -227,8 +236,12 @@ body {
   <button type="submit">Masuk</button>
       </form>
     </div>
-  
-  
+    
+    <div class="mooc-container">
+    <h3>Apa itu MOOC?</h3>
+    <p>Massive Open Online Course (MOOC) adalah model pembelajaran jarak jauh yang memungkinkan siapa saja untuk mengikuti kursus yang tersedia secara daring dan terbuka untuk jumlah peserta yang tidak terbatas. MOOC menawarkan fleksibilitas, materi berkualitas, dan kesempatan untuk belajar dari mana saja.</p>
+  </div>
+    
  <script>
     const validUsername = "admin";
     const validPassword = "123456";
@@ -266,6 +279,7 @@ body {
 </body>
 
 </html>
+
 
 
 
