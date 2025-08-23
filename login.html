@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-  <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
 {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-    
+    
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background: url("background.jpg") no-repeat center center fixed;
-  background-size: cover;
-  font-family: Montserrat;
-  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: url("background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: Montserrat;
+  flex-direction: column; /* Ini sudah benar untuk menumpuk kontainer */
 }
+
+/* Menggabungkan properti umum untuk kedua kontainer */
 .login-container, .mooc-container {
   display: flex;
   background: #f7f7f7;
@@ -35,86 +37,87 @@ body {
   max-width: 95%;
 }
 
+/* Menambahkan jarak antar kontainer dengan satuan yang benar */
 .login-container {
-  margin-top: 20;
+  margin-bottom: 20px; /* Jarak antara login dan mooc kontainer */
 }
 
 .left-side {
-  flex: 1;
-  padding-right: 20px;
-  border-right: 2px solid #ddd;
+  flex: 1;
+  padding-right: 20px;
+  border-right: 2px solid #ddd;
 }
 .left-side .logo {
-  width: 200px;
-  margin-bottom: 10px;
-  filter: drop-shadow(1px 1px 2px #D7D7D7);
+  width: 200px;
+  margin-bottom: 10px;
+  filter: drop-shadow(1px 1px 2px #D7D7D7);
 }
 .left-side h1 {
-  margin: 0 0 0px 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #1B3C53;
+  margin: 0 0 0px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1B3C53;
 }
 .left-side h2 {
-  margin: 0 0 0px 0;
-  font-size: 22px;
-  font-weight: 800;
-  color: #8C1007;
+  margin: 0 0 0px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #8C1007;
 }
 .left-side p {
-  color: #555;
-  font-size: 12px;
+  color: #555;
+  font-size: 12px;
 }
 
 .right-side {
-  flex: 1;
-  padding-left: 20px;
+  flex: 1;
+  padding-left: 20px;
 }
 
 .right-side input {
-  width: 93%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-family: Montserrat;
+  width: 93%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: Montserrat;
 }
 
 .toggle-btn {
-  width: 100%;
-  padding: 9px;
-  margin: 6px 0;
-  background: #456882;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: Montserrat;
-  font-weight: 600;
+  width: 100%;
+  padding: 9px;
+  margin: 6px 0;
+  background: #456882;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: Montserrat;
+  font-weight: 600;
 }
 
 .right-side button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: Montserrat;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: Montserrat;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .right-side button[type="submit"]:hover {
-  background-color: #28a745;
+  background-color: #28a745;
 }
-    
+    
 .mooc-container {
-  margin-top: 20;
+  /* Gaya umum sudah ada di atas */
 }
 .mooc-container h3 {
   font-size: 20px;
@@ -127,222 +130,163 @@ body {
   color: #555;
   line-height: 1.5;
 }
-    
+    
 @media (max-width: 400px) {
-  body {
-    font-family: Montserrat;
-    font-weight: 600;    
-  }
-  
-  .login-container {
-    flex-direction: column !important;
-    width: 280px;
-    max-width: 100%;
-    text-align: center;
-    font-size: 3px;
-    padding-top: 30px;
-    padding-right: 20px;
-    padding-bottom: 30px;
-    padding-left: 20px;
+  body {
+    font-family: Montserrat;
+    font-weight: 600;    
+  }
+  
+  .login-container {
+    flex-direction: column !important;
+    width: 280px;
+    max-width: 100%;
+    text-align: center;
+    font-size: 3px;
+    padding-top: 30px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+    padding-left: 20px;
 }
 
 .left-side {
-  flex: 1;
-  padding-right: 0px;
-  border: 0px solid #ccc;
+  flex: 1;
+  padding-right: 0px;
+  border: 0px solid #ccc;
 }
 .left-side .logo {
-  width: 180px;
-  margin-bottom: 10px;
-  filter: drop-shadow(1px 1px 2px #D7D7D7);
+  width: 180px;
+  margin-bottom: 10px;
+  filter: drop-shadow(1px 1px 2px #D7D7D7);
 }
 .left-side h1 {
-  margin: 0 0 0px 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #1B3C53;
-  font-family: Montserrat;
+  margin: 0 0 0px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1B3C53;
+  font-family: Montserrat;
 }
 .left-side h2 {
-  margin: 0 0 0px 0;
-  font-size: 16px;
-  font-weight: 700;
-  color: #8C1007;
-  font-family: Montserrat;
+  margin: 0 0 0px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #8C1007;
+  font-family: Montserrat;
 }
 .left-side p {
-  margin: 30 30 0px 0;
-  font-family: Montserrat;
-  color: #555;
-  font-size: 10px;
+  margin: 30 30 0px 0;
+  font-family: Montserrat;
+  color: #555;
+  font-size: 10px;
 }
 .right-side {
-  flex: 1;
-  padding-left: 0px;
+  flex: 1;
+  padding-left: 0px;
 }
 .right-side input {
-  width: 91%;
-  padding: 12px;
-  margin: 4px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-family: Montserrat;
+  width: 91%;
+  padding: 12px;
+  margin: 4px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: Montserrat;
 }
 
 .toggle-btn {
-  width: 100%;
-  padding: 7px;
-  margin: 5px 0;
-  background: #456882;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  font-family: Montserrat;
-  font-weight: 600;
+  width: 100%;
+  padding: 7px;
+  margin: 5px 0;
+  background: #456882;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: Montserrat;
+  font-weight: 600;
 }
 
 .right-side button[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  margin: 6px 0;
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: Montserrat;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: Montserrat;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
 }
 
 .right-side button[type="submit"]:hover {
-  background-color: #28a745;
+  background-color: #28a745;
 }
-    
+    
 </style>
 
 </head>
 <body>
-  <div class="login-container">
-    <!-- Bagian kiri -->
-    <div class="left-side">
-      <img src="moocorpu.png" alt="Logo Aplikasi" class="logo">
-      <h1>Selamat Datang di
-      <h1>Massive Open Online Course</h1>
-      <h2>Sukoharjo Corporate University</h2>
-      <p>Silahkan masukkan Nama Pengguna dan Kata Sandi Anda untuk melanjutkan.</p>
-    </div>
+  <div class="login-container">
+        <div class="left-side">
+      <img src="moocorpu.png" alt="Logo Aplikasi" class="logo">
+      <h1>Selamat Datang di
+      <h1>Massive Open Online Course</h1>
+      <h2>Sukoharjo Corporate University</h2>
+      <p>Silahkan masukkan Nama Pengguna dan Kata Sandi Anda untuk melanjutkan.</p>
+    </div>
 
-    <!-- Bagian kanan -->
-    <div class="right-side">
-      <form id="loginForm">
-  <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
-  <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
-  <button type="button" id="togglePassword" class="toggle-btn">Lihat Kata Sandi</button>
-  <button type="submit">Masuk</button>
-      </form>
-    </div>
-    </div>  
-    
-  <div class="mooc-container">
-    <h3>Apa itu MOOC?</h3>
-    <p>Massive Open Online Course (MOOC) adalah model pembelajaran jarak jauh yang memungkinkan siapa saja untuk mengikuti kursus yang tersedia secara daring dan terbuka untuk jumlah peserta yang tidak terbatas. MOOC menawarkan fleksibilitas, materi berkualitas, dan kesempatan untuk belajar dari mana saja.</p>
-    </div>
-    
- <script>
-    const validUsername = "admin";
-    const validPassword = "123456";
+        <div class="right-side">
+      <form id="loginForm">
+  <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
+  <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
+  <button type="button" id="togglePassword" class="toggle-btn">Lihat Kata Sandi</button>
+  <button type="submit">Masuk</button>
+      </form>
+    </div>
+  </div>
+  
+  <div class="mooc-container">
+    <h3>Apa itu MOOC?</h3>
+    <p>Massive Open Online Course (MOOC) adalah model pembelajaran jarak jauh yang memungkinkan siapa saja untuk mengikuti kursus yang tersedia secara daring dan terbuka untuk jumlah peserta yang tidak terbatas. MOOC menawarkan fleksibilitas, materi berkualitas, dan kesempatan untuk belajar dari mana saja.</p>
+  </div>
+    
+ <script>
+    const validUsername = "admin";
+    const validPassword = "123456";
 
-    const form = document.getElementById("loginForm");
+    const form = document.getElementById("loginForm");
 
-    form.addEventListener("submit", function(e) {
-      e.preventDefault(); // mencegah form reload halaman
-      
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+    form.addEventListener("submit", function(e) {
+      e.preventDefault(); // mencegah form reload halaman
+      
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-      if(username === validUsername && password === validPassword) {
-        // jika login berhasil, redirect ke halaman lain
-        window.location.href = "https://www.sipenata.sukoharjokab.go.id/"; // ganti dengan link tujuan
-      } else {
-        alert("Username atau password salah!");
-      }
+      if(username === validUsername && password === validPassword) {
+        // jika login berhasil, redirect ke halaman lain
+        window.location.href = "https://www.sipenata.sukoharjokab.go.id/"; // ganti dengan link tujuan
+      } else {
+        alert("Username atau password salah!");
+      }
 });
 </script>
 
 <script>
-    const togglePassword = document.querySelector("#togglePassword");
-    const password = document.querySelector("#password");
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
 
-    togglePassword.addEventListener("click", function () {
-      const type = password.getAttribute("type") === "password" ? "text" : "password";
-      password.setAttribute("type", type);
-     
-      this.textContent = type === "password" ? "Lihat Password" : "Sembunyikan";
+    togglePassword.addEventListener("click", function () {
+      const type = password.getAttribute("type") === "password" ? "text" : "password";
+      password.setAttribute("type", type);
+     
+      this.textContent = type === "password" ? "Lihat Password" : "Sembunyikan";
 
-    });
-  </script>
+    });
+  </script>
 
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
