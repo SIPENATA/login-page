@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
 * {
   margin: 0;
@@ -19,7 +22,7 @@ body {
   margin: 0;
   background: url("background.jpg") no-repeat center center fixed;
   background-size: cover;
-  font-family: Montserrat, sans-serif;
+  font-family: Montserrat;
   flex-direction: row;
 }
 
@@ -41,15 +44,18 @@ body {
 .left-side .logo {
   width: 200px;
   margin-bottom: 10px;
+  filter: drop-shadow(1px 1px 2px #333333)
 }
 .left-side h1 {
   margin: 0 0 0px 0;
   font-size: 22px;
+  font-weight: 800;
   color: #1B3C53;
 }
 .left-side h2 {
   margin: 0 0 0px 0;
   font-size: 22px;
+  font-weight: 800;
   color: #8C1007;
 }
 .left-side p {
@@ -68,7 +74,7 @@ body {
   margin: 8px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-family: Montserrat, sans-serif;
+  font-family: Montserrat;
 }
 
 .toggle-btn {
@@ -103,6 +109,10 @@ body {
 }
     
 @media (max-width: 480px) {
+  body {
+    font-family: Montserrat;
+  }
+  
   .login-container {
     flex-direction: column !important;
     width: 280px;
@@ -116,12 +126,15 @@ body {
   }
   .left-side .logo {
     width: 180px;
+    filter: drop-shadow(1px 1px 2px #333333)
   }
   .left-side h1 {
     font-size: 20px;
+    font-weight: 700
   }
   .left-side h2 {
     font-size: 18px;
+    
   }
   .left-side p {
     font-size: 10px;
@@ -191,3 +204,4 @@ body {
 </script>
 </body>
 </html>
+
