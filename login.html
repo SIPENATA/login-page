@@ -206,7 +206,12 @@ body {
 
     <!-- Bagian kanan -->
     <div class="right-side">
-      <form action="login.php" method="POST">
+      <form id="loginForm">
+  <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
+  <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
+  <button type="button" id="togglePassword" class="toggle-btn">Lihat Kata Sandi</button>
+  <button type="submit">Masuk</button>
+
         <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
         <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
         <button type="button" id="togglePassword" class="toggle-btn">Lihat Kata Sandi</button>
@@ -229,7 +234,7 @@ body {
 
       if(username === validUsername && password === validPassword) {
         // jika login berhasil, redirect ke halaman lain
-        window.location.href = "sipenata.sukoharjokab.go.id"; // ganti dengan link tujuan
+        window.location.href = "https://www.sipenata.sukoharjokab.go.id"; // ganti dengan link tujuan
       } else {
         alert("Username atau password salah!");
       }
