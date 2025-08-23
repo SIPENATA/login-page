@@ -216,37 +216,16 @@ body {
 
     <!-- Bagian kanan -->
     <div class="right-side">
-      <form id="loginForm">
-        <input type="text" id="username" name="username" placeholder="Nama Pengguna" required>
-        <input type="password" id="password" name="password" placeholder="Kata Sandi" required>
-        <button type="button" id="togglePassword" class="toggle-btn">Lihat Kata Sandi</button>
+      <form action="login.php" method="POST">
+        <input type="text" name="username" placeholder="Nama Pengguna" required>
+        <input type="password" name="password" placeholder="Kata Sandi" required>
         <button type="submit">Masuk</button>
       </form>
     </div>
   </div>
 
 <script>
-  // Username & Password valid
-  const validUsername = "admin";
-  const validPassword = "123456";
-
-  const form = document.getElementById("loginForm");
-
-  form.addEventListener("submit", function(e) {
-    e.preventDefault(); // cegah reload
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    if(username === validUsername && password === validPassword) {
-      // Redirect jika benar
-      window.location.href = "https://sipenata.sukoharjokab.go.id";
-    } else {
-      alert("Username atau password salah!");
-    }
-  });
-
-  // Toggle show/hide password
+    // Toggle show/hide password
   const togglePassword = document.querySelector("#togglePassword");
   const password = document.querySelector("#password");
 
@@ -258,6 +237,7 @@ body {
 </script>
 </body>
 </html>
+
 
 
 
