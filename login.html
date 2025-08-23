@@ -223,26 +223,7 @@ body {
       password.setAttribute("type", type);
      
       this.textContent = type === "password" ? "Lihat Password" : "Sembunyikan";
-  </script>
 
-  <script>
-    const validUsername = "admin";
-    const validPassword = "123456";
-
-    const form = document.getElementById("loginForm");
-
-    form.addEventListener("submit", function(e) {
-      e.preventDefault(); // mencegah form reload halaman
-      
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      if(username === validUsername && password === validPassword) {
-        // jika login berhasil, redirect ke halaman lain
-        window.location.href = "dashboard.html"; // ganti dengan link tujuan
-      } else {
-        alert("Username atau password salah!");
-      }
     });
   </script>
 </body>
