@@ -106,34 +106,15 @@ body {
     
 @media (max-width: 768px) {
   .container {
-    flex-direction: row !important;
+    flex-direction: column !important;  /* paksa jadi 1 kolom */
     max-width: 95%;
   }
 
-  .left-side, .right-side {
-    flex: unset;
-    width: 100%;
-    padding: 20px;
-    text-align: center;
-  }
-
-  .left-side .logo {
-    width: 100px;
-  }
-}
-
-@media (max-width: 480px) {
-  .left-side h1 {
-    font-size: 20px;
-  }
-
-  .left-side p {
-    font-size: 14px;
-  }
-
-  button {
-    font-size: 14px;
-    padding: 12px;
+  .left-side, 
+  .right-side {
+    width: 100% !important;
+    padding: 20px !important;
+    text-align: center !important;
   }
 }
     
@@ -175,6 +156,7 @@ body {
 </body>
 
 </html>
+
 
 
 
