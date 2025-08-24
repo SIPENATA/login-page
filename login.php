@@ -22,9 +22,9 @@ $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'"
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    // login berhasil
-    echo "<h2>Login berhasil! Selamat datang, $username</h2>";
-    echo "<a href='https://www.sipenata.sukoharjokab.go.id/halaman-awal'>Logout</a>";
+    // login berhasil → langsung redirect
+    header("Location: https://www.sipenata.sukoharjokab.go.id/halaman-awal");
+    exit(); // wajib untuk hentikan script setelah redirect
 } else {
     // login gagal
     echo "<script>alert('Username atau password salah!'); window.location='index.html';</script>";
@@ -32,4 +32,3 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
-
