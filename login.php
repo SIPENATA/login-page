@@ -25,7 +25,7 @@ if ($result->num_rows > 0) {
     // login berhasil → redirect ke website tujuan
     echo "<script>
             alert('Login berhasil! Selamat datang, $username');
-            window.location.href = 'https://sipenata.github.io/login-page/mooc.html';
+            window.location.href = 'https://sipenata.github.io/login-page/plajari.html';
           </script>";
     exit();
 } else {
@@ -38,4 +38,5 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 ?>
+
 
