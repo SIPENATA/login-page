@@ -141,6 +141,23 @@
       margin-top: 30px;
     }
 
+    .card button.eval {
+      background: #0d6efd;
+      margin-bottom: 15px;
+    }
+
+    .card button.eval:hover {
+      background: #084298;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #1B3C53;
+      color: #fff;
+      margin-top: 30px;
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -234,6 +251,9 @@
           <a href="${materi.link}" target="_blank">Lihat Materi</a>
           <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
+          </button>
+          <button class="eval" onclick="openEvaluasi(${materi.id})">
+          Evaluasi / Kuis
           </button>
         `;
         container.appendChild(card);
