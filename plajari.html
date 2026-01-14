@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plajari Sukoharjo Corporate University</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     body {
       font-family: Montserrat !important;
@@ -28,21 +26,23 @@
     header h1 {
       margin: 0;
       font-size: 35px;
+      font-weight: heavy;
       color: #1B3C53;
-      font-weight: 700;
     }
     
     header h2 {
       margin: 0;
       font-size: 33px;
+      font-weight: heavy;
       color: #8C1007;
-      font-weight: 600;
     }
     
     nav {
       display: flex;
       justify-content: center;
       width: 100%;
+      margin: 0;
+      padding: 0;
     }
     
     nav button {
@@ -58,10 +58,10 @@
       transition: background 0.3s ease;
     }
 
-    nav button.active,
-    nav button:hover {
+    nav button.active, nav button:hover {
       background: #1B3C53;
       color: #FFF0C4;
+      font-weight: 600;
     }
 
     .container {
@@ -108,40 +108,29 @@
       padding: 12px;
       margin: 10px 15px;
       border-radius: 8px;
-      font-weight: bold;
       transition: background 0.3s ease;
+      font-weight: bold;
     }
 
     .card a:hover {
       background: #28a745;
     }
 
-    /* tombol sudah dibaca */
     .card button {
+      background: #6c757d;
       font-family: Montserrat;
       color: #fff;
       border: none;
       padding: 10px;
-      margin: 0 15px 10px 15px;
+      margin: 0 15px 15px 15px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       transition: background 0.3s ease;
-      background: #6c757d;
     }
 
     .card button.read {
-      background: #28a745;
-    }
-
-    /* tombol tambahan */
-    .card button.eval {
-      background: #0d6efd;
-      margin-bottom: 15px;
-    }
-
-    .card button.eval:hover {
-      background: #084298;
+      background: #28a745 !important;
     }
 
     footer {
@@ -153,123 +142,125 @@
     }
 
     @media (max-width: 480px) {
-      header h1 {
-        font-size: 18px;
+      body {
+        font-family: Montserrat !important;
+        margin: 0;
+        padding: 0;
+        color: #333;
       }
+      
+      header h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1B3C53;
+      }
+    
       header h2 {
+        margin: 0;
         font-size: 17px;
+        font-weight: 600;
+        color: #8C1007;
       }
     }
   </style>
 </head>
-
 <body>
 
-<header>
-  <h1>Platform Belajar Mandiri (PLAJARI)</h1>
-  <h2>Sukoharjo Corporate University</h2>
-</header>
+  <header>
+    <h1>Platform Belajar Mandiri (PLAJARI)</h1>
+    <h2>Sukoharjo Corporate University</h2>
+  </header>
 
-<nav>
-  <button id="btn-all" class="active">Semua Materi</button>
-  <button id="btn-unread">Belum Dibaca</button>
-  <button id="btn-read">Sudah Dibaca</button>
-</nav>
+  <!-- Menu navigasi -->
+  <nav>
+    <button id="btn-all" class="active">Semua Materi</button>
+    <button id="btn-unread">Belum Dibaca</button>
+    <button id="btn-read">Sudah Dibaca</button>
+  </nav>
 
-<main>
-  <div class="container" id="materi-container"></div>
-</main>
+  <main>
+    <div class="container" id="materi-container"></div>
+  </main>
 
-<footer>
-  <p>&copy; 2025 Plajari Sukoharjo Corporate University</p>
-</footer>
+  <footer>
+    <p>&copy; 2025 Plajari Sukoharjo Corporate University</p>
+  </footer>
 
-<script>
-  const materiList = [
-    {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7"},
-    {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/"}
-    {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/"},
-    {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/"},
-    {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/"},
-    {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/"},
-    {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/"},
-    {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/"},
-    {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/"},
-    {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/"},
-    {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/"},
-    {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/"},
-    {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/"},
-    {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/"},
-    {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/"},
-    {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/"},
-    {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/"},
-    {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/"},
-    {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/"},
-    {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/"}
-  ];
+  <script>
+    // Daftar Materi
+    const materiList = [
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/"},
+      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/"},
+      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/"},
+      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/"},
+      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/"},
+      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/"},
+      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/"},
+      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/"},
+      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/"},
+      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/"},
+      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/"},
+      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/"},
+      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/"},
+      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/"},
+      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/"},
+      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/"},
+      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/"},
+      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/"},
+      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/"}
+    ];
 
-  let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
-  const container = document.getElementById("materi-container");
-  let currentFilter = "all";
+    // Ambil status baca dari localStorage
+    let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
 
-  function renderMateri(filter="all") {
-    container.innerHTML = "";
+    const container = document.getElementById("materi-container");
 
-    materiList.forEach(materi => {
-      const isRead = readStatus[materi.id] === true;
+    // Render Materi
+    function renderMateri(filter="all") {
+      container.innerHTML = "";
+      materiList.forEach(materi => {
+        const isRead = readStatus[materi.id] === true;
 
-      if(filter === "read" && !isRead) return;
-      if(filter === "unread" && isRead) return;
+        if(filter === "read" && !isRead) return;
+        if(filter === "unread" && isRead) return;
 
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${materi.img}" alt="${materi.judul}">
-        <h3>${materi.judul}</h3>
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${materi.img}" alt="${materi.judul}">
+          <h3>${materi.judul}</h3>
+          <a href="${materi.link}" target="_blank">Lihat Materi</a>
+          <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
+            ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
 
-        <a href="${materi.link}" target="_blank">Lihat Materi</a>
+    // Toggle status baca
+    function toggleRead(id) {
+      readStatus[id] = !readStatus[id];
+      localStorage.setItem("readStatus", JSON.stringify(readStatus));
+      renderMateri(currentFilter);
+    }
 
-        <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
-          ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
-        </button>
+    // Navigasi tab
+    let currentFilter = "all";
+    document.getElementById("btn-all").onclick = () => {currentFilter="all"; setActive("btn-all"); renderMateri("all");};
+    document.getElementById("btn-unread").onclick = () => {currentFilter="unread"; setActive("btn-unread"); renderMateri("unread");};
+    document.getElementById("btn-read").onclick = () => {currentFilter="read"; setActive("btn-read"); renderMateri("read");};
 
-        <button class="eval" onclick="openEvaluasi(${materi.id})">
-          Evaluasi / Kuis
-        </button>
-      `;
-      container.appendChild(card);
-    });
-  }
+    function setActive(id){
+      document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
 
-  function toggleRead(id) {
-    readStatus[id] = !readStatus[id];
-    localStorage.setItem("readStatus", JSON.stringify(readStatus));
-    renderMateri(currentFilter);
-  }
-
-  function openEvaluasi(id) {
-    alert("Evaluasi untuk materi ID: " + id);
-    // contoh jika nanti pakai link:
-    // window.open("https://link-evaluasi.com?id=" + id, "_blank");
-  }
-
-  document.getElementById("btn-all").onclick = () => {
-    currentFilter="all"; setActive("btn-all"); renderMateri("all");
-  };
-  document.getElementById("btn-unread").onclick = () => {
-    currentFilter="unread"; setActive("btn-unread"); renderMateri("unread");
-  };
-  document.getElementById("btn-read").onclick = () => {
-    currentFilter="read"; setActive("btn-read"); renderMateri("read");
-  };
-
-  function setActive(id){
-    document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
-
-  renderMateri("all");
-</script>
+    // Pertama kali tampilkan semua
+    renderMateri("all");
+  </script>
 
 </body>
 </html>
