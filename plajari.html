@@ -207,26 +207,26 @@
   <script>
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7"},
-      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/"},
-      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/"},
-      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/"},
-      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/"},
-      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/"},
-      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/"},
-      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/"},
-      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/"},
-      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/"},
-      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/"},
-      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/"},
-      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/"},
-      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/"},
-      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/"},
-      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/"},
-      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/"},
-      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/"},
-      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/"},
-      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/"}
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
     ];
 
     // Ambil status baca dari localStorage
@@ -253,8 +253,8 @@
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           ${filter === "read" && isRead ? `
-          <button class="eval" onclick="openEvaluasi(${materi.id})">
-          Cetak Sertifikat
+          <button class="eval" onclick="openSertifikat()">
+            Cetak Sertifikat
           </button>
          ` : ""}
         `;
