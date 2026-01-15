@@ -301,16 +301,22 @@
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
       renderMateri(currentFilter);
     }
-    function openSertifikat(url) {
+    
+    function openSertifikat(url, id) {
       if (!url) {
-      alert("Link sertifikat belum tersedia.");
-      return;
+        alert("Link sertifikat belum tersedia.");
+        return;
     }
-      printedStatus[id] = true;
-      localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
-      window.open(url, "_blank");
-      // refresh UI TANPA reload halaman
-      renderMateri(currentFilter);
+
+     // tandai sertifikat sudah dicetak
+    printedStatus[id] = true;
+    localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
+
+    // buka link sertifikat
+    window.open(url, "_blank");
+
+    // refresh UI TANPA reload halaman
+    renderMateri(currentFilter);
     }
     
     function openDownload(url) {
