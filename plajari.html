@@ -129,18 +129,7 @@
       transition: background 0.3s ease;
     }
 
-    .card button.read {
-      background: #28a745 !important;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #1B3C53;
-      color: #fff;
-      margin-top: 30px;
-    }
-
+    
     .card button.eval {
       background: #0d6efd;
       margin-bottom: 10px;
@@ -279,6 +268,7 @@
     let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
     let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
     let printedStatus = JSON.parse(localStorage.getItem("printedStatus")) || {};
+    let checklist = JSON.parse(localStorage.getItem("checklist")) || {};
     
     const container = document.getElementById("materi-container");
 
@@ -297,8 +287,6 @@
           <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
           <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">Lihat Materi</a>
-          <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
-            ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           
           ${filter === "read" && isRead ? `
@@ -329,19 +317,11 @@
       let progress = 0;
 
       if (openedStatus[id]) progress += 40;
-      if (readStatus[id]) progress += 30;
-      if (printedStatus[id]) progress += 30;
+      if (printedStatus[id]) progress += 60;
 
     return progress;
     }
 
-    // Toggle status baca
-    function toggleRead(id) {
-      readStatus[id] = !readStatus[id];
-      localStorage.setItem("readStatus", JSON.stringify(readStatus));
-      renderMateri(currentFilter);
-    }
-    
     function openSertifikat(url, id) {
       if (!url) {
         alert("Link sertifikat belum tersedia.");
@@ -369,7 +349,22 @@
     
     function markOpened(id) {
        openedStatus[id] = true;
-       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));renderMateri(currentFilter);
+       localStorage.setItem("openedStatus", JSON.stringify(openedStatus)); renderMateri(currentFilter);
+    }
+
+    function toggleChecklist(id, type) {
+      if (!checklist[id]) {
+      checklist[id] = { video: false, modul: false };
+      }
+      checklist[id][type] = !checklist[id][type];
+      localStorage.setItem("checklist", JSON.stringify(checklist));
+      renderMateri(currentFilter);
+    }
+
+    function canPrintCertificate(id) {
+      const opened = openedStatus[id];
+      const c = checklist[id] || {};
+      return opened && c.video && c.modul;
     }
     
     // Navigasi tab
