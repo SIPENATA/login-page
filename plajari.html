@@ -253,8 +253,8 @@
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           ${filter === "read" && isRead ? `
-          <button class="eval" onclick="openSertifikat()">
-            Cetak Sertifikat
+          <button class="eval" onclick="openSertifikat('${materi.sertifikat}')">
+           Cetak Sertifikat
           </button>
          ` : ""}
         `;
@@ -268,7 +268,14 @@
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
       renderMateri(currentFilter);
     }
-
+    function openSertifikat(url) {
+      if (!url) {
+      alert("Link sertifikat belum tersedia.");
+      return;
+    }
+    window.open(url, "_blank");
+    }
+    
     // Navigasi tab
     let currentFilter = "all";
     document.getElementById("btn-all").onclick = () => {currentFilter="all"; setActive("btn-all"); renderMateri("all");};
