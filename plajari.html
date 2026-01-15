@@ -255,7 +255,8 @@
 
     // Ambil status baca dari localStorage
     let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
-
+    let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
+    
     const container = document.getElementById("materi-container");
 
     // Render Materi
@@ -326,9 +327,6 @@
     function setActive(id){
       document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
       document.getElementById(id).classList.add("active");
-    }
-
-    let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
     }
 
     // Pertama kali tampilkan semua
