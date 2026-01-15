@@ -279,7 +279,11 @@
     let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
     let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
     let printedStatus = JSON.parse(localStorage.getItem("printedStatus")) || {};
+    let learningTime = JSON.parse(localStorage.getItem("learningTime")) || {};
+    let startTime = JSON.parse(localStorage.getItem("startTime")) || {};
+    let checklist = JSON.parse(localStorage.getItem("checklist")) || {};
     
+    const MIN_SECONDS = 24 * 60 * 60; // 24 jam (validasi minimal durasi belajar)
     const container = document.getElementById("materi-container");
 
     // Render Materi
@@ -302,27 +306,42 @@
           </button>
           
           ${filter === "read" && isRead ? `
+            <div style="font-size:12px; margin:5px 15px; font-weight:600;">
+              ⏱️ Durasi Belajar: ${formatDuration(getLearningDuration(materi.id))}
+              <br>
+              <span style="color:#dc3545;">
+                Minimal belajar: 24 jam
+              </span>
+             </div>
 
-            <div class="progress-text">
-            Progress Belajar: ${hitungProgress(materi.id)}%
-            </div>
-            <div class="progress-wrapper">
-            <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
-            </div>
-            
-          <button class="eval"
-          ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
-            Cetak Sertifikat
-          </button>
+  <div style="text-align:left; margin:5px 20px; font-size:13px;">
+    <label>
+      <input type="checkbox"
+        ${checklist[materi.id]?.video ? "checked" : ""}
+        onchange="toggleChecklist(${materi.id}, 'video')">
+      Video sudah dipelajari
+    </label><br>
 
-          <button class="sertif"
-            ${!printedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
-            Download Sertifikat
-          </button>
-         ` : ""}
-        `;
-        container.appendChild(card);
-      });
+    <label>
+      <input type="checkbox"
+        ${checklist[materi.id]?.modul ? "checked" : ""}
+        onchange="toggleChecklist(${materi.id}, 'modul')">
+      Modul sudah dipelajari
+    </label>
+  </div>
+
+  <button class="eval"
+    ${!canPrintCertificate(materi.id) ? "disabled" : ""}
+    onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
+    Cetak Sertifikat
+  </button>
+
+  <button class="sertif"
+    ${!printedStatus[materi.id] ? "disabled" : ""}
+    onclick="openDownload('${materi.download}')">
+    Download Sertifikat
+  </button>
+` : ""}
     }
 
     function hitungProgress(id) {
@@ -369,7 +388,44 @@
     
     function markOpened(id) {
        openedStatus[id] = true;
+      // mulai timer jika belum ada
+       if (!startTime[id]) {startTime[id] = Date.now(); localStorage.setItem("startTime", JSON.stringify(startTime));
+    }
        localStorage.setItem("openedStatus", JSON.stringify(openedStatus));renderMateri(currentFilter);
+    }
+
+    function getLearningDuration(id) {
+       if (!startTime[id]) return 0;
+
+       const now = Date.now();
+       const diff = now - startTime[id]; // ms
+       return Math.floor(diff / 1000); // detik
+    }
+
+    function formatDuration(seconds) {
+       const hours = Math.floor(seconds / 3600);
+       const minutes = Math.floor((seconds % 3600) / 60);
+       return `${hours} jam ${minutes} menit`;
+    }
+
+    function toggleChecklist(id, type) {
+      if (!checklist[id]) checklist[id] = { video: false, modul: false };
+
+      checklist[id][type] = !checklist[id][type];
+      localStorage.setItem("checklist", JSON.stringify(checklist));
+
+      renderMateri(currentFilter);
+    }
+
+    function canPrintCertificate(id) {
+      const duration = getLearningDuration(id);
+      const check = checklist[id] || {};
+
+      return (
+        duration >= MIN_SECONDS &&
+        check.video === true &&
+        check.modul === true
+      );
     }
     
     // Navigasi tab
