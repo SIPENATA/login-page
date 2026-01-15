@@ -300,8 +300,16 @@
           <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
+          
           ${filter === "read" && isRead ? `
-         
+
+            <div class="progress-text">
+            Progress Belajar: ${hitungProgress(materi.id)}%
+            </div>
+            <div class="progress-wrapper">
+            <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
+            </div>
+            
           <button class="eval"
           ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
             Cetak Sertifikat
@@ -315,6 +323,16 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    function hitungProgress(id) {
+      let progress = 0;
+
+      if (openedStatus[id]) progress += 40;
+      if (readStatus[id]) progress += 30;
+      if (printedStatus[id]) progress += 30;
+
+    return progress;
     }
 
     // Toggle status baca
