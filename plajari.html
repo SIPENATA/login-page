@@ -256,6 +256,7 @@
     // Ambil status baca dari localStorage
     let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
     let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
+    let printedStatus = JSON.parse(localStorage.getItem("printedStatus")) || {};
     
     const container = document.getElementById("materi-container");
 
@@ -278,12 +279,14 @@
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           ${filter === "read" && isRead ? `
-          <button class="eval"${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}')">
+         
+          <button class="eval"
+          ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
             Cetak Sertifikat
           </button>
 
           <button class="sertif"
-            ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
+            ${!printedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
             Download Sertifikat
           </button>
          ` : ""}
@@ -303,8 +306,13 @@
       alert("Link sertifikat belum tersedia.");
       return;
     }
-    window.open(url, "_blank");
+      printedStatus[id] = true;
+      localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
+      window.open(url, "_blank");
+      // refresh UI TANPA reload halaman
+      renderMateri(currentFilter);
     }
+    
     function openDownload(url) {
       if (!url) {
       alert("Link download sertifikat belum tersedia.");
