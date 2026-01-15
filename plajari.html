@@ -277,15 +277,12 @@
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           ${filter === "read" && isRead ? `
-          <button class="eval"
-            ${!openedStatus[materi.id] ? "disabled" : ""}
-            onclick="openSertifikat('${materi.sertifikat}')">
+          <button class="eval"${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}')">
             Cetak Sertifikat
           </button>
 
           <button class="sertif"
-            ${!openedStatus[materi.id] ? "disabled" : ""}
-            onclick="openDownload('${materi.download}')">
+            ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
             Download Sertifikat
           </button>
          ` : ""}
@@ -314,9 +311,10 @@
     }
     window.open(url, "_blank");
     }
+    
     function markOpened(id) {
-    openedStatus[id] = true;
-    localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
+       openedStatus[id] = true;
+       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
     }
     
     // Navigasi tab
