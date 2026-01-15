@@ -224,7 +224,7 @@
   <script>
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
@@ -291,6 +291,13 @@
     function openSertifikat(url) {
       if (!url) {
       alert("Link sertifikat belum tersedia.");
+      return;
+    }
+    window.open(url, "_blank");
+    }
+    function openDownload(url) {
+      if (!url) {
+      alert("Link download sertifikat belum tersedia.");
       return;
     }
     window.open(url, "_blank");
