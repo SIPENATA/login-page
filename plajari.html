@@ -278,59 +278,50 @@
     // Ambil status baca dari localStorage
     let readStatus = JSON.parse(localStorage.getItem("readStatus")) || {};
     let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
-    let checklist = JSON.parse(localStorage.getItem("checklist")) || {};
     let printedStatus = JSON.parse(localStorage.getItem("printedStatus")) || {};
     
     const container = document.getElementById("materi-container");
 
     // Render Materi
     function renderMateri(filter="all") {
-      currentFilter = filter;
-      const container = document.getElementById("materi-container");
       container.innerHTML = "";
-
       materiList.forEach(materi => {
-        const opened = openedStatus[materi.id];
-        const c = checklist[materi.id] || { video: false, modul: false };
+        const isRead = readStatus[materi.id] === true;
+
+        if(filter === "read" && !isRead) return;
+        if(filter === "unread" && isRead) return;
 
         const card = document.createElement("div");
         card.className = "card";
-
         card.innerHTML = `
-          <img src="${materi.img}">
+          <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
+          <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">Lihat Materi</a>
+          <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
+            ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
+          </button>
+          
+          ${filter === "read" && isRead ? `
 
-          <a href="${materi.link}" target="_blank"
-             onclick="markOpened(${materi.id})">
-            Lihat Materi
-          </a>
-
-          <div style="text-align:left;margin:10px 15px;font-size:13px;">
-            <label>
-              <input type="checkbox"
-                ${c.video ? "checked" : ""}
-                ${!opened ? "disabled" : ""}
-                onchange="toggleChecklist(${materi.id}, 'video')">
-              Video sudah dipelajari
-            </label><br>
-
-            <label>
-              <input type="checkbox"
-                ${c.modul ? "checked" : ""}
-                ${!opened ? "disabled" : ""}
-                onchange="toggleChecklist(${materi.id}, 'modul')">
-              Modul sudah dipelajari
-            </label>
-          </div>
-
-          <button class="sertif"
-            ${!canPrintCertificate(materi.id) ? "disabled" : ""}
-            onclick="window.open('${materi.sertifikat}','_blank')">
+            <div class="progress-text">
+            Progress Belajar: ${hitungProgress(materi.id)}%
+            </div>
+            <div class="progress-wrapper">
+            <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
+            </div>
+            
+          <button class="eval"
+          ${!openedStatus[materi.id] ? "disabled" : ""} onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
             Cetak Sertifikat
           </button>
-        `;
 
-        container.appendChild(card);        
+          <button class="sertif"
+            ${!printedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
+            Download Sertifikat
+          </button>
+         ` : ""}
+        `;
+        container.appendChild(card);
       });
     }
 
@@ -377,24 +368,8 @@
     }
     
     function markOpened(id) {
-      openedStatus[id] = true;
-      localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
-      renderMateri(currentFilter);
-    }
-
-    function toggleChecklist(id, type) {
-      if (!checklist[id]) {
-        checklist[id] = { video: false, modul: false };
-      }
-      checklist[id][type] = !checklist[id][type];
-      localStorage.setItem("checklist", JSON.stringify(checklist));
-      renderMateri(currentFilter);
-    }
-
-    function canPrintCertificate(id) {
-      const opened = openedStatus[id];
-      const c = checklist[id] || {};
-      return opened && c.video && c.modul;
+       openedStatus[id] = true;
+       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));renderMateri(currentFilter);
     }
     
     // Navigasi tab
