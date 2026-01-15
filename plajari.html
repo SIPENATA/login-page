@@ -176,6 +176,12 @@
       margin-top: 30px;
     }
 
+    .card button:disabled {
+      background: #adb5bd !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -266,16 +272,21 @@
         card.innerHTML = `
           <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
-          <a href="${materi.link}" target="_blank">Lihat Materi</a>
+          <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">Lihat Materi</a>
           <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
             ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
           </button>
           ${filter === "read" && isRead ? `
-          <button class="eval" onclick="openSertifikat('${materi.sertifikat}')">
-           Cetak Sertifikat
+          <button class="eval"
+            ${!openedStatus[materi.id] ? "disabled" : ""}
+            onclick="openSertifikat('${materi.sertifikat}')">
+            Cetak Sertifikat
           </button>
-          <button class="sertif" onclick="openDownload('${materi.download}')">
-           Download Sertifikat
+
+          <button class="sertif"
+            ${!openedStatus[materi.id] ? "disabled" : ""}
+            onclick="openDownload('${materi.download}')">
+            Download Sertifikat
           </button>
          ` : ""}
         `;
@@ -303,6 +314,10 @@
     }
     window.open(url, "_blank");
     }
+    function markOpened(id) {
+    openedStatus[id] = true;
+    localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
+    }
     
     // Navigasi tab
     let currentFilter = "all";
@@ -313,6 +328,9 @@
     function setActive(id){
       document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
       document.getElementById(id).classList.add("active");
+    }
+
+    let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
     }
 
     // Pertama kali tampilkan semua
