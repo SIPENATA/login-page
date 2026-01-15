@@ -158,6 +158,23 @@
       margin-top: 30px;
     }
 
+      .card button.sertif {
+      background: #273F4F;
+      margin-bottom: 15px;
+    }
+
+    .card button.sertif:hover {
+      background: #447D9B;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #1B3C53;
+      color: #fff;
+      margin-top: 30px;
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -256,7 +273,7 @@
           <button class="eval" onclick="openSertifikat('${materi.sertifikat}')">
            Cetak Sertifikat
           </button>
-          <button class="eval" onclick="openDownload('${materi.download}')">
+          <button class="sertif" onclick="openDownload('${materi.download}')">
            Download Sertifikat
           </button>
          ` : ""}
