@@ -322,11 +322,11 @@
         if (filter === "read" && isRead) {
           html += `
             <div class="progress-text">
-              Progress Belajar: ${hitungProgress(materi.id)}%
+              Progress Belajar: ${getProgress(materi.id)}%
             </div>
             <div class="progress-wrapper">
               <div class="progress-bar"
-                style="width:${hitungProgress(materi.id)}%"></div>
+                style="width:${getProgress(materi.id)}%"></div>
             </div>
 
             <div style="text-align:left;font-size:13px;margin:10px 15px;">
@@ -346,7 +346,7 @@
             </div>
 
             <button class="eval"
-              ${!canPrint(materi.id) ? "disabled" : ""}
+              ${!canPrintCertificate(materi.id) ? "disabled" : ""}
               onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
               Cetak Sertifikat
             </button>
@@ -390,8 +390,6 @@
     }
     
     function openSertifikat(url, id) {
-      printedStatus[id] = true;
-      localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
       window.open(url, "_blank");
       renderMateri(currentFilter);
     }
@@ -400,11 +398,6 @@
     printedStatus[id] = true;
     localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
 
-    // buka link sertifikat
-    window.open(url, "_blank");
-
-    // refresh UI TANPA reload halaman
-    renderMateri(currentFilter);
     }
     
     function openDownload(url) {
