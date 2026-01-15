@@ -286,29 +286,40 @@
     const container = document.getElementById("materi-container");
 
     // Render Materi
-    function renderMateri(filter="all") {
+    function renderMateri(filter = "all") {
       container.innerHTML = "";
+
       materiList.forEach(materi => {
         const isRead = readStatus[materi.id] === true;
 
-        if(filter === "read" && !isRead) return;
-        if(filter === "unread" && isRead) return;
+        if (filter === "read" && !isRead) return;
+        if (filter === "unread" && isRead) return;
 
         const card = document.createElement("div");
         card.className = "card";
-        card.innerHTML = `
+
+        let html = `
           <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
-          <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">Lihat Materi</a>
-          ${filter !== "read" ? `
-            <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
-               ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
-            </button>
-                    
-          ${filter === "read" && isRead ? `
+          <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
+            Lihat Materi
+          </a>
+        `;
 
-          <div style="text-align:left; margin:10px 15px; font-size:13px">
-             <label>
+        // tombol tandai baca (HANYA bukan menu read)
+        if (filter !== "read") {
+          html += `
+            <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
+              ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
+            </button>
+          `;
+        }
+
+        // KHUSUS MENU SUDAH DIBACA
+        if (filter === "read" && isRead) {
+          html += `
+            <div style="text-align:left; margin:10px 15px; font-size:13px">
+              <label>
                 <input type="checkbox"
                   ${videoStatus[materi.id] ? "checked" : ""}
                   onchange="toggleVideo(${materi.id})">
@@ -324,36 +335,39 @@
             </div>
 
             <div class="progress-text">
-            Progress Belajar: ${hitungProgress(materi.id)}%
+              Progress Belajar: ${hitungProgress(materi.id)}%
             </div>
             <div class="progress-wrapper">
-            <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
+              <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
             </div>
-            
-          <button class="eval"
-          ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id]) ? "disabled" : ""} 
-          onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
-            Cetak Sertifikat
-          </button>
 
-          <button class="sertif"
-            ${!printedStatus[materi.id] ? "disabled" : ""} onclick="openDownload('${materi.download}')">
-            Download Sertifikat
-          </button>
-         ` : ""}
-        `;
+            <button class="eval"
+              ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id])
+                ? "disabled" : ""}
+              onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
+              Cetak Sertifikat
+            </button>
+
+            <button class="sertif"
+              ${!printedStatus[materi.id] ? "disabled" : ""}
+              onclick="openDownload('${materi.download}')">
+              Download Sertifikat
+            </button>
+          `;
+        }
+
+        card.innerHTML = html;
         container.appendChild(card);
       });
     }
 
+
     function hitungProgress(id) {
       let progress = 0;
-
-      if (openedStatus[id]) progress += 40;
-      if (checkedStatus[id]) progress += 30;
-      if (printedStatus[id]) progress += 30;
-
-    return progress;
+      if (openedStatus[id]) progress += 30;
+      if (videoStatus[id]) progress += 35;
+      if (modulStatus[id]) progress += 35;
+      return progress;
     }
 
     // Toggle status baca
