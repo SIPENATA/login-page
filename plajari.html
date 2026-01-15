@@ -280,6 +280,8 @@
     let openedStatus = JSON.parse(localStorage.getItem("openedStatus")) || {};
     let printedStatus = JSON.parse(localStorage.getItem("printedStatus")) || {};
     let checkedStatus = JSON.parse(localStorage.getItem("checkedStatus")) || {};
+    let videoStatus = JSON.parse(localStorage.getItem("videoStatus")) || {};
+    let modulStatus = JSON.parse(localStorage.getItem("modulStatus")) || {};
     
     const container = document.getElementById("materi-container");
 
@@ -298,17 +300,28 @@
           <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
           <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">Lihat Materi</a>
+          ${filter !== "read" ? `
+            <button class="${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
+               ${isRead ? "Sudah Dibaca" : "Tandai Sudah Dibaca"}
+            </button>
                     
           ${filter === "read" && isRead ? `
 
-          <div style="margin:10px 15px; text-align:left; font-size:14px;">
+          <div style="text-align:left; margin:10px 15px; font-size:13px">
              <label>
-               <input type="checkbox"
-                 ${checkedStatus[materi.id] ? "checked" : ""}
-                 onchange="toggleChecklist(${materi.id})">
-               Saya telah mempelajari video dan modul
-             </label>
-           </div>
+                <input type="checkbox"
+                  ${videoStatus[materi.id] ? "checked" : ""}
+                  onchange="toggleVideo(${materi.id})">
+                Video telah dipelajari
+              </label><br>
+
+              <label>
+                <input type="checkbox"
+                  ${modulStatus[materi.id] ? "checked" : ""}
+                  onchange="toggleModul(${materi.id})">
+                Modul telah dipelajari
+              </label>
+            </div>
 
             <div class="progress-text">
             Progress Belajar: ${hitungProgress(materi.id)}%
@@ -318,7 +331,7 @@
             </div>
             
           <button class="eval"
-          ${(!openedStatus[materi.id] || !checkedStatus[materi.id]) ? "disabled" : ""} 
+          ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id]) ? "disabled" : ""} 
           onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
             Cetak Sertifikat
           </button>
@@ -385,6 +398,19 @@
        openedStatus[id] = true;
        localStorage.setItem("openedStatus", JSON.stringify(openedStatus));renderMateri(currentFilter);
     }
+
+    function toggleVideo(id) {
+      videoStatus[id] = !videoStatus[id];
+      localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
+      renderMateri(currentFilter);
+    }
+
+    function toggleModul(id) {
+      modulStatus[id] = !modulStatus[id];
+      localStorage.setItem("modulStatus", JSON.stringify(modulStatus));
+      renderMateri(currentFilter);
+    }
+
     
     // Navigasi tab
     let currentFilter = "all";
