@@ -408,10 +408,10 @@
           // JIKA BELUM DIBACA → tombol aktif + popup
           if (!isRead) {
             html += `
-              <button onclick="openModal(${materi.id})">
+              <button class="start" onclick="openModal(${materi.id})">
               Mulai Belajar
               </button>
-            `;
+  `          ;
           } 
           // JIKA SUDAH DIBACA → tombol pasif (tidak bisa diklik)
           else {
