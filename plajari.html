@@ -387,13 +387,24 @@
 
     // Toggle status baca
     function toggleRead(id) {
-      // Jika sudah dibaca, hentikan (tidak bisa dikembalikan)
+      // jika sudah dibaca, tidak bisa diklik lagi
       if (readStatus[id]) return;
 
-      // Tandai sebagai sudah dibaca
+      // popup konfirmasi
+      const yakin = confirm(
+         "Apakah Anda yakin ingin mulai belajar?\nMateri akan ditandai sebagai Sudah Dibaca."
+      );
+
+      if (!yakin) return;
+
+      // tandai sudah dibaca
       readStatus[id] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
-      renderMateri(currentFilter);
+
+      // otomatis pindah ke menu Sudah Dibaca
+      currentFilter = "read";
+      setActive("btn-read");
+      renderMateri("read");
     }
 
     function toggleChecklist(id) {
