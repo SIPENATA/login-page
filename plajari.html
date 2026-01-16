@@ -301,10 +301,15 @@
         let html = `
           <img src="${materi.img}" alt="${materi.judul}">
           <h3>${materi.judul}</h3>
-          <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
-            Lihat Materi
-          </a>
         `;
+
+        if (filter === "read") {
+          html += `
+            <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
+              Lihat Materi
+            </a>
+          `;
+        }
 
         // tombol tandai baca (HANYA bukan menu read)
         if (filter !== "read") {
