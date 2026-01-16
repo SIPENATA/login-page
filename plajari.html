@@ -387,7 +387,11 @@
 
     // Toggle status baca
     function toggleRead(id) {
-      readStatus[id] = !readStatus[id];
+      // Jika sudah dibaca, hentikan (tidak bisa dikembalikan)
+      if (readStatus[id]) return;
+
+      // Tandai sebagai sudah dibaca
+      readStatus[id] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
       renderMateri(currentFilter);
     }
