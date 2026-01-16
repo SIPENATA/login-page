@@ -214,6 +214,86 @@
       font-weight: 600;
     }
 
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 9999;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-box h3 {
+      margin-top: 0;
+      color: #1B3C53;
+    }
+
+    .modal-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: #adb5bd;
+      color: #fff;
+    }
+
+    .btn-confirm {
+      background: #28a745;
+      color: #fff;
+    }
+
+    /* ===== ANIMASI TAB ===== */
+    .container {
+      animation: fadeSlide 0.4s ease;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -324,7 +404,7 @@
         // tombol tandai baca (HANYA bukan menu read)
         if (filter !== "read") {
           html += `
-            <button class="start ${isRead ? "read" : ""}" onclick="toggleRead(${materi.id})">
+            <button class="${isRead ? "read" : ""}" onclick="openModal(${materi.id})">
               ${isRead ? "Sudah Dipelajari" : "Mulai Belajar"}
             </button>
           `;
@@ -455,6 +535,32 @@
       renderMateri(currentFilter);
     }
 
+    let selectedMateriId = null;
+
+    function openModal(id) {
+      selectedMateriId = id;
+      document.getElementById("confirmModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("confirmModal").classList.remove("show");
+      selectedMateriId = null;
+    }
+
+    function confirmStart() {
+      if (!selectedMateriId) return;
+
+      readStatus[selectedMateriId] = true;
+      localStorage.setItem("readStatus", JSON.stringify(readStatus));
+
+      closeModal();
+
+      // pindah tab + animasi
+      currentFilter = "read";
+      setActive("btn-read");
+      renderMateri("read");
+    }
+
     
     // Navigasi tab
     let currentFilter = "all";
@@ -470,6 +576,21 @@
     // Pertama kali tampilkan semua
     renderMateri("all");
   </script>
+
+    <!-- Modal Konfirmasi Mulai Belajar -->
+    <div id="confirmModal" class="modal-overlay">
+      <div class="modal-box">
+        <h3>Konfirmasi Mulai Belajar</h3>
+        <p>
+          Apakah Anda yakin ingin memulai pembelajaran?<br>
+          Materi akan ditandai sebagai <b>Sudah Dibaca</b>.
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Batal</button>
+          <button class="btn-confirm" onclick="confirmStart()">Ya, Mulai</button>
+        </div>
+      </div>
+    </div>
 
 </body>
 </html>
