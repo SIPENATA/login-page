@@ -401,13 +401,25 @@
           `;
         }
 
-        // tombol tandai baca (HANYA bukan menu read)
+        // tombol Mulai Belajar / Sudah Dibaca
         if (filter !== "read") {
-          html += `
-            <button class="${isRead ? "read" : ""}" onclick="openModal(${materi.id})">
-              ${isRead ? "Sudah Dipelajari" : "Mulai Belajar"}
-            </button>
-          `;
+
+          // JIKA BELUM DIBACA → tombol aktif + popup
+          if (!isRead) {
+            html += `
+              <button onclick="openModal(${materi.id})">
+              Mulai Belajar
+              </button>
+            `;
+          } 
+          // JIKA SUDAH DIBACA → tombol pasif (tidak bisa diklik)
+          else {
+            html += `
+              <button class="read" disabled>
+              Sudah Dipelajari
+              </button>
+            `;
+          }
         }
 
         // KHUSUS MENU SUDAH DIBACA
