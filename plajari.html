@@ -422,6 +422,7 @@
     let videoStatus = JSON.parse(localStorage.getItem("videoStatus")) || {};
     let modulStatus = JSON.parse(localStorage.getItem("modulStatus")) || {};
     let lastMovedMateriId = null;
+    let readTime = JSON.parse(localStorage.getItem("readTime")) || {};
     let hasAutoScrolled = false; // pengunci: scroll hanya sekali per sesi
     
     const container = document.getElementById("materi-container");
@@ -437,10 +438,10 @@ function urutkanMateri(materiArray, filter) {
   return terbaru ? [terbaru, ...lainnya] : materiArray;
 }
 
-    function renderMateri(filter = "all") {
+function renderMateri(filter = "all") {
   container.innerHTML = "";
 
-  const dataRender = urutkanMateri(materiList, filter);
+  const dataRender = urutkanMateriPermanen(materiList, filter);
 
   dataRender.forEach(materi => {
     const isRead = readStatus[materi.id] === true;
@@ -655,6 +656,10 @@ if (
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
 
+      // simpan waktu terakhir belajar
+      readTime[selectedMateriId] = Date.now();
+      localStorage.setItem("readTime", JSON.stringify(readTime));
+
       // simpan ID untuk scroll + highlight
       lastMovedMateriId = selectedMateriId;
 
@@ -665,6 +670,16 @@ if (
       currentFilter = "read";
       setActive("btn-read");
       renderMateri("read");
+    }
+
+    function urutkanMateriPermanen(materiArray, filter) {
+      if (filter !== "read") return materiArray;
+
+      return [...materiArray].sort((a, b) => {
+        const timeA = readTime[a.id] || 0;
+        const timeB = readTime[b.id] || 0;
+        return timeB - timeA; // terbaru di atas
+      });
     }
 
     
