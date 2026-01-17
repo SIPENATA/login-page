@@ -648,8 +648,14 @@ if (
     }
     
     function markOpened(id) {
-       openedStatus[id] = true;
-       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));renderMateri(currentFilter);
+      openedStatus[id] = true;
+      localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
+
+      // UPDATE waktu terakhir dipelajari
+      readTime[id] = Date.now();
+      localStorage.setItem("readTime", JSON.stringify(readTime));
+
+      renderMateri(currentFilter);
     }
 
     function toggleVideo(id) {
