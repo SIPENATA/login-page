@@ -352,6 +352,10 @@
       text-align: left;
     }
 
+    .card.completed {
+      border: 2px solid #28a745;
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -462,6 +466,11 @@ function renderMateri(filter = "all") {
     card.className = "card";
     card.id = `materi-${materi.id}`;
 
+    // jika sertifikat sudah dicetak → tandai card sebagai selesai
+    if (printedStatus[materi.id]) {
+      card.classList.add("completed");
+    }
+
     // label jika materi baru dipelajari
     let badgeHtml = "";
     if (materi.id === lastMovedMateriId && filter === "read") {
@@ -515,6 +524,7 @@ function renderMateri(filter = "all") {
           <label>
             <input type="checkbox"
               ${videoStatus[materi.id] ? "checked" : ""}
+              ${printedStatus[materi.id] ? "disabled" : ""}
               onchange="toggleVideo(${materi.id})">
             Video telah dipelajari
           </label><br>
@@ -522,6 +532,7 @@ function renderMateri(filter = "all") {
           <label>
             <input type="checkbox"
               ${modulStatus[materi.id] ? "checked" : ""}
+              ${printedStatus[materi.id] ? "disabled" : ""}
               onchange="toggleModul(${materi.id})">
             Modul telah dipelajari
           </label>
@@ -576,12 +587,16 @@ if (
 
 
     function hitungProgress(id) {
+      // 🔒 Jika sertifikat sudah dicetak, progres dikunci 100%
+      if (printedStatus[id]) {
+        return 100;
+      }
+
       let progress = 0;
 
-      if (openedStatus[id]) progress += 30;     // Lihat materi
-      if (videoStatus[id]) progress += 20;      // Video
-      if (modulStatus[id]) progress += 20;      // Modul
-      if (printedStatus[id]) progress += 30;    // Cetak sertifikat
+      if (openedStatus[id]) progress += 30;
+      if (videoStatus[id]) progress += 20;
+      if (modulStatus[id]) progress += 20;
 
       return progress;
     }
