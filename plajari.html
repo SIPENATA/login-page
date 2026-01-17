@@ -317,31 +317,45 @@
       }
     }
 
-/* Label materi baru dibaca */
-.badge-new {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: linear-gradient(135deg, #1aa179, #218838);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  z-index: 2;
-  animation: badgePop 0.5s ease;
-}
+    /* Label materi baru dibaca */
+    .badge-new {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: linear-gradient(135deg, #1aa179, #218838);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      z-index: 2;
+      animation: badgePop 0.5s ease;
+    }
 
-@keyframes badgePop {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
+    @keyframes badgePop {
+      from {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Label terakhir dipelajari */
+    .badge-time {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(27, 60, 83, 0.9);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      z-index: 2;
+    }
 
     @media (max-width: 480px) {
       body {
@@ -453,11 +467,22 @@ function renderMateri(filter = "all") {
     card.className = "card";
     card.id = `materi-${materi.id}`;
 
-// label jika materi baru dipelajari
-let badgeHtml = "";
-if (materi.id === lastMovedMateriId && filter === "read") {
-  badgeHtml = `<div class="badge-new">BARU</div>`;
-}
+    // label waktu terakhir dipelajari
+    let timeBadgeHtml = "";
+     if (readTime[materi.id]) {
+       timeBadgeHtml = `
+         <div class="badge-time">
+          Terakhir dipelajari<br>
+          ${formatTanggalJam(readTime[materi.id])}
+         </div>
+      `;
+    }
+
+    // label jika materi baru dipelajari
+    let badgeHtml = "";
+    if (materi.id === lastMovedMateriId && filter === "read") {
+      badgeHtml = `<div class="badge-new">BARU</div>`;
+    }
 
     // highlight jika materi baru dipelajari
     if (materi.id === lastMovedMateriId && filter === "read") {
@@ -465,10 +490,11 @@ if (materi.id === lastMovedMateriId && filter === "read") {
     }
 
     let html = `
-  ${badgeHtml}
-  <img src="${materi.img}" alt="${materi.judul}">
-  <h3>${materi.judul}</h3>
-`;
+      ${badgeHtml}
+      ${timeBadgeHtml}
+      <img src="${materi.img}" alt="${materi.judul}">
+      <h3>${materi.judul}</h3>
+    `;
 
     if (filter === "read") {
       html += `
@@ -680,6 +706,23 @@ if (
         const timeB = readTime[b.id] || 0;
         return timeB - timeA; // terbaru di atas
       });
+    }
+
+    function formatTanggalJam(timestamp) {
+      if (!timestamp) return "";
+
+      const d = new Date(timestamp);
+      const tgl = d.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+      const jam = d.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+       return `${tgl} • ${jam}`;
     }
 
     
