@@ -410,6 +410,7 @@
 
         const card = document.createElement("div");
         card.className = "card";
+        card.id = `materi-${materi.id}`; // <-- INI PENTING
 
         
         // highlight jika materi baru dipelajari
@@ -496,21 +497,23 @@
         container.appendChild(card);
       });
 
-        // auto scroll ke materi yang baru dipelajari
         if (filter === "read" && lastMovedMateriId) {
-          setTimeout(() => {
-            const target = document.getElementById(`materi-${lastMovedMateriId}`);
-            if (target) {
-              target.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-              });
-            }
+        setTimeout(() => {
+          const target = document.getElementById(`materi-${lastMovedMateriId}`);
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+           }
 
-            // reset agar tidak scroll ulang
-          lastMovedMateriId = null;
+          // reset setelah animasi highlight selesai
+          setTimeout(() => {
+            lastMovedMateriId = null;
+          }, 2500);
+
         }, 300);
-    }
+      }
 
 
     function hitungProgress(id) {
