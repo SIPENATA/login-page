@@ -485,6 +485,12 @@ function renderMateri(filter = "all") {
         <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
           Lihat Materi
         </a>
+
+        ${readTime[materi.id] ? `
+          <div class="label-time">
+            Terakhir dipelajari: ${formatTanggalJam(readTime[materi.id])}
+          </div>
+        ` : ""}
       `;
     }
 
