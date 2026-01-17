@@ -398,122 +398,115 @@
     
     const container = document.getElementById("materi-container");
 
-    // Render Materi
     function renderMateri(filter = "all") {
-      container.innerHTML = "";
+  container.innerHTML = "";
 
-      materiList.forEach(materi => {
-        const isRead = readStatus[materi.id] === true;
+  materiList.forEach(materi => {
+    const isRead = readStatus[materi.id] === true;
 
-        if (filter === "read" && !isRead) return;
-        if (filter === "unread" && isRead) return;
+    if (filter === "read" && !isRead) return;
+    if (filter === "unread" && isRead) return;
 
-        const card = document.createElement("div");
-        card.className = "card";
-        card.id = `materi-${materi.id}`; // <-- INI PENTING
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = `materi-${materi.id}`;
 
-        
-        // highlight jika materi baru dipelajari
-        if (materi.id === lastMovedMateriId && filter === "read") {
-          card.classList.add("highlight");
-        }
+    // highlight jika materi baru dipelajari
+    if (materi.id === lastMovedMateriId && filter === "read") {
+      card.classList.add("highlight");
+    }
 
-        let html = `
-          <img src="${materi.img}" alt="${materi.judul}">
-          <h3>${materi.judul}</h3>
+    let html = `
+      <img src="${materi.img}" alt="${materi.judul}">
+      <h3>${materi.judul}</h3>
+    `;
+
+    if (filter === "read") {
+      html += `
+        <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
+          Lihat Materi
+        </a>
+      `;
+    }
+
+    if (filter !== "read") {
+      if (!isRead) {
+        html += `
+          <button class="start" onclick="openModal(${materi.id})">
+            Mulai Belajar
+          </button>
         `;
-
-        if (filter === "read") {
-          html += `
-            <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
-              Lihat Materi
-            </a>
-          `;
-        }
-
-        // tombol Mulai Belajar / Sudah Dibaca
-        if (filter !== "read") {
-
-          // JIKA BELUM DIBACA → tombol aktif + popup
-          if (!isRead) {
-            html += `
-              <button class="start" onclick="openModal(${materi.id})">
-              Mulai Belajar
-              </button>
-            `;
-          } 
-          // JIKA SUDAH DIBACA → tombol pasif (tidak bisa diklik)
-          else {
-            html += `
-              <button class="read" disabled>
-              Sudah Dipelajari
-              </button>
-            `;
-          }
-        }
-
-        // KHUSUS MENU SUDAH DIBACA
-        if (filter === "read" && isRead) {
-          html += `
-            <div style="text-align:left; margin:10px 15px; font-size:13px">
-              <label>
-                <input type="checkbox"
-                  ${videoStatus[materi.id] ? "checked" : ""}
-                  onchange="toggleVideo(${materi.id})">
-                Video telah dipelajari
-              </label><br>
-
-              <label>
-                <input type="checkbox"
-                  ${modulStatus[materi.id] ? "checked" : ""}
-                  onchange="toggleModul(${materi.id})">
-                Modul telah dipelajari
-              </label>
-            </div>
-
-            <div class="progress-text">
-              Progress Belajar: ${hitungProgress(materi.id)}%
-            </div>
-            <div class="progress-wrapper">
-              <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
-            </div>
-
-            <button class="eval"
-              ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id])
-                ? "disabled" : ""}
-              onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
-              Cetak Sertifikat
-            </button>
-
-            <button class="sertif"
-              ${!printedStatus[materi.id] ? "disabled" : ""}
-              onclick="openDownload('${materi.download}')">
-              Download Sertifikat
-            </button>
-          `;
-        }
-
-        card.innerHTML = html;
-        container.appendChild(card);
-      });
-
-        if (filter === "read" && lastMovedMateriId) {
-        setTimeout(() => {
-          const target = document.getElementById(`materi-${lastMovedMateriId}`);
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "center"
-            });
-           }
-
-          // reset setelah animasi highlight selesai
-          setTimeout(() => {
-            lastMovedMateriId = null;
-          }, 2500);
-
-        }, 300);
+      } else {
+        html += `
+          <button class="read" disabled>
+            Sudah Dipelajari
+          </button>
+        `;
       }
+    }
+
+    if (filter === "read" && isRead) {
+      html += `
+        <div style="text-align:left; margin:10px 15px; font-size:13px">
+          <label>
+            <input type="checkbox"
+              ${videoStatus[materi.id] ? "checked" : ""}
+              onchange="toggleVideo(${materi.id})">
+            Video telah dipelajari
+          </label><br>
+
+          <label>
+            <input type="checkbox"
+              ${modulStatus[materi.id] ? "checked" : ""}
+              onchange="toggleModul(${materi.id})">
+            Modul telah dipelajari
+          </label>
+        </div>
+
+        <div class="progress-text">
+          Progress Belajar: ${hitungProgress(materi.id)}%
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
+        </div>
+
+        <button class="eval"
+          ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id])
+            ? "disabled" : ""}
+          onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
+          Cetak Sertifikat
+        </button>
+
+        <button class="sertif"
+          ${!printedStatus[materi.id] ? "disabled" : ""}
+          onclick="openDownload('${materi.download}')">
+          Download Sertifikat
+        </button>
+      `;
+    }
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+
+  // ✅ AUTO SCROLL (DI LUAR forEach, MASIH DI DALAM renderMateri)
+  if (filter === "read" && lastMovedMateriId) {
+    setTimeout(() => {
+      const target = document.getElementById(`materi-${lastMovedMateriId}`);
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+
+      setTimeout(() => {
+        lastMovedMateriId = null;
+      }, 2500);
+
+    }, 300);
+  }
+}
 
 
     function hitungProgress(id) {
