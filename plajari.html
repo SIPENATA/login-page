@@ -82,6 +82,7 @@
       flex-direction: column;
       text-align: center;
       transition: transform 0.2s ease;
+      position: relative;
     }
 
     .card:hover {
@@ -316,6 +317,32 @@
       }
     }
 
+/* Label materi baru dibaca */
+.badge-new {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #1aa179, #218838);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  z-index: 2;
+  animation: badgePop 0.5s ease;
+}
+
+@keyframes badgePop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -412,15 +439,22 @@
     card.className = "card";
     card.id = `materi-${materi.id}`;
 
+// label jika materi baru dipelajari
+let badgeHtml = "";
+if (materi.id === lastMovedMateriId && filter === "read") {
+  badgeHtml = `<div class="badge-new">BARU</div>`;
+}
+
     // highlight jika materi baru dipelajari
     if (materi.id === lastMovedMateriId && filter === "read") {
       card.classList.add("highlight");
     }
 
     let html = `
-      <img src="${materi.img}" alt="${materi.judul}">
-      <h3>${materi.judul}</h3>
-    `;
+  ${badgeHtml}
+  <img src="${materi.img}" alt="${materi.judul}">
+  <h3>${materi.judul}</h3>
+`;
 
     if (filter === "read") {
       html += `
