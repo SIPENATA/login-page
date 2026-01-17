@@ -295,6 +295,27 @@
       }
     }
 
+    /* Highlight materi baru dipelajari */
+    .card.highlight {
+      animation: highlightPulse 2s ease;
+      border: 2px solid #1aa179;
+    }
+
+    @keyframes highlightPulse {
+      0% {
+        box-shadow: 0 0 0 rgba(26, 161, 121, 0.0);
+        background-color: #f8fffb;
+      }
+      30% {
+        box-shadow: 0 0 20px rgba(26, 161, 121, 0.6);
+        background-color: #eafff6;
+      }
+      100% {
+        box-shadow: 0 0 0 rgba(26, 161, 121, 0.0);
+        background-color: #ffffff;
+      }
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -373,6 +394,7 @@
     let checkedStatus = JSON.parse(localStorage.getItem("checkedStatus")) || {};
     let videoStatus = JSON.parse(localStorage.getItem("videoStatus")) || {};
     let modulStatus = JSON.parse(localStorage.getItem("modulStatus")) || {};
+    let lastMovedMateriId = null;
     
     const container = document.getElementById("materi-container");
 
@@ -388,6 +410,12 @@
 
         const card = document.createElement("div");
         card.className = "card";
+
+        
+        // highlight jika materi baru dipelajari
+        if (materi.id === lastMovedMateriId && filter === "read") {
+          card.classList.add("highlight");
+        }
 
         let html = `
           <img src="${materi.img}" alt="${materi.judul}">
@@ -411,7 +439,7 @@
               <button class="start" onclick="openModal(${materi.id})">
               Mulai Belajar
               </button>
-  `          ;
+            `;
           } 
           // JIKA SUDAH DIBACA → tombol pasif (tidak bisa diklik)
           else {
@@ -467,6 +495,21 @@
         card.innerHTML = html;
         container.appendChild(card);
       });
+
+        // auto scroll ke materi yang baru dipelajari
+        if (filter === "read" && lastMovedMateriId) {
+          setTimeout(() => {
+            const target = document.getElementById(`materi-${lastMovedMateriId}`);
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+              });
+            }
+
+            // reset agar tidak scroll ulang
+          lastMovedMateriId = null;
+        }, 300);
     }
 
 
@@ -565,6 +608,10 @@
 
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
+
+      // simpan ID untuk scroll + highlight
+      lastMovedMateriId = selectedMateriId;
+
 
       closeModal();
 
