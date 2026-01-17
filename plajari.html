@@ -577,9 +577,12 @@ if (
 
     function hitungProgress(id) {
       let progress = 0;
-      if (openedStatus[id]) progress += 30;
-      if (videoStatus[id]) progress += 35;
-      if (modulStatus[id]) progress += 35;
+
+      if (openedStatus[id]) progress += 30;     // Lihat materi
+      if (videoStatus[id]) progress += 20;      // Video
+      if (modulStatus[id]) progress += 20;      // Modul
+      if (printedStatus[id]) progress += 30;    // Cetak sertifikat
+
       return progress;
     }
 
