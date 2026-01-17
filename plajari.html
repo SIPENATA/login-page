@@ -426,10 +426,23 @@
     
     const container = document.getElementById("materi-container");
 
+function urutkanMateri(materiArray, filter) {
+  if (filter !== "read" || !lastMovedMateriId) {
+    return materiArray;
+  }
+
+  const terbaru = materiArray.find(m => m.id === lastMovedMateriId);
+  const lainnya = materiArray.filter(m => m.id !== lastMovedMateriId);
+
+  return terbaru ? [terbaru, ...lainnya] : materiArray;
+}
+
     function renderMateri(filter = "all") {
   container.innerHTML = "";
 
-  materiList.forEach(materi => {
+  const dataRender = urutkanMateri(materiList, filter);
+
+  dataRender.forEach(materi => {
     const isRead = readStatus[materi.id] === true;
 
     if (filter === "read" && !isRead) return;
