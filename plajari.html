@@ -395,6 +395,7 @@
     let videoStatus = JSON.parse(localStorage.getItem("videoStatus")) || {};
     let modulStatus = JSON.parse(localStorage.getItem("modulStatus")) || {};
     let lastMovedMateriId = null;
+    let hasAutoScrolled = false; // pengunci: scroll hanya sekali per sesi
     
     const container = document.getElementById("materi-container");
 
@@ -490,22 +491,24 @@
   });
 
   // ✅ AUTO SCROLL (DI LUAR forEach, MASIH DI DALAM renderMateri)
-  if (filter === "read" && lastMovedMateriId) {
-    setTimeout(() => {
-      const target = document.getElementById(`materi-${lastMovedMateriId}`);
-      if (target) {
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-      }
+  // AUTO SCROLL hanya sekali per sesi
+if (
+  filter === "read" &&
+  lastMovedMateriId &&
+  !hasAutoScrolled
+) {
+  setTimeout(() => {
+    const target = document.getElementById(`materi-${lastMovedMateriId}`);
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
 
-      setTimeout(() => {
-        lastMovedMateriId = null;
-      }, 2500);
-
-    }, 300);
-  }
+      hasAutoScrolled = true; // 🔒 KUNCI SCROLL
+    }
+  }, 300);
+ }
 }
 
 
