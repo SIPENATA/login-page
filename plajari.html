@@ -29,14 +29,14 @@
       font-weight: heavy;
       color: #1B3C53;
     }
-    
+
     header h2 {
       margin: 0;
       font-size: 33px;
       font-weight: heavy;
       color: #8C1007;
     }
-    
+
     nav {
       display: flex;
       justify-content: center;
@@ -44,7 +44,7 @@
       margin: 0;
       padding: 0;
     }
-    
+
     nav button {
       flex: 1;
       padding: 12px;
@@ -378,14 +378,14 @@
         padding: 0;
         color: #333;
       }
-      
+
       header h1 {
         margin: 0;
         font-size: 18px;
         font-weight: 700;
         color: #1B3C53;
       }
-    
+
       header h2 {
         margin: 0;
         font-size: 17px;
@@ -420,8 +420,8 @@
   <script>
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", password: "probis123"},
-      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", password: "manris123"},
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
@@ -453,7 +453,7 @@
     let readTime = JSON.parse(localStorage.getItem("readTime")) || {};
     let hasAutoScrolled = false; // pengunci: scroll hanya sekali per sesi
     let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
-    
+
     const container = document.getElementById("materi-container");
 
 function urutkanMateri(materiArray, filter) {
@@ -659,7 +659,7 @@ if (
       localStorage.setItem("checkedStatus", JSON.stringify(checkedStatus));
       renderMateri(currentFilter);
     }
-    
+
     function openSertifikat(url, id) {
       if (!url) {
         alert("Link sertifikat belum tersedia.");
@@ -676,7 +676,7 @@ if (
     // refresh UI TANPA reload halaman
     renderMateri(currentFilter);
     }
-    
+
     function openDownload(url) {
       if (!url) {
       alert("Link download sertifikat belum tersedia.");
@@ -684,7 +684,7 @@ if (
     }
     window.open(url, "_blank");
     }
-    
+
     function markOpened(id) {
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
@@ -710,51 +710,33 @@ if (
 
     let selectedMateriId = null;
 
-    let selectedMateriPassword = null;
-
     function openModal(id) {
       selectedMateriId = id;
-
-      const materi = materiList.find(m => m.id === id);
-      selectedMateriPassword = materi.password;
-
       document.getElementById("confirmModal").classList.add("show");
     }
 
     function closeModal() {
       document.getElementById("confirmModal").classList.remove("show");
-
-      document.getElementById("materiPassword").value = "";
-
       selectedMateriId = null;
-      selectedMateriPassword = null;
     }
 
     function confirmStart() {
       if (!selectedMateriId) return;
 
-      // 🔐 VALIDASI PASSWORD
-      const input = document.getElementById("materiPassword");
-      const password = input.value.trim();
-
-      if (password !== selectedMateriPassword) {
-        alert("Password salah. Silakan periksa kembali.");
-        input.focus();
-        return;
-      }
-
-      // lanjut jika password BENAR
-      input.value = "";
-
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
 
+      // simpan waktu terakhir belajar
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
 
+      // simpan ID untuk scroll + highlight
       lastMovedMateriId = selectedMateriId;
 
+
       closeModal();
+
+      // pindah tab + animasi
       currentFilter = "read";
       setActive("btn-read");
       renderMateri("read");
@@ -787,7 +769,7 @@ if (
        return `${tgl} • ${jam}`;
     }
 
-    
+
     // Navigasi tab
     let currentFilter = "all";
     document.getElementById("btn-all").onclick = () => {currentFilter="all"; setActive("btn-all"); renderMateri("all");};
