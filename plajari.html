@@ -555,9 +555,14 @@ function renderMateri(filter = "all") {
       html += `
 
         <div class="label-time">
-          ⏱ Waktu belajar: ${formatDurasi(getWaktuBelajarAktif(materi.id))}
-          <br>
-          Minimal: ${formatDurasi(MIN_WAKTU_BELAJAR)}
+          ⏳ Sisa waktu belajar:
+          <b>
+            ${
+              getSisaWaktuBelajar(materi.id) > 0
+                ? formatCountdown(getSisaWaktuBelajar(materi.id))
+                : "SELESAI"
+            }
+          </b>
         </div>
 
         <div style="text-align:left; margin:10px 15px; font-size:13px">
@@ -807,6 +812,19 @@ if (
       }
 
       return total;
+    }
+
+    function getSisaWaktuBelajar(id) {
+      const sudah = getWaktuBelajarAktif(id);
+      const sisa = MIN_WAKTU_BELAJAR - sudah;
+      return sisa > 0 ? sisa : 0;
+    }
+
+    function formatCountdown(ms) {
+      const totalDetik = Math.ceil(ms / 1000);
+      const menit = Math.floor(totalDetik / 60);
+      const detik = totalDetik % 60;
+      return `${menit.toString().padStart(2,"0")}:${detik.toString().padStart(2,"0")}`;
     }
 
     function simpanWaktuBelajar() {
