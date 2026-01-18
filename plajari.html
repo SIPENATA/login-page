@@ -371,6 +371,11 @@
       border: 2px solid #28a745;
     }
 
+    .timer-selesai {
+      color: #1aa179; /* hijau */
+      font-weight: 700;
+    }
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -457,6 +462,7 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
 
     const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
+    const selesai = waktuBelajar >= MIN_WAKTU_BELAJAR;
 
     const container = document.getElementById("materi-container");
 
@@ -554,15 +560,13 @@ function renderMateri(filter = "all") {
     if (filter === "read" && isRead) {
       html += `
 
-        <div class="label-time">
-          ⏳ Sisa waktu belajar:
-          <b>
-            ${
-              getSisaWaktuBelajar(materi.id) > 0
-                ? formatCountdown(getSisaWaktuBelajar(materi.id))
-                : "SELESAI"
-            }
-          </b>
+        < <div class="label-time">
+        ⏳ Waktu belajar:
+            <span 
+              id="timer-${materi.id}"
+              class="${selesai ? 'timer-selesai' : ''}">
+              ${selesai ? 'SELESAI' : formatCountdown(sisa)}
+            </span>
         </div>
 
         <div style="text-align:left; margin:10px 15px; font-size:13px">
