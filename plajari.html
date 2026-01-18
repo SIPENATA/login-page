@@ -425,7 +425,7 @@
   <script>
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/aK7bgHofCgxBmpB/preview", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
@@ -948,18 +948,24 @@ if (
     <div id="videoModal" class="modal-overlay">
       <div class="modal-box" style="max-width: 800px; width: 95%;">
         <h3 id="videoTitle">Memutar Video Materi</h3>
+    
         <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; border-radius: 8px;">
+      
           <iframe id="videoPlayer" 
-              style="position: absolute; top:0; left:0; width:100%; height:100%;" 
-              src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+                  style="position: absolute; top:0; left:0; width:100%; height:100%;" 
+                  src="" 
+                  frameborder="0" 
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media" 
+                  allowfullscreen>
           </iframe>
+      
         </div>
-        <div class="modal-actions">
-          <button class="btn-cancel" onclick="closeVideoModal()">Tutup & Pause Belajar</button>
-        </div>
+
+         <div class="modal-actions">
+           <button class="btn-cancel" onclick="closeVideoModal()">Tutup & Pause Belajar</button>
+         </div>
       </div>
     </div>
-
 
 </body>
 </html>
