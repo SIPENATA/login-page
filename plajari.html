@@ -496,7 +496,10 @@ function renderMateri(filter = "all") {
     ) {
       badgeHtml = `<div class="badge-new">BARU</div>`;
 
-      // tandai bahwa badge sudah pernah ditampilkan
+      // ✨ highlight HANYA SEKALI (ikut badge)
+      card.classList.add("highlight");
+
+      // tandai bahwa badge + highlight sudah pernah ditampilkan
       newBadgeShown[materi.id] = true;
       localStorage.setItem("newBadgeShown", JSON.stringify(newBadgeShown));
     }
@@ -505,11 +508,6 @@ function renderMateri(filter = "all") {
     let completeBadgeHtml = "";
     if (printedStatus[materi.id]) {
       completeBadgeHtml = `<div class="badge-complete">SELESAI DIPELAJARI</div>`;
-    }
-
-    // highlight jika materi baru dipelajari
-    if (materi.id === lastMovedMateriId && filter === "read") {
-      card.classList.add("highlight");
     }
 
     let html = `
