@@ -553,6 +553,13 @@ function renderMateri(filter = "all") {
 
     if (filter === "read" && isRead) {
       html += `
+
+        <div class="label-time">
+          ⏱ Waktu belajar: ${formatDurasi(getWaktuBelajarAktif(materi.id))}
+          <br>
+          Minimal: ${formatDurasi(MIN_WAKTU_BELAJAR)}
+        </div>
+
         <div style="text-align:left; margin:10px 15px; font-size:13px">
           <label>
             <input type="checkbox"
@@ -784,6 +791,24 @@ if (
        return `${tgl} • ${jam}`;
     }
 
+    function formatDurasi(ms) {
+      const totalDetik = Math.floor(ms / 1000);
+      const menit = Math.floor(totalDetik / 60);
+      const detik = totalDetik % 60;
+
+      return `${menit} menit ${detik.toString().padStart(2, "0")} detik`;
+    }
+
+    function getWaktuBelajarAktif(id) {
+      let total = studyTime[id] || 0;
+
+      if (studyStart[id]) {
+        total += Date.now() - studyStart[id];
+      }
+
+      return total;
+    }
+
     function simpanWaktuBelajar() {
       Object.keys(studyStart).forEach(id => {
         if (studyStart[id]) {
@@ -818,6 +843,13 @@ if (
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) simpanWaktuBelajar();
     });
+
+    setInterval(() => {
+      if (currentFilter === "read") {
+        renderMateri("read");
+      }
+    }, 1000);
+
   </script>
 
     <!-- Modal Konfirmasi Mulai Belajar -->
