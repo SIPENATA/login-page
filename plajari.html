@@ -462,7 +462,6 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
 
     const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
-    const selesai = waktuBelajar >= MIN_WAKTU_BELAJAR;
 
     const container = document.getElementById("materi-container");
 
@@ -484,6 +483,9 @@ function renderMateri(filter = "all") {
 
   dataRender.forEach(materi => {
     const isRead = readStatus[materi.id] === true;
+
+    const waktuSkr = getWaktuBelajarAktif(materi.id); const sisa = MIN_WAKTU_BELAJAR - waktuSkr;         
+    const selesai = waktuSkr >= MIN_WAKTU_BELAJAR;
 
     if (filter === "read" && !isRead) return;
     if (filter === "unread" && isRead) return;
