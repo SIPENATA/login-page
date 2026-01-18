@@ -452,6 +452,7 @@
     let lastMovedMateriId = null;
     let readTime = JSON.parse(localStorage.getItem("readTime")) || {};
     let hasAutoScrolled = false; // pengunci: scroll hanya sekali per sesi
+    let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
     
     const container = document.getElementById("materi-container");
 
@@ -486,10 +487,18 @@ function renderMateri(filter = "all") {
       card.classList.add("completed");
     }
 
-    // label jika materi baru dipelajari
+    // label BARU → hanya muncul SEKALI
     let badgeHtml = "";
-    if (materi.id === lastMovedMateriId && filter === "read") {
+    if (
+      materi.id === lastMovedMateriId &&
+      filter === "read" &&
+      !newBadgeShown[materi.id]
+    ) {
       badgeHtml = `<div class="badge-new">BARU</div>`;
+
+      // tandai bahwa badge sudah pernah ditampilkan
+      newBadgeShown[materi.id] = true;
+      localStorage.setItem("newBadgeShown", JSON.stringify(newBadgeShown));
     }
 
     // label jika materi sudah selesai (sertifikat dicetak)
