@@ -576,7 +576,7 @@ function renderMateri(filter = "all") {
             <input type="checkbox"
               ${videoStatus[materi.id] ? "checked" : ""}
               ${printedStatus[materi.id] ? "disabled" : ""}
-              ${(studyTime[materi.id] || 0) < MIN_WAKTU_BELAJAR ? "disabled" : ""}
+              ${getWaktuBelajarAktif(materi.id) < MIN_WAKTU_BELAJAR ? "disabled" : ""} 
               onchange="toggleVideo(${materi.id})">
             Video telah dipelajari
           </label><br>
@@ -762,10 +762,6 @@ if (
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
 
-      // ⏱ MULAI HITUNG WAKTU BELAJAR
-      studyStart[selectedMateriId] = Date.now();
-      localStorage.setItem("studyStart", JSON.stringify(studyStart));
-
       lastMovedMateriId = selectedMateriId;
 
       closeModal();
@@ -867,9 +863,11 @@ if (
 
     setInterval(() => {
       if (currentFilter === "read") {
+        simpanWaktuBelajar(); // Tambahkan ini agar data waktu terus terupdate ke localStorage
         renderMateri("read");
       }
     }, 1000);
+
 
   </script>
 
