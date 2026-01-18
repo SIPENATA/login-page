@@ -647,19 +647,19 @@ if (
 
 
     function hitungProgress(id) {
-      // 🔒 Jika sertifikat sudah dicetak, progres dikunci 100%
-      if (printedStatus[id]) {
-        return 100;
-      }
+      if (printedStatus[id]) return 100;
 
       let progress = 0;
+      // Cek apakah waktu sudah memenuhi syarat (5 menit)
+      const isTimeComplete = getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR;
 
       if (openedStatus[id]) progress += 30;
-      if (videoStatus[id]) progress += 20;
+      if (isTimeComplete && videoStatus[id]) progress += 20; // Hanya nambah jika timer cukup & diceklis
       if (modulStatus[id]) progress += 20;
 
       return progress;
     }
+
 
     // Toggle status baca
     function toggleRead(id) {
@@ -832,11 +832,14 @@ if (
     function simpanWaktuBelajar() {
       Object.keys(studyStart).forEach(id => {
         if (studyStart[id]) {
-          const durasi = Date.now() - studyStart[id];
-  
-          studyTime[id] = (studyTime[id] || 0) + durasi;
-
-          studyStart[id] = null;
+          const sekarang = Date.now();
+          const durasiTambahan = sekarang - studyStart[id];
+ 
+          // Tambahkan ke total waktu
+          studyTime[id] = (studyTime[id] || 0) + durasiTambahan;
+      
+          // Update titik awal ke 'sekarang' agar tidak dihitung double di detik berikutnya
+          studyStart[id] = sekarang;
         }
       });
 
