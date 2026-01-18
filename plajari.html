@@ -462,6 +462,8 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
 
     let currentActiveId = null; 
+    let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
+    let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
 
     const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
 
@@ -694,20 +696,51 @@ if (
 
     function openSertifikat(url, id) {
       if (!url) {
-        alert("Link sertifikat belum tersedia.");
+        alert("Link evaluasi belum tersedia.");
         return;
+      }
+      // Simpan data materi yang sedang dipilih
+      currentEvalUrl = url;
+      currentEvalId = id;
+
+      // Tampilkan modal konfirmasi "Apakah anda siap?"
+      document.getElementById("evaluasiConfirmModal").classList.add("show");
     }
 
-     // tandai sertifikat sudah dicetak
-    printedStatus[id] = true;
-    localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
-
-    // buka link sertifikat
-    window.open(url, "_blank");
-
-    // refresh UI TANPA reload halaman
-    renderMateri(currentFilter);
+    // 2. Fungsi jika user klik "Belum Siap"
+    function closeEvalModal() {
+      document.getElementById("evaluasiConfirmModal").classList.remove("show");
+      currentEvalUrl = "";
+      currentEvalId = null;
     }
+
+    // 3. Fungsi jika user klik "Ya, Saya Siap"
+    function startGoogleForm() {
+      // Tutup modal konfirmasi dulu
+      document.getElementById("evaluasiConfirmModal").classList.remove("show");
+
+      // Buka Modal Video (kita gunakan modal ini untuk menampilkan Google Form)
+      const modal = document.getElementById("videoModal");
+      const player = document.getElementById("videoPlayer");
+      const title = document.getElementById("videoTitle");
+
+      title.innerText = "Evaluasi Belajar: Selesaikan Kuis";
+      
+      // Masukkan link Google Form ke iframe (pastikan ada ?embedded=true)
+      let finalUrl = currentEvalUrl;
+      if (!finalUrl.includes("embedded=true")) {
+        finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
+      }
+    
+      player.src = finalUrl; 
+      modal.classList.add("show");
+
+      // Tandai status sertifikat sudah diakses (agar tombol download aktif)
+      printedStatus[currentEvalId] = true;
+      localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
+
+      renderMateri(currentFilter);
+    } 
 
     function openDownload(url) {
       if (!url) {
@@ -944,6 +977,20 @@ if (
         </div>
       </div>
     </div>
+
+    <div id="evaluasiConfirmModal" class="modal-overlay">
+      <div class="modal-box">
+        <h3>Konfirmasi Evaluasi</h3>
+        <p>
+          Apakah Anda sudah siap melaksanakan evaluasi belajar?<br>
+          <small style="color: #8C1007;">Pastikan koneksi internet Anda stabil.</small>
+        </p>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeEvalModal()">Belum Siap</button>
+          <button class="btn-confirm" onclick="startGoogleForm()">Ya, Saya Siap</button>
+        </div>
+       </div>
+     </div>
 
     <div id="videoModal" class="modal-overlay">
       <div class="modal-box" style="max-width: 800px; width: 95%;">
