@@ -753,17 +753,17 @@ if (
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
 
-      // simpan waktu terakhir belajar
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
 
-      // simpan ID untuk scroll + highlight
-      lastMovedMateriId = selectedMateriId;
+      // ⏱ MULAI HITUNG WAKTU BELAJAR
+      studyStart[selectedMateriId] = Date.now();
+      localStorage.setItem("studyStart", JSON.stringify(studyStart));
 
+      lastMovedMateriId = selectedMateriId;
 
       closeModal();
 
-      // pindah tab + animasi
       currentFilter = "read";
       setActive("btn-read");
       renderMateri("read");
@@ -858,9 +858,6 @@ if (
     renderMateri("all");
 
     window.addEventListener("beforeunload", simpanWaktuBelajar);
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) simpanWaktuBelajar();
-    });
 
     setInterval(() => {
       if (currentFilter === "read") {
