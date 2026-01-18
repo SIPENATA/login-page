@@ -453,6 +453,10 @@
     let readTime = JSON.parse(localStorage.getItem("readTime")) || {};
     let hasAutoScrolled = false; // pengunci: scroll hanya sekali per sesi
     let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
+    let studyTime = JSON.parse(localStorage.getItem("studyTime")) || {};
+    let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
+
+    const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
 
     const container = document.getElementById("materi-container");
 
@@ -554,6 +558,7 @@ function renderMateri(filter = "all") {
             <input type="checkbox"
               ${videoStatus[materi.id] ? "checked" : ""}
               ${printedStatus[materi.id] ? "disabled" : ""}
+              ${(studyTime[materi.id] || 0) < MIN_WAKTU_BELAJAR ? "disabled" : ""}
               onchange="toggleVideo(${materi.id})">
             Video telah dipelajari
           </label><br>
@@ -575,8 +580,16 @@ function renderMateri(filter = "all") {
         </div>
 
         <button class="eval"
-          ${!(openedStatus[materi.id] && videoStatus[materi.id] && modulStatus[materi.id])
-            ? "disabled" : ""}
+          ${
+            !(
+              openedStatus[materi.id] &&
+              videoStatus[materi.id] &&
+              modulStatus[materi.id] &&
+              (studyTime[materi.id] || 0) >= MIN_WAKTU_BELAJAR
+            )
+              ? "disabled"
+              : ""
+         v}
           onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
           Cetak Sertifikat
         </button>
@@ -687,7 +700,11 @@ if (
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
 
-      // UPDATE waktu terakhir dipelajari
+      // ⏱ mulai hitung waktu belajar
+      studyStart[id] = Date.now();
+      localStorage.setItem("studyStart", JSON.stringify(studyStart));
+
+      // update waktu terakhir dipelajari
       readTime[id] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
 
@@ -767,6 +784,21 @@ if (
        return `${tgl} • ${jam}`;
     }
 
+    function simpanWaktuBelajar() {
+      Object.keys(studyStart).forEach(id => {
+        if (studyStart[id]) {
+          const durasi = Date.now() - studyStart[id];
+  
+          studyTime[id] = (studyTime[id] || 0) + durasi;
+
+          studyStart[id] = null;
+        }
+      });
+
+      localStorage.setItem("studyTime", JSON.stringify(studyTime));
+      localStorage.setItem("studyStart", JSON.stringify(studyStart));
+    }
+
 
     // Navigasi tab
     let currentFilter = "all";
@@ -781,6 +813,11 @@ if (
 
     // Pertama kali tampilkan semua
     renderMateri("all");
+
+    window.addEventListener("beforeunload", simpanWaktuBelajar);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) simpanWaktuBelajar();
+    });
   </script>
 
     <!-- Modal Konfirmasi Mulai Belajar -->
