@@ -460,6 +460,7 @@
     let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
     let studyTime = JSON.parse(localStorage.getItem("studyTime")) || {};
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
+    let currentActiveId = null; 
 
     const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
 
@@ -531,9 +532,10 @@ function renderMateri(filter = "all") {
 
     if (filter === "read") {
       html += `
-        <a href="${materi.link}" target="_blank" onclick="markOpened(${materi.id})">
-          Lihat Materi
-        </a>
+        <button class="start" style="width: calc(100% - 30px); margin: 10px 15px;" onclick="markOpened(${materi.id})">
+          Lihat Video Materi
+        </button>
+
 
         ${readTime[materi.id] ? `
           <div class="label-time">
@@ -715,19 +717,39 @@ if (
     }
 
     function markOpened(id) {
+      const materi = materiList.find(m => m.id === id);
+      currentActiveId = id;
+     
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
+          
+      const modal = document.getElementById("videoModal");
+      const player = document.getElementById("videoPlayer");
+      const title = document.getElementById("videoTitle");
+     
+      title.innerText = "Mempelajari: " + materi.judul;
+      player.src = materi.link; 
+      modal.classList.add("show");
 
-      // ⏱ mulai hitung waktu belajar
       studyStart[id] = Date.now();
       localStorage.setItem("studyStart", JSON.stringify(studyStart));
-
-      // update waktu terakhir dipelajari
+      
       readTime[id] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
-
+ 
       renderMateri(currentFilter);
     }
+
+    function closeVideoModal() {
+      if (currentActiveId) {
+        simpanWaktuBelajar();
+        currentActiveId = null;
+      }
+      document.getElementById("videoPlayer").src = "";
+      document.getElementById("videoModal").classList.remove("show");
+      renderMateri(currentFilter);
+    }
+
 
     function toggleVideo(id) {
       videoStatus[id] = !videoStatus[id];
@@ -834,14 +856,14 @@ if (
         if (studyStart[id]) {
           const sekarang = Date.now();
           const durasiTambahan = sekarang - studyStart[id];
- 
-          // Tambahkan ke total waktu
           studyTime[id] = (studyTime[id] || 0) + durasiTambahan;
-      
-          // Update titik awal ke 'sekarang' agar tidak dihitung double di detik berikutnya
-          studyStart[id] = sekarang;
+          studyStart[id] = null; // Ini kunci untuk PAUSE
         }
       });
+      localStorage.setItem("studyTime", JSON.stringify(studyTime));
+      localStorage.setItem("studyStart", JSON.stringify(studyStart));
+    }
+
 
       localStorage.setItem("studyTime", JSON.stringify(studyTime));
       localStorage.setItem("studyStart", JSON.stringify(studyStart));
@@ -898,6 +920,17 @@ if (
       }
     }, 1000);
 
+    document.addEventListener("visibilitychange", function() {
+      if (!currentActiveId) return;
+
+      if (document.hidden) {
+        simpanWaktuBelajar(); // Pause saat pindah tab
+      } else {
+        studyStart[currentActiveId] = Date.now(); // Resume saat kembali
+        localStorage.setItem("studyStart", JSON.stringify(studyStart));
+      }
+    });
+
   </script>
 
     <!-- Modal Konfirmasi Mulai Belajar -->
@@ -914,6 +947,22 @@ if (
         </div>
       </div>
     </div>
+
+    <div id="videoModal" class="modal-overlay">
+      <div class="modal-box" style="max-width: 800px; width: 95%;">
+        <h3 id="videoTitle">Memutar Video Materi</h3>
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000; border-radius: 8px;">
+          <iframe id="videoPlayer" 
+              style="position: absolute; top:0; left:0; width:100%; height:100%;" 
+              src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+          </iframe>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeVideoModal()">Tutup & Pause Belajar</button>
+        </div>
+      </div>
+    </div>
+
 
 </body>
 </html>
