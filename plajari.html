@@ -460,6 +460,7 @@
     let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
     let studyTime = JSON.parse(localStorage.getItem("studyTime")) || {};
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
+
     let currentActiveId = null; 
 
     const MIN_WAKTU_BELAJAR = 2 * 60 * 1000; // 5 menit (dalam milidetik)
@@ -857,17 +858,13 @@ if (
           const sekarang = Date.now();
           const durasiTambahan = sekarang - studyStart[id];
           studyTime[id] = (studyTime[id] || 0) + durasiTambahan;
-          studyStart[id] = null; // Ini kunci untuk PAUSE
+          studyStart[id] = null; // Mematikan timer (Pause)
         }
       });
       localStorage.setItem("studyTime", JSON.stringify(studyTime));
       localStorage.setItem("studyStart", JSON.stringify(studyStart));
     }
 
-
-      localStorage.setItem("studyTime", JSON.stringify(studyTime));
-      localStorage.setItem("studyStart", JSON.stringify(studyStart));
-    }
 
     function updateLiveTimers() {
       const dataRender = materiList.filter(m => readStatus[m.id]);
@@ -914,11 +911,11 @@ if (
 
     setInterval(() => {
       if (currentFilter === "read") {
-        simpanWaktuBelajar();
-        // Ganti renderMateri("read") dengan fungsi update khusus timer:
+        // Jangan panggil simpanWaktuBelajar() di sini agar timer tetap jalan
         updateLiveTimers(); 
       }
     }, 1000);
+
 
     document.addEventListener("visibilitychange", function() {
       if (!currentActiveId) return;
