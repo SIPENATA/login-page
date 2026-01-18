@@ -420,8 +420,8 @@
   <script>
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/BimzawMJbL7TjJ7", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", password: "probis123"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", password: "manris123"},
       {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/", sertifikat: "https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
@@ -710,33 +710,51 @@ if (
 
     let selectedMateriId = null;
 
+    let selectedMateriPassword = null;
+
     function openModal(id) {
       selectedMateriId = id;
+
+      const materi = materiList.find(m => m.id === id);
+      selectedMateriPassword = materi.password;
+
       document.getElementById("confirmModal").classList.add("show");
     }
 
     function closeModal() {
       document.getElementById("confirmModal").classList.remove("show");
+
+      document.getElementById("materiPassword").value = "";
+
       selectedMateriId = null;
+      selectedMateriPassword = null;
     }
 
     function confirmStart() {
       if (!selectedMateriId) return;
 
+      // 🔐 VALIDASI PASSWORD
+      const input = document.getElementById("materiPassword");
+      const password = input.value.trim();
+
+      if (password !== selectedMateriPassword) {
+        alert("Password salah. Silakan periksa kembali.");
+        input.focus();
+        return;
+      }
+
+      // lanjut jika password BENAR
+      input.value = "";
+
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
 
-      // simpan waktu terakhir belajar
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
 
-      // simpan ID untuk scroll + highlight
       lastMovedMateriId = selectedMateriId;
 
-
       closeModal();
-
-      // pindah tab + animasi
       currentFilter = "read";
       setActive("btn-read");
       renderMateri("read");
