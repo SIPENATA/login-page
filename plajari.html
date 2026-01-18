@@ -847,6 +847,32 @@ if (
       localStorage.setItem("studyStart", JSON.stringify(studyStart));
     }
 
+    function updateLiveTimers() {
+      const dataRender = materiList.filter(m => readStatus[m.id]);
+
+      dataRender.forEach(materi => {
+        const timerElement = document.getElementById(`timer-${materi.id}`);
+        if (timerElement) {
+          const waktuSkr = getWaktuBelajarAktif(materi.id);
+          const sisa = MIN_WAKTU_BELAJAR - waktuSkr;
+          const selesai = waktuSkr >= MIN_WAKTU_BELAJAR;
+
+          // Update teks timer tanpa render ulang card
+          timerElement.innerText = selesai ? 'SELESAI' : formatCountdown(sisa);
+      
+          if (selesai) {
+            timerElement.classList.add('timer-selesai');
+            // Aktifkan checkbox video jika sebelumnya terkunci
+            const cbVideo = timerElement.closest('.card').querySelector('input[type="checkbox"]');
+            if (cbVideo && cbVideo.disabled && !printedStatus[materi.id]) {
+                cbVideo.disabled = false;
+            }
+          }
+        }
+      });
+    }
+
+
 
     // Navigasi tab
     let currentFilter = "all";
@@ -866,11 +892,11 @@ if (
 
     setInterval(() => {
       if (currentFilter === "read") {
-        simpanWaktuBelajar(); // Tambahkan ini agar data waktu terus terupdate ke localStorage
-        renderMateri("read");
+        simpanWaktuBelajar();
+        // Ganti renderMateri("read") dengan fungsi update khusus timer:
+        updateLiveTimers(); 
       }
     }, 1000);
-
 
   </script>
 
