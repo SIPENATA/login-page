@@ -612,34 +612,48 @@ function renderMateri(filter = "all") {
     }
 
     if (filter === "read" && isRead) {
-      html += `
+      // --- PENGECEKAN SYARAT (Poin 2) ---
+      const waktuSkr = getWaktuBelajarAktif(materi.id);
+      const sisa = MIN_WAKTU_BELAJAR - waktuSkr;
+      
+      const timeOk = waktuSkr >= MIN_WAKTU_BELAJAR; // Syarat 1: Waktu
+      const videoOk = videoStatus[materi.id] === true; // Syarat 2: Video
+      const modulOk = modulStatus[materi.id] === true; // Syarat 3: Modul
+      const allOk = timeOk && videoOk && modulOk; // Gabungan semua syarat
 
+      html += `
         <div class="label-time">
         ⏳ Waktu belajar:
             <span 
               id="timer-${materi.id}"
-              class="${selesai ? 'timer-selesai' : ''}">
-              ${selesai ? 'SELESAI' : formatCountdown(sisa)}
+              class="${timeOk ? 'timer-selesai' : ''}">
+              ${timeOk ? 'SELESAI' : formatCountdown(sisa)}
             </span>
         </div>
 
         <div style="text-align:left; margin:10px 15px; font-size:13px">
           <label>
             <input type="checkbox"
-              ${videoStatus[materi.id] ? "checked" : ""}
-              ${printedStatus[materi.id] ? "disabled" : ""}
-              ${getWaktuBelajarAktif(materi.id) < MIN_WAKTU_BELAJAR ? "disabled" : ""} 
+              ${videoOk ? "checked" : ""}
+              ${printedStatus[materi.id] || !timeOk ? "disabled" : ""} 
               onchange="toggleVideo(${materi.id})">
             Video telah dipelajari
           </label><br>
 
           <label>
             <input type="checkbox"
-              ${modulStatus[materi.id] ? "checked" : ""}
+              ${modulOk ? "checked" : ""}
               ${printedStatus[materi.id] ? "disabled" : ""}
               onchange="toggleModul(${materi.id})">
             Modul telah dipelajari
           </label>
+        </div>
+
+        <div style="text-align: left; margin: 10px 15px; font-size: 11px; padding: 8px; background: #fdf2f2; border-radius: 5px; border: 1px solid #f8d7da;">
+          <b style="color: #1B3C53; display: block; margin-bottom: 3px;">Syarat Cetak Sertifikat:</b>
+          <span style="color: ${timeOk ? '#28a745' : '#dc3545'}">${timeOk ? '✔' : '✖'} Minimal Belajar 1 Menit</span><br>
+          <span style="color: ${videoOk ? '#28a745' : '#dc3545'}">${videoOk ? '✔' : '✖'} Video Materi Selesai</span><br>
+          <span style="color: ${modulOk ? '#28a745' : '#dc3545'}">${modulOk ? '✔' : '✖'} Modul Materi Selesai</span>
         </div>
 
         <div class="progress-text">
@@ -650,18 +664,9 @@ function renderMateri(filter = "all") {
         </div>
 
         <button class="eval"
-          ${
-            !(
-              openedStatus[materi.id] &&
-              videoStatus[materi.id] &&
-              modulStatus[materi.id] &&
-              (studyTime[materi.id] || 0) >= MIN_WAKTU_BELAJAR
-            )
-              ? "disabled"
-              : ""
-          }
+          ${!allOk ? "disabled" : ""}
           onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
-          Cetak Sertifikat
+          ${allOk ? 'CETAK SERTIFIKAT SEKARANG' : 'LENGKAPI SYARAT DI ATAS'}
         </button>
 
         <button class="sertif"
@@ -674,6 +679,7 @@ function renderMateri(filter = "all") {
 
     card.innerHTML = html;
     container.appendChild(card);
+
   });
 
   // ✅ AUTO SCROLL (DI LUAR forEach, MASIH DI DALAM renderMateri)
