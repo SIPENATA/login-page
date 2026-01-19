@@ -419,20 +419,28 @@
 
 
     #toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: #28a745;
-        color: white;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        display: none;
-        z-index: 10000;
-        animation: slideIn 0.5s ease;
+      position: fixed;
+      bottom: 50px; /* Lebih naik agar tidak tertutup nav bar HP */
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(40, 167, 69, 0.95); /* Hijau transparan */
+      color: white;
+      padding: 12px 25px;
+      border-radius: 50px; /* Bentuk kapsul lebih modern */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 10001; /* Pastikan di atas modal */
+      font-size: 14px;
+      text-align: center;
+      white-space: nowrap;
+      animation: slideUp 0.4s ease;
     }
 
-    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes slideUp { 
+      from { bottom: 0; opacity: 0; } 
+      to { bottom: 50px; opacity: 1; } 
+    }
+
 
 
     @media (max-width: 480px) {
@@ -852,6 +860,8 @@ if (
       player.src = finalUrl; 
       modal.classList.add("show");
 
+      showToast("📝 Membuka lembar evaluasi..."); 
+
       // SIMPAN STATUS EVALUASI DISINI
       evalStatus[currentEvalId] = true;
       localStorage.setItem("evalStatus", JSON.stringify(evalStatus));
@@ -910,12 +920,14 @@ if (
     function toggleVideo(id) {
       videoStatus[id] = !videoStatus[id];
       localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
+      if(videoStatus[id]) showToast("📺 Video selesai dipelajari!"); // TAMBAHKAN INI
       renderMateri(currentFilter);
-    }
+    }  
 
     function toggleModul(id) {
       modulStatus[id] = !modulStatus[id];
       localStorage.setItem("modulStatus", JSON.stringify(modulStatus));
+      if(modulStatus[id]) showToast("📚 Modul selesai dibaca!"); // TAMBAHKAN INI
       renderMateri(currentFilter);
     }
 
@@ -936,18 +948,19 @@ if (
 
       readStatus[selectedMateriId] = true;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
-
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
-
       lastMovedMateriId = selectedMateriId;
 
       closeModal();
+  
+      showToast("✅ Berhasil! Materi dipindahkan ke 'Sudah Dibaca'");
 
       currentFilter = "read";
       setActive("btn-read");
       renderMateri("read");
     }
+
 
     function urutkanMateriPermanen(materiArray, filter) {
       if (filter !== "read") return materiArray;
