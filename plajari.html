@@ -458,6 +458,14 @@
     <b>Alur Belajar:</b> 1. Pilih Materi di "Belum Dibaca" ➔ 2. Klik "Mulai Belajar" ➔ 3. Tonton Video & Baca Modul (Min. 5 Menit) ➔ 4. Ceklis Status ➔ 5. Cetak Sertifikat.
   </div>
 
+  <main>
+    <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+      <div style="position: relative;">
+        <input type="text" id="searchInput" placeholder="Cari judul materi (contoh: Probis, IT, Komunikasi)..." 
+               style="width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px; border: 2px solid #ddd; font-family: Montserrat; font-size: 16px; outline: none; transition: border-color 0.3s;">
+        <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888;">🔍</span>
+      </div>
+    </div>
 
   <!-- Menu navigasi -->
   <nav>
@@ -554,7 +562,26 @@ function urutkanMateri(materiArray, filter) {
 function renderMateri(filter = "all") {
   container.innerHTML = "";
 
-  const dataRender = urutkanMateriPermanen(materiList, filter);
+  // A. Ambil apa yang diketik user di kotak pencarian (ubah jadi huruf kecil semua)
+  const kataKunci = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase() : "";
+
+  // B. Ambil materi berdasarkan kategori (Semua/Belum/Sudah)
+  let dataRender = urutkanMateriPermanen(materiList, filter);
+
+  // C. LOGIKA FILTER: Saring lagi berdasarkan judul
+  dataRender = dataRender.filter(materi => {
+    // Mengecek apakah judul materi mengandung kata kunci yang diketik
+    return materi.judul.toLowerCase().includes(kataKunci);
+  });
+
+  // D. Tambahan: Jika hasil pencarian tidak ada, tampilkan pesan "Tidak ditemukan"
+  if (dataRender.length === 0 && kataKunci !== "") {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+        <p>Materi dengan judul "<b>${kataKunci}</b>" tidak ditemukan.</p>
+      </div>`;
+    return; // Berhenti di sini, jangan lanjut ke looping di bawah
+  }
 
   dataRender.forEach(materi => {
     const isRead = readStatus[materi.id] === true;
@@ -1048,7 +1075,13 @@ if (
         studyStart[currentActiveId] = Date.now(); // Resume saat kembali
         localStorage.setItem("studyStart", JSON.stringify(studyStart));
       }
+
+    // Aktifkan fungsi pencarian setiap kali ada ketikan di input search
+    document.getElementById("searchInput").addEventListener("input", function() {
+  renderMateri(currentFilter); 
+
     });
+
 
   </script>
 
