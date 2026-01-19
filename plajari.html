@@ -753,7 +753,7 @@ function renderMateri(filter = "all") {
           </label>
         </div>
 
-        <div style="text-align: left; margin: 10px 15px; font-size: 11px; padding: 8px; background: #fdf2f2; border-radius: 5px; border: 1px solid #f8d7da;">
+                <div style="text-align: left; margin: 10px 15px; font-size: 11px; padding: 8px; background: #fdf2f2; border-radius: 5px; border: 1px solid #f8d7da;">
           <b style="color: #1B3C53; display: block; margin-bottom: 3px;">Syarat Kelulusan:</b>
           <span style="color: ${timeOk ? '#28a745' : '#dc3545'}">${timeOk ? '✔' : '✖'} Minimal Belajar 5 Menit</span><br>
           <span style="color: ${videoOk ? '#28a745' : '#dc3545'}">${videoOk ? '✔' : '✖'} Video Materi Selesai</span><br>
@@ -761,16 +761,14 @@ function renderMateri(filter = "all") {
           <span style="color: ${isEvalDone ? '#28a745' : '#dc3545'}">${isEvalDone ? '✔' : '✖'} Kerjakan Evaluasi Belajar</span>
         </div>
 
-        // GANTI MENJADI SEPERTI INI:
-        html += `
-         <div class="progress-text" style="display: flex; justify-content: space-between; font-size: 11px; margin: 0 15px; font-weight: 700; color: #1B3C53;">
+        <div class="progress-text">
            <span>Progres Belajar</span>
            <span>${hitungProgress(materi.id)}%</span>
-         </div>
-         <div class="progress-wrapper" style="margin: 8px 15px 12px; background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);">
-         <div class="progress-bar" style="width:${hitungProgress(materi.id)}%; height: 100%; transition: width 0.8s ease;"></div>
         </div>
-     
+        <div class="progress-wrapper">
+           <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
+        </div>
+
         <button class="eval"
           ${!canEval || isEvalDone ? "disabled" : ""}
           onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
@@ -783,6 +781,7 @@ function renderMateri(filter = "all") {
           DOWNLOAD SERTIFIKAT
         </button>
       `;
+
      updateStats();
     }
 
