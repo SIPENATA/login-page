@@ -520,16 +520,24 @@
     let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
 
     const MIN_WAKTU_BELAJAR = 1 * 60 * 1000; // 5 menit (dalam milidetik)
-
+  
     const container = document.getElementById("materi-container");
 
     function updateStats() {
-      const totalRead = Object.values(readStatus).filter(status => status === true).length;
-      const totalDone = Object.values(evalStatus).filter(status => status === true).length;
-    
-      document.getElementById("statTotal").innerText = totalRead;
-      document.getElementById("statDone").innerText = totalDone;
+       // Menghitung jumlah materi yang sudah diklik "Mulai Belajar" (readStatus)
+       const totalRead = Object.values(readStatus).filter(status => status === true).length;
+   
+       // Menghitung jumlah materi yang sudah mengerjakan evaluasi (evalStatus)
+       const totalDone = Object.values(evalStatus).filter(status => status === true).length;
+     
+       // Update teks di header
+       const statTotalEl = document.getElementById("statTotal");
+       const statDoneEl = document.getElementById("statDone");
+
+       if (statTotalEl) statTotalEl.innerText = totalRead;
+       if (statDoneEl) statDoneEl.innerText = totalDone;
     }
+
 
 
 function urutkanMateri(materiArray, filter) {
@@ -1016,7 +1024,8 @@ if (
       document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
       document.getElementById(id).classList.add("active");
     }
-
+    
+    updateStats();
     // Pertama kali tampilkan semua
     renderMateri("all");
 
