@@ -18,51 +18,61 @@
 
     header {
       text-align: center;
-      background: url("backmooc.png") no-repeat center center;
+      background: linear-gradient(rgba(27, 60, 83, 0.8), rgba(27, 60, 83, 0.8)), url("backmooc.png") no-repeat center center;
       background-size: cover;
-      padding: 50px 0;
+      padding: 60px 20px;
+      color: white;
     }
 
     header h1 {
       margin: 0;
       font-size: 35px;
       font-weight: heavy;
-      color: #1B3C53;
+      color: #FFD700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
     header h2 {
       margin: 0;
       font-size: 33px;
       font-weight: heavy;
-      color: #8C1007;
+      color: #ffffff;
     }
 
     nav {
       display: flex;
       justify-content: center;
       width: 100%;
-      margin: 0;
-      padding: 0;
-    }
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }   
 
     nav button {
       flex: 1;
-      padding: 12px;
+      padding: 15px;
       border: none;
-      background: #456882;
-      color: #fff;
+      background: #fff;
+      color: #456882;
       font-family: Montserrat;
-      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
     }
 
-    nav button.active, nav button:hover {
-      background: #1B3C53;
-      color: #FFF0C4;
-      font-weight: 600;
+    nav button.active {
+       background: #f8f9fa;
+       color: #1B3C53;
+       border-bottom: 3px solid #8C1007; /* Merah Maron Sukoharjo */
     }
+
+    nav button:hover {
+      background: #f1f1f1;
+    }
+
 
     .container {
       display: grid;
@@ -75,18 +85,20 @@
 
     .card {
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 15px; /* Lebih bulat */
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Shadow lebih halus */
       overflow: hidden;
       display: flex;
       flex-direction: column;
       text-align: center;
-      transition: transform 0.2s ease;
+      transition: all 0.3s ease;
       position: relative;
+      border: 1px solid #eee;
     }
 
     .card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
     }
 
     .card img {
@@ -115,6 +127,12 @@
 
     .card a:hover {
       background: #28a745;
+    }
+
+    .status-icon {
+      font-size: 22px;
+      margin-top: 15px;
+      display: block;
     }
 
     .card button {
@@ -171,7 +189,7 @@
       margin-top: 30px;
     }
 
-      .card button.sertif {
+    .card button.sertif {
       background: linear-gradient(135deg, #1aa179, #218838);
       margin-bottom: 15px;
     }
@@ -214,6 +232,17 @@
       margin: 5px 15px 0;
       color: #555;
       font-weight: 600;
+    }
+
+    .card button.eval:not(:disabled) {
+      animation: pulse-blue 2s infinite;
+    }
+
+
+    @keyframes pulse-blue {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
     }
 
     /* ===== MODAL ===== */
