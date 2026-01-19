@@ -418,6 +418,23 @@
     .step-guide b { color: #1B3C53; }
 
 
+    #toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: none;
+        z-index: 10000;
+        animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -1038,8 +1055,12 @@ if (
       });
     }
 
-
-
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.innerText = message;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
 
     // Navigasi tab
     let currentFilter = "all";
@@ -1142,6 +1163,8 @@ if (
         </div>
       </div>
     </div>
+
+  <div id="toast"></div>
 
 
 
