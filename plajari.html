@@ -507,6 +507,8 @@
     let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
     let studyTime = JSON.parse(localStorage.getItem("studyTime")) || {};
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
+    let evalStatus = JSON.parse(localStorage.getItem("evalStatus")) || {};
+
 
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
@@ -702,18 +704,19 @@ if (
 
 
     function hitungProgress(id) {
-      if (printedStatus[id]) return 100;
+      if (evalStatus[id]) return 100; // Langsung 100% jika evaluasi selesai
 
       let progress = 0;
-      // Cek apakah waktu sudah memenuhi syarat (5 menit)
       const isTimeComplete = getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR;
 
-      if (openedStatus[id]) progress += 30;
-      if (isTimeComplete && videoStatus[id]) progress += 20; // Hanya nambah jika timer cukup & diceklis
-      if (modulStatus[id]) progress += 20;
+      if (openedStatus[id]) progress += 25;
+      if (isTimeComplete && videoStatus[id]) progress += 25;
+      if (modulStatus[id]) progress += 25;
+      // Sisa 25% didapat dari klik evaluasi
 
       return progress;
     }
+
 
 
     // Toggle status baca
@@ -766,17 +769,14 @@ if (
 
     // 3. Fungsi jika user klik "Ya, Saya Siap"
     function startGoogleForm() {
-      // Tutup modal konfirmasi dulu
       document.getElementById("evaluasiConfirmModal").classList.remove("show");
 
-      // Buka Modal Video (kita gunakan modal ini untuk menampilkan Google Form)
       const modal = document.getElementById("videoModal");
       const player = document.getElementById("videoPlayer");
       const title = document.getElementById("videoTitle");
 
       title.innerText = "Evaluasi Belajar: Selesaikan Kuis";
 
-      // Masukkan link Google Form ke iframe (pastikan ada ?embedded=true)
       let finalUrl = currentEvalUrl;
       if (!finalUrl.includes("embedded=true")) {
         finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
@@ -785,12 +785,17 @@ if (
       player.src = finalUrl; 
       modal.classList.add("show");
 
-      // Tandai status sertifikat sudah diakses (agar tombol download aktif)
+      // SIMPAN STATUS EVALUASI DISINI
+      evalStatus[currentEvalId] = true;
+      localStorage.setItem("evalStatus", JSON.stringify(evalStatus));
+
+      // Tetap tandai printedStatus jika diperlukan untuk download
       printedStatus[currentEvalId] = true;
       localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
 
       renderMateri(currentFilter);
-    } 
+    }
+ 
 
     function openDownload(url) {
       if (!url) {
