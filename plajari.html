@@ -1051,21 +1051,14 @@ if (
       document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
       document.getElementById(id).classList.add("active");
     }
-    
-    updateStats();
-    // Pertama kali tampilkan semua
-    renderMateri("all");
-
-    window.addEventListener("beforeunload", simpanWaktuBelajar);
 
     setInterval(() => {
-      if (currentFilter === "read") {
-        // Jangan panggil simpanWaktuBelajar() di sini agar timer tetap jalan
+      // Selalu update stats dan live timers
+      updateStats(); 
+      if (currentActiveId) {
         updateLiveTimers(); 
       }
     }, 1000);
-   });
-
 
     document.addEventListener("visibilitychange", function() {
       if (!currentActiveId) return;
@@ -1076,11 +1069,20 @@ if (
         studyStart[currentActiveId] = Date.now(); // Resume saat kembali
         localStorage.setItem("studyStart", JSON.stringify(studyStart));
       }
+    });
 
-    // Aktifkan fungsi pencarian setiap kali ada ketikan di input search
-    document.getElementById("searchInput").addEventListener("input", function() {
-  renderMateri(currentFilter); 
-
+    // Aktifkan fungsi pencarian (Letakkan di luar event listener lain)
+    document.addEventListener("DOMContentLoaded", function() {
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) {
+        searchInput.addEventListener("input", function() {
+          renderMateri(currentFilter); 
+        });
+      }
+      
+      // Jalankan pertama kali saat halaman dimuat
+      updateStats();
+      renderMateri("all");
     });
 
 
