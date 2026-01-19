@@ -213,25 +213,58 @@
     }
 
     .progress-wrapper {
-      margin: 10px 15px;
-      background: #e9ecef;
-      border-radius: 10px;
-      height: 10px;
+      margin: 12px 15px 5px;
+      background: #e0e0e0;
+      border-radius: 20px; /* Lebih lonjong */
+      height: 14px; /* Sedikit lebih tebal */
       overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
     }
 
     .progress-bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #28a745, #20c997);
-      transition: width 0.4s ease;
+      /* Gradasi warna dari oranye ke hijau sukses */
+      background: linear-gradient(90deg, #f0ad4e, #5cb85c, #28a745);
+      background-size: 200% 100%;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Gerakan smooth */
+      border-radius: 20px;
+      position: relative;
+    }
+
+    /* Efek cahaya bergerak pada progress bar */
+    .progress-bar::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background-image: linear-gradient(
+        -45deg, 
+        rgba(255, 255, 255, .2) 25%, 
+        transparent 25%, 
+        transparent 50%, 
+        rgba(255, 255, 255, .2) 50%, 
+        rgba(255, 255, 255, .2) 75%, 
+        transparent 75%, 
+        transparent
+      );
+      z-index: 1;
+      background-size: 50px 50px;
+      animation: moveStripes 2s linear infinite;
+    }
+
+    @keyframes moveStripes {
+      0% { background-position: 0 0; }
+      100% { background-position: 50px 50px; }
     }
 
     .progress-text {
-      font-size: 12px;
-      margin: 5px 15px 0;
-      color: #555;
-      font-weight: 600;
+      font-size: 11px;
+      margin: 0 15px;
+      color: #1B3C53;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between; /* Menaruh label di kiri dan % di kanan */
     }
 
     .card button.eval:not(:disabled) {
@@ -728,13 +761,16 @@ function renderMateri(filter = "all") {
           <span style="color: ${isEvalDone ? '#28a745' : '#dc3545'}">${isEvalDone ? '✔' : '✖'} Kerjakan Evaluasi Belajar</span>
         </div>
 
-        <div class="progress-text">
-          Progress Belajar: ${hitungProgress(materi.id)}%
+        // GANTI MENJADI SEPERTI INI:
+        html += `
+         <div class="progress-text" style="display: flex; justify-content: space-between; font-size: 11px; margin: 0 15px; font-weight: 700; color: #1B3C53;">
+           <span>Progres Belajar</span>
+           <span>${hitungProgress(materi.id)}%</span>
+         </div>
+         <div class="progress-wrapper" style="margin: 8px 15px 12px; background: #e9ecef; border-radius: 10px; height: 12px; overflow: hidden; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);">
+         <div class="progress-bar" style="width:${hitungProgress(materi.id)}%; height: 100%; transition: width 0.8s ease;"></div>
         </div>
-        <div class="progress-wrapper">
-          <div class="progress-bar" style="width:${hitungProgress(materi.id)}%"></div>
-        </div>
-
+     
         <button class="eval"
           ${!canEval || isEvalDone ? "disabled" : ""}
           onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
@@ -779,20 +815,24 @@ if (
 
 
     function hitungProgress(id) {
-      if (evalStatus[id]) return 100; // Langsung 100% jika evaluasi selesai
+      if (evalStatus[id]) return 100;
 
       let progress = 0;
       const isTimeComplete = getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR;
 
+      // 1. Sudah diklik/buka materi
       if (openedStatus[id]) progress += 25;
-      if (isTimeComplete && videoStatus[id]) progress += 25;
+   
+      // 2. Waktu minimal terpenuhi
+      if (isTimeComplete) progress += 25;
+    
+      // 3. Checklist video/modul (masing-masing 12.5% jika ingin detail, atau 25% jika keduanya ok)
+      // Kita buat: Video 25%, Modul 25%
+      if (videoStatus[id]) progress += 25;
       if (modulStatus[id]) progress += 25;
-      // Sisa 25% didapat dari klik evaluasi
 
-      return progress;
+      return Math.min(progress, 99); // Maksimal 99% sebelum evaluasi selesai
     }
-
-
 
     // Toggle status baca
     function toggleRead(id) {
