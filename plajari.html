@@ -447,7 +447,12 @@
   <header>
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
+    <div id="userStats" style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 15px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto; border: 1px solid rgba(255,255,255,0.3);">
+        <span title="Materi yang sedang dipelajari">📖 <b id="statTotal">0</b> Materi Dibaca</span>
+        <span title="Sertifikat yang sudah didapat">🎓 <b id="statDone">0</b> Selesai</span>
+    </div>
   </header>
+
 
   <div class="step-guide">
     <b>Alur Belajar:</b> 1. Pilih Materi di "Belum Dibaca" ➔ 2. Klik "Mulai Belajar" ➔ 3. Tonton Video & Baca Modul (Min. 5 Menit) ➔ 4. Ceklis Status ➔ 5. Cetak Sertifikat.
@@ -517,6 +522,15 @@
     const MIN_WAKTU_BELAJAR = 1 * 60 * 1000; // 5 menit (dalam milidetik)
 
     const container = document.getElementById("materi-container");
+
+    function updateStats() {
+      const totalRead = Object.values(readStatus).filter(status => status === true).length;
+      const totalDone = Object.values(evalStatus).filter(status => status === true).length;
+    
+      document.getElementById("statTotal").innerText = totalRead;
+      document.getElementById("statDone").innerText = totalDone;
+    }
+
 
 function urutkanMateri(materiArray, filter) {
   if (filter !== "read" || !lastMovedMateriId) {
@@ -673,6 +687,7 @@ function renderMateri(filter = "all") {
           DOWNLOAD SERTIFIKAT
         </button>
       `;
+     updateStats();
     }
 
 
