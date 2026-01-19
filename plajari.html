@@ -405,108 +405,6 @@
       font-weight: 700;
     }
 
-    /* Container Utama Login */
-    #login-section {
-      background: #ffffff;
-      padding: 15px 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      border-bottom: 3px solid #8C1007;
-      position: sticky;
-      top: 0;
-      z-index: 1100; /* Di atas Nav */
-    }    
-
-    /* Kotak Form Login */
-    .login-container {
-      max-width: 500px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .login-container input {
-      flex: 1;
-      padding: 12px 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-family: Montserrat;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-
-    .login-container input:focus {
-      border-color: #1B3C53;
-    }
-
-    .btn-login {
-      background: linear-gradient(135deg, #1b3c53, #0a2130);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: Montserrat;
-      transition: transform 0.2s;
-    }
-
-    .btn-login:hover {
-      transform: scale(1.02);
-    }
-
-    /* Info User Setelah Login */
-    .user-logged-in {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-    }   
-
-    .user-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-avatar {
-      width: 35px;
-      height: 35px;
-      background: #1B3C53;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    .btn-logout {
-      background: #fff;
-      color: #8C1007;
-      border: 1px solid #8C1007;
-      padding: 5px 12px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .hidden { display: none !important; }
-
-    /* Responsive Mobile */
-    @media (max-width: 480px) {
-      .login-container {
-        flex-direction: column;
-        gap: 8px;
-      }
-      .btn-login { width: 100%; }
-    }
-
-
     @media (max-width: 480px) {
       body {
         font-family: Montserrat !important;
@@ -537,25 +435,6 @@
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
   </header>
-
-  <div id="login-section">
-    <div id="login-form" class="login-container">
-      <input type="text" id="nip-input" placeholder="Masukkan NIP ASN..." maxlength="18">
-      <button class="btn-login" onclick="handleLogin()">MASUK SISTEM</button>
-    </div>
-
-    <div id="user-info" class="user-logged-in hidden">
-      <div class="user-meta">
-        <div class="user-avatar" id="user-initial">A</div>
-        <div>
-          <div style="font-size: 11px; color: #666;">ASN Sukoharjo:</div>
-          <div style="font-size: 14px; font-weight: 700; color: #1B3C53;" id="user-name">Memuat Nama...</div>
-        </div>
-      </div>
-      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
-    </div>
-  </div>
-
 
   <!-- Menu navigasi -->
   <nav>
@@ -875,13 +754,13 @@ if (
       const title = document.getElementById("videoTitle");
 
       title.innerText = "Evaluasi Belajar: Selesaikan Kuis";
-      
+
       // Masukkan link Google Form ke iframe (pastikan ada ?embedded=true)
       let finalUrl = currentEvalUrl;
       if (!finalUrl.includes("embedded=true")) {
         finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
       }
-    
+
       player.src = finalUrl; 
       modal.classList.add("show");
 
@@ -903,24 +782,24 @@ if (
     function markOpened(id) {
       const materi = materiList.find(m => m.id === id);
       currentActiveId = id;
-     
+
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
-          
+
       const modal = document.getElementById("videoModal");
       const player = document.getElementById("videoPlayer");
       const title = document.getElementById("videoTitle");
-     
+
       title.innerText = "Mempelajari: " + materi.judul;
       player.src = materi.link; 
       modal.classList.add("show");
 
       studyStart[id] = Date.now();
       localStorage.setItem("studyStart", JSON.stringify(studyStart));
-      
+
       readTime[id] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
- 
+
       renderMateri(currentFilter);
     }
 
@@ -1061,7 +940,7 @@ if (
 
           // Update teks timer tanpa render ulang card
           timerElement.innerText = selesai ? 'SELESAI' : formatCountdown(sisa);
-      
+
           if (selesai) {
             timerElement.classList.add('timer-selesai');
             // Aktifkan checkbox video jika sebelumnya terkunci
@@ -1073,20 +952,6 @@ if (
         }
       });
     }
-
-    function showLoading(status) {
-      const btn = document.querySelector('.btn-login');
-      if (status) {
-        btn.disabled = true;
-        btn.innerText = "MEMVALIDASI...";
-        btn.style.opacity = "0.7";
-      } else {
-        btn.disabled = false;
-        btn.innerText = "MASUK SISTEM";
-        btn.style.opacity = "1";
-      }
-    }
-
 
 
 
@@ -1159,7 +1024,7 @@ if (
     <div id="videoModal" class="modal-overlay">
       <div class="modal-box" style="max-width: 900px; width: 95%; height: 90vh; display: flex; flex-direction: column;">
         <h3 id="videoTitle">Memutar Video Materi</h3>
-    
+
         <div style="flex-grow: 1; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
           <iframe id="videoPlayer" 
             style="position: absolute; top:0; left:0; width:100%; height:100%;" 
