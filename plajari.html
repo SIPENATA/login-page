@@ -543,28 +543,6 @@
     <div class="container" id="materi-container"></div>
   </main>
 
-      <div id="loginModal" class="modal-overlay show">
-      <div class="modal-box">
-        <h3>Login Peserta</h3>
-        <p style="font-size:14px">Silakan masukkan Nama dan NIP</p>
-
-        <input id="loginNama" placeholder="Nama Lengkap"
-          style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:1px solid #ccc">
-
-        <input id="loginNip" placeholder="NIP"
-          style="width:100%; padding:10px; margin-bottom:15px; border-radius:6px; border:1px solid #ccc">
-
-        <button class="btn-confirm" style="width:100%" onclick="submitLogin()">
-          Masuk
-        </button>
-
-        <p id="loginError" style="color:red; font-size:13px; display:none; margin-top:10px;">
-          Nama atau NIP tidak valid
-        </p>
-      </div>
-    </div>
-
-    
   <footer>
     <p>&copy; 2025 Plajari Sukoharjo Corporate University</p>
   </footer>
@@ -1189,59 +1167,6 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       updateStats();
       renderMateri("all");
     });
-
-
-  const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbzjyX6741s9McbApscrVlguVdbxngm0tulmBcIirSNv0kyWKPFlD8Nmg28kv7bYT68UAg/exec";
-
-  function submitLogin() {
-    const nama = document.getElementById("loginNama").value.trim();
-    const nip = document.getElementById("loginNip").value.trim();
-    const error = document.getElementById("loginError");
-
-    if (!nama || !nip) {
-      error.innerText = "Nama dan NIP wajib diisi";
-      error.style.display = "block";
-      return;
-    }
-
-    const formData = new URLSearchParams();
-    formData.append("nama", nama);
-    formData.append("nip", nip);
-
-    fetch(LOGIN_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: formData.toString()
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        localStorage.setItem("plajari_user", JSON.stringify({ nama, nip }));
-        document.getElementById("loginModal").classList.remove("show");
-        showToast("✅ Login berhasil, selamat belajar!");
-      } else {
-        error.innerText = "Nama atau NIP tidak terdaftar";
-        error.style.display = "block";
-      }
-    })
-    .catch(() => {
-      error.innerText = "Koneksi ke server gagal";
-      error.style.display = "block";
-    });
-  }
-
-
-  // CEK SAAT LOAD
-  document.addEventListener("DOMContentLoaded", () => {
-    const user = localStorage.getItem("plajari_user");
-    if (!user) {
-      document.getElementById("loginModal").classList.add("show");
-    }
-  });
-
-    
 
 
   </script>
