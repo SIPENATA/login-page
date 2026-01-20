@@ -648,38 +648,47 @@
       const nama = document.getElementById("userName").value.trim();
 
       if (nip === "" || nama === "") {
-        showToast("⚠️ NIP dan Nama harus diisi!");
+        showToast("⚠️ Mohon isi NIP dan Nama Anda!");
         return;
       }
 
-      // Tampilkan loading pada tombol
+      // Animasi loading pada tombol
       const btn = document.querySelector(".btn-confirm");
       const originalText = btn.innerText;
       btn.innerText = "Memverifikasi...";
       btn.disabled = true;
 
-      // Kirim data ke Google Apps Script (Code.gs)
+      // Panggil fungsi di Code.gs
       google.script.run
         .withSuccessHandler(function(response) {
           if (response.status === "success") {
-            // Simpan ke localStorage jika sukses di server
+            // Jika data ditemukan di Spreadsheet
             userData = { nip: nip, nama: nama };
             localStorage.setItem("userData", JSON.stringify(userData));
         
-            showToast("✅ Berhasil Masuk!");
+            showToast("✅ Login Berhasil! Selamat Belajar.");
         
-            // Tutup modal
+            // Sembunyikan modal login
             const loginModal = document.getElementById("loginModal");
             loginModal.classList.remove("show");
             setTimeout(() => { loginModal.style.display = "none"; }, 500);
+          } else if (response.status === "not_found") {
+            // Jika data tidak ada di Spreadsheet
+            showToast("❌ " + response.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
+          } else {
+            showToast("⚠️ Terjadi kesalahan: " + response.message);
+            btn.innerText = originalText;
+            btn.disabled = false;
           }
         })
         .withFailureHandler(function(err) {
-          showToast("❌ Gagal terhubung ke server");
+          showToast("❌ Gagal terhubung ke sistem.");
           btn.innerText = originalText;
           btn.disabled = false;
         })
-        .registerUser(nip, nama); // Memanggil fungsi di Code.gs
+        .checkUserLogin(nip, nama); // Nama fungsi harus sama dengan di Code.gs
     }
 
     // Tambahkan pemanggilan checkLoginStatus di dalam DOMContentLoaded
