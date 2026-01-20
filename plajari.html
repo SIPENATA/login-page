@@ -76,17 +76,21 @@
 
     .container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      /* Menggunakan auto-fill agar ukuran card tetap konsisten (tidak melebar jika hanya 1) */
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
       gap: 20px;
       padding: 20px;
       max-width: 1200px;
       margin: auto;
+      /* Tambahkan ini agar grid tidak memaksa konten ke tengah jika cuma sedikit */
+      justify-content: start; 
     }
+
 
     .card {
       background: #fff;
-      border-radius: 15px; /* Lebih bulat */
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08); /* Shadow lebih halus */
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -94,7 +98,10 @@
       transition: all 0.3s ease;
       position: relative;
       border: 1px solid #eee;
+      /* Tambahkan ini agar tinggi kartu konsisten dalam satu baris */
+      height: 100%; 
     }
+
 
     .card:hover {
       transform: translateY(-8px);
