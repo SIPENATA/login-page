@@ -527,7 +527,7 @@
 </head>
 <body>
 
-  <div id="loginModal" class="modal-overlay" style="display: flex;">
+  <div id="loginModal" class="modal-overlay" style="display: none; align-items: center; justify-content: center;">
     <div class="modal-box" style="max-width: 400px;">
       <div style="font-size: 50px; margin-bottom: 10px;"> 👤 </div>
       <h3 style="color: #1B3C53;">Selamat Datang!</h3>
@@ -535,11 +535,11 @@
       <div style="text-align: left; margin-top: 15px;">
         <label style="font-size: 14px; font-weight: 600;">NIP :</label>
         <input type="text" id="userNIP" placeholder="Masukkan NIP Anda" 
-               style="width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
+             style="width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
       
         <label style="font-size: 14px; font-weight: 600;">Nama Lengkap :</label>
         <input type="text" id="userName" placeholder="Masukkan Nama Lengkap" 
-               style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
+             style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
       </div>
       <div class="modal-actions">
         <button class="btn-confirm" onclick="saveLoginData()" style="width: 100%;">Masuk & Belajar</button>
@@ -586,6 +586,9 @@
   </footer>
 
   <script>
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-JCbv04WK3Dv3yXK9u9QidMhfPvtqitTD_YjQuz1_UBUpis_XcTKoFPSDVlHf7IAMog/exec";
+    
     // Daftar Materi
     const materiList = [
       {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview", sertifikat: "https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
@@ -643,62 +646,61 @@
     }
 
     // Fungsi untuk menyimpan data login ke localStorage
-    function saveLoginData() {
+    async function saveLoginData() {
       const nip = document.getElementById("userNIP").value.trim();
       const nama = document.getElementById("userName").value.trim();
 
       if (nip === "" || nama === "") {
-        showToast("⚠️ Mohon isi NIP dan Nama Anda!");
+        alert("NIP dan Nama harus diisi!");
         return;
       }
 
-      // Animasi loading pada tombol
       const btn = document.querySelector(".btn-confirm");
-      const originalText = btn.innerText;
       btn.innerText = "Memverifikasi...";
       btn.disabled = true;
 
-      // Panggil fungsi di Code.gs
-      google.script.run
-        .withSuccessHandler(function(response) {
-          if (response.status === "success") {
-            // Jika data ditemukan di Spreadsheet
-            userData = { nip: nip, nama: nama };
-            localStorage.setItem("userData", JSON.stringify(userData));
-        
-            showToast("✅ Login Berhasil! Selamat Belajar.");
-        
-            // Sembunyikan modal login
-            const loginModal = document.getElementById("loginModal");
-            loginModal.classList.remove("show");
-            setTimeout(() => { loginModal.style.display = "none"; }, 500);
-          } else if (response.status === "not_found") {
-            // Jika data tidak ada di Spreadsheet
-            showToast("❌ " + response.message);
-            btn.innerText = originalText;
-            btn.disabled = false;
-          } else {
-            showToast("⚠️ Terjadi kesalahan: " + response.message);
-            btn.innerText = originalText;
-            btn.disabled = false;
-          }
-        })
-        .withFailureHandler(function(err) {
-          showToast("❌ Gagal terhubung ke sistem.");
-          btn.innerText = originalText;
+      try {
+        // Mengirim data ke Google Sheets melalui URL Web App
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({ nip: nip, nama: nama })
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          userData = { nip: nip, nama: nama };
+          localStorage.setItem("userData", JSON.stringify(userData));
+      
+          document.getElementById("loginModal").classList.remove("show");
+          document.getElementById("loginModal").style.display = "none";
+          showToast("Selamat Datang, " + nama);
+        } else {
+          alert("Maaf, NIP atau Nama tidak terdaftar di database.");
+          btn.innerText = "Masuk & Belajar";
           btn.disabled = false;
-        })
-        .checkUserLogin(nip, nama); // Nama fungsi harus sama dengan di Code.gs
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Gagal terhubung ke server. Pastikan URL Script benar.");
+        btn.innerText = "Masuk & Belajar";
+        btn.disabled = false;
+      }
     }
 
-    // Tambahkan pemanggilan checkLoginStatus di dalam DOMContentLoaded
+    // Cek status login saat halaman dibuka
     document.addEventListener("DOMContentLoaded", function() {
-      // Panggil fungsi cek login di sini
-      checkLoginStatus(); 
-
-      // Kode Anda yang sudah ada sebelumnya
-      renderMateri();
-      updateProgress();
+      const savedUser = localStorage.getItem("userData");
+      const loginModal = document.getElementById("loginModal");
+  
+      if (!savedUser) {
+        // Jika belum login, tampilkan modal
+        loginModal.style.display = "flex"; 
+        loginModal.classList.add("show");
+      } else {
+        // Jika sudah login, biarkan modal tetap tersembunyi
+        loginModal.style.display = "none";
+      }
     });
     
     let currentActiveId = null; 
