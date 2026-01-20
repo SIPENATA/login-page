@@ -653,24 +653,24 @@
       if (!nipRaw || !namaRaw) {
         showToast("⚠️ Mohon isi NIP dan Nama!");
         return;
-    }
+      }
 
       const btn = document.querySelector(".btn-confirm");
       btn.innerText = "Memverifikasi...";
       btn.disabled = true;
 
       try {
-      // Paksa menjadi string dan bersihkan spasi
-      const cleanNip = String(nipRaw).trim();
-      const cleanNama = String(namaRaw).trim();
+        // Paksa menjadi string dan bersihkan spasi
+        const cleanNip = String(nipRaw).trim();
+        const cleanNama = String(namaRaw).trim();
 
-      const response = await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          nip: cleanNip,
-          nama: cleanNama
-        })
-     });
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            nip: cleanNip,
+            nama: cleanNama
+          })
+        });
 
         const result = await response.json();
 
@@ -1251,7 +1251,7 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
         t.className = "show";
         setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
       } else {
-        alert(msg);
+        alert(msg);}
     }
 
     function closeInstructionModal() {
