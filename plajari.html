@@ -651,49 +651,59 @@
     }
 
     // Fungsi untuk menyimpan data login ke localStorage
+    // GANTI FUNGSI LAMA ANDA DENGAN INI
     async function saveLoginData() {
-      const nipRaw = document.getElementById("userNIP").value;
-      const namaRaw = document.getElementById("userName").value;
+        const nipRaw = document.getElementById("userNIP").value;
+        const namaRaw = document.getElementById("userName").value;
 
-      if (!nipRaw || !namaRaw) {
-        showToast("⚠️ NIP dan Nama harus diisi!");
-        return;
-      }
-
-      const btn = document.querySelector(".btn-confirm");
-      btn.innerText = "Memverifikasi...";
-      btn.disabled = true;
-
-      try {
-        const cleanNip = String(nipRaw).replace(/\D/g, "");
-        const cleanNama = String(namaRaw).trim();
-
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          // TAMBAHKAN action: "login" DI SINI
-          body: JSON.stringify({
-            action: "login", 
-            nip: cleanNip,
-            nama: cleanNama
-          })
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          localStorage.setItem("userData", JSON.stringify({ nip: cleanNip, nama: cleanNama }));
-          showToast("✅ Login Berhasil!");
-          setTimeout(() => { location.reload(); }, 1000);
-        } else {
-          showToast("❌ Data tidak ditemukan. Pastikan NIP dan Nama sesuai Database.");
-          btn.innerText = "Masuk & Belajar";
-          btn.disabled = false;
+        if (!nipRaw || !namaRaw) {
+            showToast("⚠️ NIP dan Nama harus diisi!");
+            return;
         }
-      } catch (error) {
-        showToast("⚠️ Masalah koneksi server.");
-        btn.innerText = "Masuk & Belajar";
-        btn.disabled = false;
-      }
+
+        const btn = document.querySelector(".btn-confirm");
+        btn.innerText = "Memverifikasi...";
+        btn.disabled = true;
+
+        try {
+            const cleanNip = String(nipRaw).replace(/\D/g, "");
+            const cleanNama = String(namaRaw).trim();
+
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "login",
+                    nip: cleanNip,
+                    nama: cleanNama
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                // SIMPAN DATA KE BROWSER TERMASUK NAMA DARI SPREADSHEET & PROGRES TERAKHIR
+                localStorage.setItem("userData", JSON.stringify({ 
+                    nip: cleanNip, 
+                    nama: result.nama, 
+                    progres: result.progres 
+                }));
+
+                showToast("✅ Login Berhasil!");
+            
+                setTimeout(() => {
+                    location.reload(); // Refresh untuk mengaktifkan menu akun
+                }, 1000);
+            } else {
+                showToast("❌ NIP atau Nama tidak terdaftar!");
+                btn.innerText = "Masuk & Belajar";
+                btn.disabled = false;
+            }
+        } catch (e) {
+            console.error(e);
+            showToast("⚠️ Masalah koneksi server.");
+            btn.innerText = "Masuk & Belajar";
+            btn.disabled = false;
+        }
     }
 
     async function updateProgressToCloud(statusMateri) {
@@ -1018,9 +1028,19 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
     }
 
     function toggleChecklist(id) {
-      checkedStatus[id] = !checkedStatus[id];
-      localStorage.setItem("checkedStatus", JSON.stringify(checkedStatus));
-      renderMateri(currentFilter);
+        // 1. Ubah status centang
+        checkedStatus[id] = !checkedStatus[id];
+    
+        // 2. Simpan di browser (Local Storage)
+        localStorage.setItem("checkedStatus", JSON.stringify(checkedStatus));
+    
+        // 3. KIRIM KE CLOUD (Spreadsheet Kolom C)
+        const statusTeks = checkedStatus[id] ? "Selesai" : "Batal";
+        const laporan = `Materi ID ${id}: ${statusTeks}`;
+        updateProgressToCloud(laporan);
+
+        // 4. Update tampilan layar
+        renderMateri(currentFilter);
     }
 
     function openSertifikat(url, id) {
@@ -1347,6 +1367,27 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       updateStats();
       renderMateri("all");
     });
+
+    async function updateProgressToCloud(statusMateri) {
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+    
+        // Jika user belum login, jangan kirim apa-apa
+        if (!savedUser || !savedUser.nip) return;
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "saveProgress",
+                    nip: savedUser.nip,
+                    progres: statusMateri
+                })
+            });
+            console.log("Sinkronisasi Cloud: " + statusMateri);
+        } catch (e) {
+            console.error("Gagal sinkron ke Cloud:", e);
+        }
+    }
 
 
   </script>
