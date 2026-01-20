@@ -656,12 +656,11 @@
 
     let currentUserNip = localStorage.getItem("plajari_nip") || null;
 
-    // Satukan semua status ke dalam satu objek 'state' agar mudah dikirim ke Cloud
     let state = JSON.parse(localStorage.getItem("plajari_state")) || {
-      opened: JSON.parse(localStorage.getItem("openedStatus")) || {},
-      startTime: JSON.parse(localStorage.getItem("studyStart")) || {},
-      checklist: JSON.parse(localStorage.getItem("checkedStatus")) || {},
-      printed: JSON.parse(localStorage.getItem("printedStatus")) || {}
+      opened: {},
+      startTime: {},
+      checklist: {},
+      printed: {}
     };
 
     window.onload = function() {
@@ -669,15 +668,18 @@
       const infoBar = document.getElementById('user-info-bar');
 
       if (currentUserNip) {
-        // Jika sudah login
-        modal.classList.add('hidden');
-        infoBar.classList.remove('hidden');
-        // Ambil nama dari memori atau database
-        document.getElementById('user-name').innerText = "ASN"; 
+        // Sembunyikan pop-up jika sudah login
+        if(modal) modal.classList.add('hidden');
+        if(infoBar) infoBar.classList.remove('hidden');
+    
+        // Ambil nama dari localStorage jika ada
+        const savedName = localStorage.getItem("plajari_nama");
+        if(savedName) document.getElementById('user-name').innerText = savedName;
+    
         renderMateri("all"); 
       } else {
-        // Jika belum login, pastikan pop-up muncul
-        modal.classList.remove('hidden');
+        // Munculkan pop-up jika belum login
+        if(modal) modal.classList.remove('hidden');
       }
     };
 
@@ -686,7 +688,10 @@
       const btn = document.getElementById('btn-login');
       const msg = document.getElementById('login-msg');
 
-      if (!nipInput) return alert("Silahkan masukkan NIP!");
+      if (!nipInput) {
+        msg.innerText = "NIP tidak boleh kosong!";
+        return;
+      }
 
       btn.innerText = "Memverifikasi...";
       btn.disabled = true;
@@ -696,20 +701,32 @@
           method: 'POST',
           body: JSON.stringify({ action: 'login', nip: nipInput })
         });
+    
         const data = await response.json();
 
         if (data.success) {
+          // Simpan NIP dan Nama
           currentUserNip = nipInput;
           localStorage.setItem("plajari_nip", nipInput);
+          localStorage.setItem("plajari_nama", data.nama);
+      
+          // Update data progres dari cloud jika ada
+          if (data.progres) {
+           state = JSON.parse(data.progres);
+            localStorage.setItem("plajari_state", JSON.stringify(state));
+          }
+
+          // Tutup Pop-up
           document.getElementById('user-name').innerText = data.nama;
           document.getElementById('login-modal').classList.add('hidden');
           document.getElementById('user-info-bar').classList.remove('hidden');
+      
           renderMateri("all");
         } else {
           msg.innerText = data.message;
         }
       } catch (err) {
-        msg.innerText = "Koneksi ke Database Gagal!";
+        msg.innerText = "Error: Pastikan URL Apps Script Benar & Deploy sebagai 'Anyone'";
       } finally {
         btn.innerText = "Masuk ke Platform";
         btn.disabled = false;
