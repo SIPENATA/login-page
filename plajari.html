@@ -509,6 +509,18 @@
 </head>
 <body>
 
+  <div id="login-section" style="background:#fff; padding:20px; text-align:center; border-bottom:3px solid #1B3C53;">
+    <div id="login-form">
+      <h3 style="margin-top:0">Silahkan Login NIP</h3>
+      <input type="text" id="nip-input" placeholder="Masukkan NIP Anda" style="padding:10px; border:1px solid #ccc; border-radius:5px; width:200px;">
+      <button onclick="handleLogin()" style="padding:10px 20px; background:#1B3C53; color:white; border:none; border-radius:5px; cursor:pointer;">Masuk</button>
+    </div>
+    <div id="user-info" style="display:none">
+      <span>Selamat Datang, <b id="user-name"></b></span> | 
+      <button onclick="handleLogout()" style="color:red; background:none; border:none; cursor:pointer; text-decoration:underline;">Keluar</button>
+    </div>
+  </div>
+  
   <header>
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
@@ -587,6 +599,15 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
     let evalStatus = JSON.parse(localStorage.getItem("evalStatus")) || {};
 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2wnG78EdwInXdQTVSyhKTO9yk5yWgL4qjRLU2rPzcODXtimCgHOEexaHqo9Rcxt_StQ/exec"; // Ganti dengan URL dari Langkah 2
+    let currentUserNip = localStorage.getItem("plajari_nip") || null;
+
+    let state = {
+      opened: {},
+      startTime: {},
+      checklist: {},
+      printed: {}
+    };
 
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
@@ -860,9 +881,16 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       renderMateri("read");
     }
 
-    function toggleChecklist(id) {
-      checkedStatus[id] = !checkedStatus[id];
-      localStorage.setItem("checkedStatus", JSON.stringify(checkedStatus));
+    function toggleCheck(id, type) {
+      if (!state.checklist[id]) state.checklist[id] = { video: false, modul: false };
+      state.checklist[id][type] = !state.checklist[id][type];
+  
+      // Simpan lokal
+      localStorage.setItem("plajari_check", JSON.stringify(state.checklist)); 
+  
+      // SIMPAN KE CLOUD (Google Sheets)
+      saveToCloud(); 
+  
       renderMateri(currentFilter);
     }
 
@@ -1168,6 +1196,69 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       renderMateri("all");
     });
 
+    // Fungsi saat tombol Masuk diklik
+async function handleLogin() {
+  const nip = document.getElementById('nip-input').value;
+  if (!nip) return alert("Masukkan NIP!");
+
+  const btn = document.querySelector('#login-form button');
+  btn.innerText = "Loading...";
+  btn.disabled = true;
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'login', nip: nip })
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      currentUserNip = nip;
+      localStorage.setItem("plajari_nip", nip);
+      
+      // Jika ada progres lama di cloud, timpa data lokal
+      if (data.progres) {
+        state = JSON.parse(data.progres);
+      }
+      
+      showLoggedIn(data.nama);
+      renderMateri("all"); // Render ulang tampilan
+    } else {
+      alert(data.message);
+    }
+  } catch (e) {
+    alert("Gagal terhubung ke database. Pastikan internet aktif.");
+  } finally {
+    btn.innerText = "Masuk";
+    btn.disabled = false;
+  }
+}
+
+// Fungsi Mengirim data ke Cloud
+function saveToCloud() {
+  if (!currentUserNip) return;
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors', // Penting agar tidak kena error CORS
+    body: JSON.stringify({
+      action: 'saveProgres',
+      nip: currentUserNip,
+      progres: JSON.stringify(state)
+    })
+  });
+}
+
+function showLoggedIn(nama) {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('user-info').style.display = 'block';
+  document.getElementById('user-name').innerText = nama;
+}
+
+function handleLogout() {
+  localStorage.clear();
+  location.reload();
+}
 
   </script>
 
