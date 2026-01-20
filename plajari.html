@@ -660,7 +660,7 @@
       btn.disabled = true;
 
       try {
-        // Membersihkan input agar hanya angka yang dikirim ke server
+        // Bersihkan input NIP agar hanya angka yang dikirim
         const cleanNip = String(nipRaw).replace(/\D/g, "");
         const cleanNama = String(namaRaw).trim();
 
@@ -679,12 +679,12 @@
           showToast("✅ Login Berhasil!");
           setTimeout(() => { location.reload(); }, 1000);
         } else {
-          showToast("❌ NIP atau Nama tidak terdaftar di database.");
+          showToast("❌ Data tidak ditemukan. Pastikan NIP dan Nama sesuai Database.");
           btn.innerText = "Masuk & Belajar";
           btn.disabled = false;
         }
       } catch (error) {
-        showToast("⚠️ Terjadi kesalahan koneksi.");
+        showToast("⚠️ Masalah koneksi server.");
         btn.innerText = "Masuk & Belajar";
         btn.disabled = false;
       }
