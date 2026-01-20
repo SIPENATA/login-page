@@ -548,19 +548,12 @@
   </div>
 
   <header>
-   
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
     <div id="userStats" style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 15px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto; border: 1px solid rgba(255,255,255,0.3);">
         <span title="Materi yang sedang dipelajari">📖 <b id="statTotal">0</b> Materi Dibaca</span>
         <span title="Sertifikat yang sudah didapat">🎓 <b id="statDone">0</b> Selesai</span>
     </div>
-
-    <div id="userAccount" style="display:none; padding: 10px; background: #fff; border-bottom: 2px solid #ddd; text-align: right;">
-        <span id="displayUserName" style="font-weight: bold; margin-right: 15px;"></span>
-        <button onclick="logOut()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Log Out</button>
-    </div>
-    
   </header>
 
 
@@ -697,25 +690,21 @@
       }
     }
 
-    async function updateProgressToCloud(statusMateri) {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (!savedUser) return;
-
-        try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    action: "saveProgress",
-                    nip: savedUser.nip,
-                    progres: statusMateri // Contoh: "Video Selesai, Modul Belum"
-                })
-            });
-            console.log("Progres berhasil sinkron ke Cloud");
-        } catch (e) {
-            console.error("Gagal sinkron progres");
+    // Cek status login saat halaman dibuka
+    document.addEventListener("DOMContentLoaded", function() {
+      const savedUser = localStorage.getItem("userData");
+      const loginModal = document.getElementById("loginModal");
+  
+      if (!savedUser) {
+        // Jika belum login, tampilkan modal
+        loginModal.style.display = "flex"; 
+        loginModal.classList.add("show");
+      } else {
+        // Jika sudah login, biarkan modal tetap tersembunyi
+        loginModal.style.display = "none";
       }
-    }
-
+    });
+    
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
     let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
@@ -1267,13 +1256,6 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       document.getElementById("instructionModal").classList.remove("show");
     }
 
-    function logOut() {
-      if (confirm("Apakah Anda yakin ingin keluar?")) {
-          localStorage.removeItem("userData");
-          location.reload();
-      }
-    }
-
 
     // Navigasi tab
     let currentFilter = "all";
@@ -1307,22 +1289,12 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
 
     // Aktifkan fungsi pencarian (Letakkan di luar event listener lain)
     document.addEventListener("DOMContentLoaded", function() {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (savedUser) {
-            // Tampilkan Menu Akun
-            document.getElementById("userAccount").style.display = "block";
-            document.getElementById("displayUserName").innerText = "Halo, " + savedUser.nama;
-        
-            // Sembunyikan modal login
-            document.getElementById("loginModal").style.display = "none";
-        
-            // OPSIONAL: Gunakan data progres dari Cloud untuk mencentang otomatis materi
-            // applyCloudProgress(savedUser.progres); 
-        } else {
-            document.getElementById("loginModal").style.display = "flex";
-            document.getElementById("loginModal").classList.add("show");
-        }
-    });
+      const searchInput = document.getElementById("searchInput");
+      if (searchInput) {
+        searchInput.addEventListener("input", function() {
+          renderMateri(currentFilter); 
+        });
+      }
       
       // Jalankan pertama kali saat halaman dimuat
       updateStats();
