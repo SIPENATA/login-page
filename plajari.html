@@ -638,14 +638,13 @@
 
     // Inisialisasi state tunggal
     let state = JSON.parse(localStorage.getItem("plajari_state")) || {
-      readStatus: {},
-      openedStatus: {},
-      printedStatus: {},
-      videoStatus: {},
-      modulStatus: {},
-      evalStatus: {},
-      studyTime: {},
-      readTime: {}
+      const readStatus    = state.readStatus;
+      const openedStatus  = state.openedStatus;
+      const printedStatus = state.printedStatus;
+      const videoStatus   = state.videoStatus;
+      const modulStatus   = state.modulStatus;
+      const evalStatus    = state.evalStatus;
+      const readTime      = state.readTime;
     };
 
     // Fungsi pembantu agar kode lama Anda tetap jalan tanpa ubah banyak baris
@@ -1305,8 +1304,8 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
 
 
     function getSisaWaktuBelajar(id) {
-      const sudah = getWaktuBelajarAktif(id);
-      const sisa = MIN_WAKTU_BELAJAR - sudah;
+      const total = getWaktuBelajarAktif(id);
+      const sisa = MIN_WAKTU_BELAJAR - total;
       return sisa > 0 ? sisa : 0;
     }
 
