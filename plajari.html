@@ -547,6 +547,11 @@
     </div>
   </div>
 
+  <div id="userAccount" style="display:none; padding: 10px; background: #fff; border-bottom: 2px solid #ddd; text-align: right;">
+      <span id="displayUserName" style="font-weight: bold; margin-right: 15px;"></span>
+      <button onclick="logOut()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Log Out</button>
+  </div>
+
   <header>
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
@@ -690,19 +695,53 @@
       }
     }
 
+    async function updateProgressToCloud(statusMateri) {
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+        if (!savedUser) return;
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "saveProgress",
+                    nip: savedUser.nip,
+                    progres: statusMateri // Contoh: "Video Selesai, Modul Belum"
+                })
+            });
+            console.log("Progres berhasil sinkron ke Cloud");
+        } catch (e) {
+            console.error("Gagal sinkron progres");
+        }
+    }
+
     // Cek status login saat halaman dibuka
     document.addEventListener("DOMContentLoaded", function() {
-      const savedUser = localStorage.getItem("userData");
-      const loginModal = document.getElementById("loginModal");
-  
-      if (!savedUser) {
-        // Jika belum login, tampilkan modal
-        loginModal.style.display = "flex"; 
-        loginModal.classList.add("show");
-      } else {
-        // Jika sudah login, biarkan modal tetap tersembunyi
-        loginModal.style.display = "none";
-      }
+        // Kita gunakan JSON.parse karena data sekarang disimpan sebagai objek {nip, nama}
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+        const loginModal = document.getElementById("loginModal");
+        const userAccount = document.getElementById("userAccount");
+        const displayUserName = document.getElementById("displayUserName");
+
+        if (savedUser && savedUser.nama) {
+            // 1. Jika data ditemukan, tampilkan bar akun (Halo, Nama!)
+            if (userAccount) userAccount.style.display = "block";
+            if (displayUserName) displayUserName.innerText = "Halo, " + savedUser.nama;
+        
+            // 2. Pastikan modal login tetap tertutup
+            if (loginModal) {
+                loginModal.style.display = "none";
+                loginModal.classList.remove("show");
+            }
+        } else {
+            // 3. Jika tidak ada data, sembunyikan bar akun dan paksa tampilkan modal login
+            if (userAccount) userAccount.style.display = "none";
+            if (loginModal) {
+                loginModal.style.display = "flex";
+                setTimeout(() => {
+                    loginModal.classList.add("show");
+                }, 100);
+            }
+        }
     });
     
     let currentActiveId = null; 
@@ -1249,6 +1288,13 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       toast.innerText = message;
       toast.style.display = "block";
       setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    function logOut() {
+      if (confirm("Apakah Anda yakin ingin keluar?")) {
+          localStorage.removeItem("userData");
+          location.reload();
+       }
     }
 
 
