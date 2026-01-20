@@ -648,19 +648,38 @@
       const nama = document.getElementById("userName").value.trim();
 
       if (nip === "" || nama === "") {
-        alert("NIP dan Nama harus diisi!");
+        showToast("⚠️ NIP dan Nama harus diisi!");
         return;
       }
 
-      userData = { nip: nip, nama: nama };
-      localStorage.setItem("userData", JSON.stringify(userData));
-  
-      showToast("Selamat datang, " + nama + "!");
-  
-      // Sembunyikan modal dengan animasi
-      const loginModal = document.getElementById("loginModal");
-      loginModal.classList.remove("show");
-      setTimeout(() => { loginModal.style.display = "none"; }, 3000);
+      // Tampilkan loading pada tombol
+      const btn = document.querySelector(".btn-confirm");
+      const originalText = btn.innerText;
+      btn.innerText = "Memverifikasi...";
+      btn.disabled = true;
+
+      // Kirim data ke Google Apps Script (Code.gs)
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.status === "success") {
+            // Simpan ke localStorage jika sukses di server
+            userData = { nip: nip, nama: nama };
+            localStorage.setItem("userData", JSON.stringify(userData));
+        
+            showToast("✅ Berhasil Masuk!");
+        
+            // Tutup modal
+            const loginModal = document.getElementById("loginModal");
+            loginModal.classList.remove("show");
+            setTimeout(() => { loginModal.style.display = "none"; }, 500);
+          }
+        })
+        .withFailureHandler(function(err) {
+          showToast("❌ Gagal terhubung ke server");
+          btn.innerText = originalText;
+          btn.disabled = false;
+        })
+        .registerUser(nip, nama); // Memanggil fungsi di Code.gs
     }
 
     // Tambahkan pemanggilan checkLoginStatus di dalam DOMContentLoaded
