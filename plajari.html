@@ -638,14 +638,26 @@
 
     // Inisialisasi state tunggal
     let state = JSON.parse(localStorage.getItem("plajari_state")) || {
-      const readStatus    = state.readStatus;
-      const openedStatus  = state.openedStatus;
-      const printedStatus = state.printedStatus;
-      const videoStatus   = state.videoStatus;
-      const modulStatus   = state.modulStatus;
-      const evalStatus    = state.evalStatus;
-      const readTime      = state.readTime;
+      readStatus: {},
+      openedStatus: {},
+      printedStatus: {},
+      videoStatus: {},
+      modulStatus: {},
+      evalStatus: {},
+      readTime: {},
+      studyTime: {}
     };
+
+    // ALIAS agar kode lama tetap jalan
+    const readStatus    = state.readStatus;
+    const openedStatus  = state.openedStatus;
+    const printedStatus = state.printedStatus;
+    const videoStatus   = state.videoStatus;
+    const modulStatus   = state.modulStatus;
+    const evalStatus    = state.evalStatus;
+    const readTime      = state.readTime;
+    const studyTime     = state.studyTime;
+
 
     // Fungsi pembantu agar kode lama Anda tetap jalan tanpa ubah banyak baris
     function syncLegacyVariables() {
@@ -1403,6 +1415,7 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       } else {
         studyStart[currentActiveId] = Date.now(); // Resume saat kembali
         localStorage.setItem("studyStart", JSON.stringify(studyStart));
+      });
       }
     });
 
