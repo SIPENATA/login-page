@@ -684,8 +684,12 @@
 
     // Tambahkan pemanggilan checkLoginStatus di dalam DOMContentLoaded
     document.addEventListener("DOMContentLoaded", function() {
-      checkLoginStatus(); // TAMBAHKAN INI
-      // ... kode DOMContentLoaded yang sudah ada ...
+      // Panggil fungsi cek login di sini
+      checkLoginStatus(); 
+
+      // Kode Anda yang sudah ada sebelumnya
+      renderMateri();
+      updateProgress();
     });
     
     let currentActiveId = null; 
