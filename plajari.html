@@ -713,24 +713,9 @@
             console.log("Progres berhasil sinkron ke Cloud");
         } catch (e) {
             console.error("Gagal sinkron progres");
-        }
+      }
     }
 
-    // Cek status login saat halaman dibuka
-    document.addEventListener("DOMContentLoaded", function() {
-      const savedUser = localStorage.getItem("userData");
-      const loginModal = document.getElementById("loginModal");
-  
-      if (!savedUser) {
-        // Jika belum login, tampilkan modal
-        loginModal.style.display = "flex"; 
-        loginModal.classList.add("show");
-      } else {
-        // Jika sudah login, biarkan modal tetap tersembunyi
-        loginModal.style.display = "none";
-      }
-    });
-    
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
     let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
