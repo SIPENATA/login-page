@@ -8,6 +8,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    
+    #loginModal {
+      display: none; /* Sembunyikan secara default */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #loginModal.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box input:focus {
+      outline: none;
+      border-color: #1B3C53;
+      box-shadow: 0 0 5px rgba(27, 60, 83, 0.2);
+    }
+    
     body {
       font-family: Montserrat !important;
       margin: 0;
