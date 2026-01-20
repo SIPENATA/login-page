@@ -651,7 +651,7 @@
       const namaRaw = document.getElementById("userName").value;
 
       if (!nipRaw || !namaRaw) {
-        showToast("⚠️ Mohon isi NIP dan Nama!");
+        showToast("⚠️ NIP dan Nama harus diisi!");
         return;
       }
 
@@ -660,8 +660,8 @@
       btn.disabled = true;
 
       try {
-        // Paksa menjadi string dan bersihkan spasi
-        const cleanNip = String(nipRaw).trim();
+        // Membersihkan input agar hanya angka yang dikirim ke server
+        const cleanNip = String(nipRaw).replace(/\D/g, "");
         const cleanNama = String(namaRaw).trim();
 
         const response = await fetch(SCRIPT_URL, {
@@ -684,7 +684,7 @@
           btn.disabled = false;
         }
       } catch (error) {
-        showToast("⚠️ Gagal terhubung ke server.");
+        showToast("⚠️ Terjadi kesalahan koneksi.");
         btn.innerText = "Masuk & Belajar";
         btn.disabled = false;
       }
