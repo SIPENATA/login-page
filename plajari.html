@@ -649,6 +649,7 @@
     async function saveLoginData() {
       const nip = document.getElementById("userNIP").value.trim();
       const nama = document.getElementById("userName").value.trim();
+      const cleanNip = String(nip).replace(/\D/g, "");
 
       if (nip === "" || nama === "") {
         alert("NIP dan Nama harus diisi!");
@@ -660,10 +661,10 @@
       btn.disabled = true;
 
       try {
-        // Mengirim data ke Google Sheets melalui URL Web App
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
-          body: JSON.stringify({ nip: nip, nama: nama })
+          // Pastikan NIP dikirim sebagai string yang sudah dibersihkan
+          body: JSON.stringify({ nip: cleanNip, nama: nama })
         });
 
         const result = await response.json();
