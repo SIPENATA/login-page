@@ -800,20 +800,16 @@ function renderMateri(filter = "all") {
 
   // ✅ AUTO SCROLL (DI LUAR forEach, MASIH DI DALAM renderMateri)
   // AUTO SCROLL hanya sekali per sesi
-if (
-  filter === "read" &&
-  lastMovedMateriId &&
-  !hasAutoScrolled
-) {
+if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
   setTimeout(() => {
     const target = document.getElementById(`materi-${lastMovedMateriId}`);
     if (target) {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+      target.scrollIntoView({behavior: "smooth", block: "center"});
 
-      document.getElementById("instructionModal").classList.add("show");
+      const modalInstruksi = document.getElementById("instructionModal");
+      if (modalInstruksi) {
+        modalInstruksi.classList.add("show");
+      }
 
       hasAutoScrolled = true; // 🔒 KUNCI SCROLL
     }
@@ -999,7 +995,7 @@ if (
       readTime[selectedMateriId] = Date.now();
       localStorage.setItem("readTime", JSON.stringify(readTime));
       lastMovedMateriId = selectedMateriId;
-
+      hasAutoScrolled = false;
       closeModal();
   
       showToast("✅ Berhasil! Materi dipindahkan ke 'Sudah Dibaca'");
