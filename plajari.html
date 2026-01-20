@@ -1191,7 +1191,7 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
     });
 
 
-  const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbyYqsC9LA_qg1kAsDPeD5QeW5o-j-IMR-eqjP0AzBYY-kfL_h7yySbNgPfYd5IMFdCelA/exec";
+  const LOGIN_API_URL = "https://script.google.com/macros/s/AKfycbxebIm-TaXBZ3sXsnW1Mv8Eole6V0X819XBwtCNJ-P9mtK0rT3Fb7WGB0WZcMHPsioQhQ/exec";
 
   function submitLogin() {
     const nama = document.getElementById("loginNama").value.trim();
@@ -1204,9 +1204,16 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       return;
     }
 
+    const formData = new URLSearchParams();
+    formData.append("nama", nama);
+    formData.append("nip", nip);
+
     fetch(LOGIN_API_URL, {
       method: "POST",
-      body: JSON.stringify({ nama, nip })
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData.toString()
     })
     .then(res => res.json())
     .then(data => {
@@ -1215,14 +1222,16 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
         document.getElementById("loginModal").classList.remove("show");
         showToast("✅ Login berhasil, selamat belajar!");
       } else {
+        error.innerText = "Nama atau NIP tidak terdaftar";
         error.style.display = "block";
       }
     })
     .catch(() => {
-      error.innerText = "Koneksi gagal";
+      error.innerText = "Koneksi ke server gagal";
       error.style.display = "block";
     });
   }
+
 
   // CEK SAAT LOAD
   document.addEventListener("DOMContentLoaded", () => {
