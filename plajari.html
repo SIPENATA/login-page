@@ -1244,15 +1244,13 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       });
     }
 
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      if (t) {
-        t.innerText = msg;
-        t.className = "show";
-        setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
-      } else {
-        alert(msg);}
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.innerText = message;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
+
 
     function closeInstructionModal() {
       document.getElementById("instructionModal").classList.remove("show");
