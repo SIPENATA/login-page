@@ -733,6 +733,55 @@
       }
     }
 
+    // Fungsi Mengirim data ke Cloud
+function saveToCloud() {
+  if (!currentUserNip) return;
+  
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors', // Penting agar tidak kena error CORS
+    body: JSON.stringify({
+      action: 'saveProgres',
+      nip: currentUserNip,
+      progres: JSON.stringify(state)
+    })
+  });
+}
+
+function showLoggedIn(nama) {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('user-info').style.display = 'block';
+  document.getElementById('user-name').innerText = nama;
+}
+
+function handleLogout() {
+  localStorage.clear();
+  location.reload();
+}
+
+    // Fungsi login otomatis jika sudah pernah login sebelumnya
+    async function autoLogin(nip) {
+      // Langsung sembunyikan modal agar tidak mengganggu yang sudah login
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('user-info-bar').classList.remove('hidden');
+  
+      // Ambil data terbaru dari cloud untuk sinkronisasi
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'login', nip: nip })
+      });
+      const data = await response.json();
+  
+      if (data.success) {
+        document.getElementById('user-name').innerText = data.nama;
+        if (data.progres) state = JSON.parse(data.progres);
+        renderMateri("all");
+      } else {
+        // Jika NIP tiba-tiba tidak valid (dihapus admin), paksa logout
+        handleLogout();
+      }
+    }
+
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
     let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
@@ -1319,93 +1368,6 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       updateStats();
       renderMateri("all");
     });
-
-    // Fungsi saat tombol Masuk diklik
-async function handleLogin() {
-  const nip = document.getElementById('nip-input').value;
-  if (!nip) return alert("Masukkan NIP!");
-
-  const btn = document.querySelector('#login-form button');
-  btn.innerText = "Loading...";
-  btn.disabled = true;
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'login', nip: nip })
-    });
-    const data = await response.json();
-
-    if (data.success) {
-      currentUserNip = nip;
-      localStorage.setItem("plajari_nip", nip);
-      
-      // Jika ada progres lama di cloud, timpa data lokal
-      if (data.progres) {
-        state = JSON.parse(data.progres);
-      }
-      
-      showLoggedIn(data.nama);
-      renderMateri("all"); // Render ulang tampilan
-    } else {
-      alert(data.message);
-    }
-  } catch (e) {
-    alert("Gagal terhubung ke database. Pastikan internet aktif.");
-  } finally {
-    btn.innerText = "Masuk";
-    btn.disabled = false;
-  }
-}
-
-// Fungsi Mengirim data ke Cloud
-function saveToCloud() {
-  if (!currentUserNip) return;
-  
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors', // Penting agar tidak kena error CORS
-    body: JSON.stringify({
-      action: 'saveProgres',
-      nip: currentUserNip,
-      progres: JSON.stringify(state)
-    })
-  });
-}
-
-function showLoggedIn(nama) {
-  document.getElementById('login-form').style.display = 'none';
-  document.getElementById('user-info').style.display = 'block';
-  document.getElementById('user-name').innerText = nama;
-}
-
-function handleLogout() {
-  localStorage.clear();
-  location.reload();
-}
-
-    // Fungsi login otomatis jika sudah pernah login sebelumnya
-    async function autoLogin(nip) {
-      // Langsung sembunyikan modal agar tidak mengganggu yang sudah login
-      document.getElementById('login-modal').classList.add('hidden');
-      document.getElementById('user-info-bar').classList.remove('hidden');
-  
-      // Ambil data terbaru dari cloud untuk sinkronisasi
-      const response = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'login', nip: nip })
-      });
-      const data = await response.json();
-  
-      if (data.success) {
-        document.getElementById('user-name').innerText = data.nama;
-        if (data.progres) state = JSON.parse(data.progres);
-        renderMateri("all");
-      } else {
-        // Jika NIP tiba-tiba tidak valid (dihapus admin), paksa logout
-        handleLogout();
-      }
-    }
 
   </script>
 
