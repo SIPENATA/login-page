@@ -509,6 +509,26 @@
 </head>
 <body>
 
+  <div id="loginModal" class="modal-overlay" style="display: flex;">
+    <div class="modal-box" style="max-width: 400px;">
+      <div style="font-size: 50px; margin-bottom: 10px;"> 👤 </div>
+      <h3 style="color: #1B3C53;">Selamat Datang!</h3>
+      <p>Silakan isi data diri Anda untuk memulai pembelajaran.</p>
+      <div style="text-align: left; margin-top: 15px;">
+        <label style="font-size: 14px; font-weight: 600;">NIP :</label>
+        <input type="text" id="userNIP" placeholder="Masukkan NIP Anda" 
+               style="width: 100%; padding: 10px; margin: 8px 0 15px; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
+      
+        <label style="font-size: 14px; font-weight: 600;">Nama Lengkap :</label>
+        <input type="text" id="userName" placeholder="Masukkan Nama Lengkap" 
+               style="width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-confirm" onclick="saveLoginData()" style="width: 100%;">Masuk & Belajar</button>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
     <h2>Sukoharjo Corporate University</h2>
@@ -587,7 +607,50 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
     let evalStatus = JSON.parse(localStorage.getItem("evalStatus")) || {};
 
+    // Cek apakah user sudah login sebelumnya
+    let userData = JSON.parse(localStorage.getItem("userData")) || null;
 
+    // Fungsi untuk mengecek status login saat halaman dimuat
+    function checkLoginStatus() {
+      const loginModal = document.getElementById("loginModal");
+      if (!userData) {
+        // Jika belum ada data user, tampilkan modal login
+        loginModal.classList.add("show");
+      } else {
+        // Jika sudah ada, sembunyikan modal
+        loginModal.classList.remove("show");
+        loginModal.style.display = "none";
+        console.log("Welcome back, " + userData.nama);
+      }
+    }
+
+    // Fungsi untuk menyimpan data login ke localStorage
+    function saveLoginData() {
+      const nip = document.getElementById("userNIP").value.trim();
+      const nama = document.getElementById("userName").value.trim();
+
+      if (nip === "" || nama === "") {
+        alert("NIP dan Nama harus diisi!");
+        return;
+      }
+
+      userData = { nip: nip, nama: nama };
+      localStorage.setItem("userData", JSON.stringify(userData));
+  
+      showToast("Selamat datang, " + nama + "!");
+  
+      // Sembunyikan modal dengan animasi
+      const loginModal = document.getElementById("loginModal");
+      loginModal.classList.remove("show");
+      setTimeout(() => { loginModal.style.display = "none"; }, 3000);
+    }
+
+    // Tambahkan pemanggilan checkLoginStatus di dalam DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function() {
+      checkLoginStatus(); // TAMBAHKAN INI
+      // ... kode DOMContentLoaded yang sudah ada ...
+    });
+    
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
     let currentEvalId = null; // Variabel sementara untuk menyimpan ID materi
@@ -896,10 +959,25 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
 
       title.innerText = "Evaluasi Belajar: Selesaikan Kuis";
 
+      // --- BAGIAN MODIFIKASI DIMULAI ---
       let finalUrl = currentEvalUrl;
+
+      // 1. Ambil data user dari localStorage
+      const storedUser = JSON.parse(localStorage.getItem("userData"));
+
+      if (storedUser) {
+        // 2. Tambahkan parameter pre-fill ke URL
+        // PENTING: Ganti angka di entry.xxxxxx sesuai dengan ID Form Anda
+        finalUrl += (finalUrl.includes("?") ? "&" : "?") + 
+                    "entry.12345678=" + encodeURIComponent(storedUser.nip) + 
+                    "&entry.87654321=" + encodeURIComponent(storedUser.nama);
+      }
+
+      // 3. Tambahkan parameter embedded agar tampilan rapi di modal
       if (!finalUrl.includes("embedded=true")) {
         finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
       }
+      // --- BAGIAN MODIFIKASI SELESAI ---
 
       player.src = finalUrl; 
       modal.classList.add("show");
