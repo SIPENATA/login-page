@@ -652,19 +652,17 @@
     function syncLegacyVariables() {
       localStorage.setItem("plajari_state", JSON.stringify(state));
     }
+    
+    let studyStart = {}; 
+    let lastMovedMateriId = null;
+    let hasAutoScrolled = false;
+    let newBadgeShown = JSON.parse(localStorage.getItem("newBadgeShown")) || {};
 
 
     // GANTI DENGAN URL APPS SCRIPT ANDA
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIQRv3GjCYaS0-SUlV7JXyAJ6b6VHwfozhaRrqTWgTB-Lr7Wq3tKDgaQa5GoPxi1DWsQ/exec"; 
 
     let currentUserNip = localStorage.getItem("plajari_nip") || null;
-
-    let state = JSON.parse(localStorage.getItem("plajari_state")) || {
-      opened: {},
-      startTime: {},
-      checklist: {},
-      printed: {}
-    };
 
     window.onload = function() {
       const modal = document.getElementById('login-modal');
@@ -811,19 +809,16 @@
     const container = document.getElementById("materi-container");
 
     function updateStats() {
-       // Menghitung jumlah materi yang sudah diklik "Mulai Belajar" (readStatus)
-       const totalRead = Object.values(readStatus).filter(status => status === true).length;
-   
-       // Menghitung jumlah materi yang sudah mengerjakan evaluasi (evalStatus)
-       const totalDone = Object.values(evalStatus).filter(status => status === true).length;
-     
-       // Update teks di header
+       const totalRead = Object.values(state.readStatus).filter(status => status === true).length;
+       const totalDone = Object.values(state.evalStatus).filter(status => status === true).length;
+
        const statTotalEl = document.getElementById("statTotal");
        const statDoneEl = document.getElementById("statDone");
 
        if (statTotalEl) statTotalEl.innerText = totalRead;
        if (statDoneEl) statDoneEl.innerText = totalDone;
     }
+
 
 
 
@@ -867,6 +862,8 @@ function renderMateri(filter = "all") {
     const isRead = state.readStatus[materi.id] === true;
     const isPrinted = state.printedStatus[materi.id] === true;
     const isEvalDone = state.evalStatus[materi.id] === true;
+    const isVideoDone = state.videoStatus[materi.id] === true;
+    const isModulDone = state.modulStatus[materi.id] === true;
 
 
     const waktuSkr = getWaktuBelajarAktif(materi.id); const sisa = MIN_WAKTU_BELAJAR - waktuSkr;         
@@ -1295,14 +1292,17 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
     }
 
     function getWaktuBelajarAktif(id) {
-      let total = studyTime[id] || 0;
+      // Ambil dari state.studyTime
+      let total = state.studyTime[id] || 0;
 
-      if (studyStart[id]) {
+      // studyStart biasanya tidak perlu masuk state karena bersifat sementara (session)
+      if (typeof studyStart !== 'undefined' && studyStart[id]) {
         total += Date.now() - studyStart[id];
       }
 
       return total;
     }
+
 
     function getSisaWaktuBelajar(id) {
       const sudah = getWaktuBelajarAktif(id);
