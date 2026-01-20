@@ -651,15 +651,70 @@
     let studyStart = JSON.parse(localStorage.getItem("studyStart")) || {};
     let evalStatus = JSON.parse(localStorage.getItem("evalStatus")) || {};
 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2wnG78EdwInXdQTVSyhKTO9yk5yWgL4qjRLU2rPzcODXtimCgHOEexaHqo9Rcxt_StQ/exec"; // Ganti dengan URL dari Langkah 2
+    // GANTI DENGAN URL APPS SCRIPT ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2wnG78EdwInXdQTVSyhKTO9yk5yWgL4qjRLU2rPzcODXtimCgHOEexaHqo9Rcxt_StQ/exec"; 
+
     let currentUserNip = localStorage.getItem("plajari_nip") || null;
 
-    let state = {
-      opened: {},
-      startTime: {},
-      checklist: {},
-      printed: {}
+    // Satukan semua status ke dalam satu objek 'state' agar mudah dikirim ke Cloud
+    let state = JSON.parse(localStorage.getItem("plajari_state")) || {
+      opened: JSON.parse(localStorage.getItem("openedStatus")) || {},
+      startTime: JSON.parse(localStorage.getItem("studyStart")) || {},
+      checklist: JSON.parse(localStorage.getItem("checkedStatus")) || {},
+      printed: JSON.parse(localStorage.getItem("printedStatus")) || {}
     };
+
+    window.onload = function() {
+      const modal = document.getElementById('login-modal');
+      const infoBar = document.getElementById('user-info-bar');
+
+      if (currentUserNip) {
+        // Jika sudah login
+        modal.classList.add('hidden');
+        infoBar.classList.remove('hidden');
+        // Ambil nama dari memori atau database
+        document.getElementById('user-name').innerText = "ASN"; 
+        renderMateri("all"); 
+      } else {
+        // Jika belum login, pastikan pop-up muncul
+        modal.classList.remove('hidden');
+      }
+    };
+
+    async function handleLogin() {
+      const nipInput = document.getElementById('nip-input').value;
+      const btn = document.getElementById('btn-login');
+      const msg = document.getElementById('login-msg');
+
+      if (!nipInput) return alert("Silahkan masukkan NIP!");
+
+      btn.innerText = "Memverifikasi...";
+      btn.disabled = true;
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'login', nip: nipInput })
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          currentUserNip = nipInput;
+          localStorage.setItem("plajari_nip", nipInput);
+          document.getElementById('user-name').innerText = data.nama;
+          document.getElementById('login-modal').classList.add('hidden');
+          document.getElementById('user-info-bar').classList.remove('hidden');
+          renderMateri("all");
+        } else {
+          msg.innerText = data.message;
+        }
+      } catch (err) {
+        msg.innerText = "Koneksi ke Database Gagal!";
+      } finally {
+        btn.innerText = "Masuk ke Platform";
+        btn.disabled = false;
+      }
+    }
 
     let currentActiveId = null; 
     let currentEvalUrl = ""; // Variabel sementara untuk menyimpan link form
@@ -1310,62 +1365,6 @@ function showLoggedIn(nama) {
 function handleLogout() {
   localStorage.clear();
   location.reload();
-}
-
-    // Cek status login saat halaman dimuat
-window.onload = function() {
-  if (currentUserNip) {
-    // Jika sudah ada NIP di localStorage, ambil data dari cloud (opsional) atau langsung tampilkan
-    autoLogin(currentUserNip);
-  } else {
-    // Jika belum login, pastikan modal muncul
-    document.getElementById('login-modal').classList.remove('hidden');
-  }
-};
-
-async function handleLogin() {
-  const nip = document.getElementById('nip-input').value;
-  const msg = document.getElementById('login-msg');
-  const btn = document.getElementById('btn-login');
-
-  if (!nip) {
-    msg.innerText = "NIP tidak boleh kosong!";
-    return;
-  }
-
-  btn.innerText = "Memverifikasi...";
-  btn.disabled = true;
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'login', nip: nip })
-    });
-    const data = await response.json();
-
-    if (data.success) {
-      currentUserNip = nip;
-      localStorage.setItem("plajari_nip", nip);
-      
-      if (data.progres) {
-        state = JSON.parse(data.progres);
-      }
-      
-      // Sembunyikan Pop-up & Tampilkan Info Bar
-      document.getElementById('login-modal').classList.add('hidden');
-      document.getElementById('user-info-bar').classList.remove('hidden');
-      document.getElementById('user-name').innerText = data.nama;
-      
-      renderMateri("all");
-    } else {
-      msg.innerText = data.message;
-    }
-  } catch (e) {
-    msg.innerText = "Gangguan koneksi ke database.";
-  } finally {
-    btn.innerText = "Masuk ke Platform";
-    btn.disabled = false;
-  }
 }
 
     // Fungsi login otomatis jika sudah pernah login sebelumnya
