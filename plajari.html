@@ -665,13 +665,14 @@
       btn.disabled = true;
 
       try {
-        // Bersihkan input NIP agar hanya angka yang dikirim
         const cleanNip = String(nipRaw).replace(/\D/g, "");
         const cleanNama = String(namaRaw).trim();
 
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
+          // TAMBAHKAN action: "login" DI SINI
           body: JSON.stringify({
+            action: "login", 
             nip: cleanNip,
             nama: cleanNama
           })
