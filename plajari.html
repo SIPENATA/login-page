@@ -647,43 +647,44 @@
 
     // Fungsi untuk menyimpan data login ke localStorage
     async function saveLoginData() {
-      const nip = document.getElementById("userNIP").value.trim();
-      const nama = document.getElementById("userName").value.trim();
-      const cleanNip = String(nip).replace(/\D/g, "");
+      const nipRaw = document.getElementById("userNIP").value;
+      const namaRaw = document.getElementById("userName").value;
 
-      if (nip === "" || nama === "") {
-        alert("NIP dan Nama harus diisi!");
+      if (!nipRaw || !namaRaw) {
+        showToast("⚠️ Mohon isi NIP dan Nama!");
         return;
-      }
+    }
 
       const btn = document.querySelector(".btn-confirm");
       btn.innerText = "Memverifikasi...";
       btn.disabled = true;
 
       try {
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          // Pastikan NIP dikirim sebagai string yang sudah dibersihkan
-          body: JSON.stringify({ nip: cleanNip, nama: nama })
-        });
+      // Paksa menjadi string dan bersihkan spasi
+      const cleanNip = String(nipRaw).trim();
+      const cleanNama = String(namaRaw).trim();
+
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          nip: cleanNip,
+          nama: cleanNama
+        })
+     });
 
         const result = await response.json();
 
         if (result.status === "success") {
-          userData = { nip: nip, nama: nama };
-          localStorage.setItem("userData", JSON.stringify(userData));
-      
-          document.getElementById("loginModal").classList.remove("show");
-          document.getElementById("loginModal").style.display = "none";
-          showToast("Selamat Datang, " + nama);
+          localStorage.setItem("userData", JSON.stringify({ nip: cleanNip, nama: cleanNama }));
+          showToast("✅ Login Berhasil!");
+          setTimeout(() => { location.reload(); }, 1000);
         } else {
-          alert("Maaf, NIP atau Nama tidak terdaftar di database.");
+          showToast("❌ NIP atau Nama tidak terdaftar di database.");
           btn.innerText = "Masuk & Belajar";
           btn.disabled = false;
         }
       } catch (error) {
-        console.error(error);
-        alert("Gagal terhubung ke server. Pastikan URL Script benar.");
+        showToast("⚠️ Gagal terhubung ke server.");
         btn.innerText = "Masuk & Belajar";
         btn.disabled = false;
       }
@@ -1243,11 +1244,14 @@ if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
       });
     }
 
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.innerText = message;
-      toast.style.display = "block";
-      setTimeout(() => { toast.style.display = "none"; }, 3000);
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      if (t) {
+        t.innerText = msg;
+        t.className = "show";
+        setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+      } else {
+        alert(msg);
     }
 
     function closeInstructionModal() {
