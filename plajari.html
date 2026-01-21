@@ -9,37 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
     
-    #userAccount {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end !important; /* ⬅️ KUNCI */
-      background: #ffffff;
-      padding: 8px 16px;
-      border-bottom: 1px solid #e0e0e0;
-      position: sticky;
-      top: 0;
-      z-index: 1100;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    #displayUserName {
-      font-weight: 600;
-      color: #1B3C53 !important; /* Paksa warna biru gelap agar tidak hilang/putih */
-      font-size: 14px;
-      text-align: left;
-    }
-
-    #logoutBtn {
-      background: #e74c3c;
-      color: #fff;
-      border: none;
-      padding: 7px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    
     #loginModal {
       display: none; /* Sembunyikan secara default */
       opacity: 0;
@@ -93,13 +62,10 @@
       justify-content: center;
       width: 100%;
       background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       position: sticky;
-      top: 32px;
+      top: 0;
       z-index: 1000;
-      padding: 7px 0;
-      gap: 8px;
-      border-bottom: 1px solid #eee;
     }   
 
     nav button {
@@ -581,13 +547,10 @@
     </div>
   </div>
 
-  <div id="userAccount">
-    <div class="user-right">
-      <span id="displayUserName">Halo, lungid</span>
-      <button id="logoutBtn">Keluar</button>
-    </div>
+  <div id="userAccount" style="display:none; padding: 10px; background: #fff; border-bottom: 2px solid #ddd; text-align: right;">
+      <span id="displayUserName" style="font-weight: bold; margin-right: 15px;"></span>
+      <button onclick="logOut()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Log Out</button>
   </div>
-    
 
   <header>
     <h1>Platform Belajar Mandiri (PLAJARI)</h1>
@@ -597,6 +560,7 @@
         <span title="Sertifikat yang sudah didapat">🎓 <b id="statDone">0</b> Selesai</span>
     </div>
   </header>
+
 
   <div class="step-guide">
     <b>Alur Belajar:</b> 1. Pilih Materi di "Belum Dibaca" ➔ 2. Klik "Mulai Belajar" ➔ 3. Tonton Video & Baca Modul (Min. 5 Menit) ➔ 4. Ceklis Status ➔ 5. Cetak Sertifikat.
