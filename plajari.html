@@ -10,15 +10,15 @@
   <style>
     
     #userAccount {
-      display: none; /* Default sembunyi */
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* ⬅️ KUNCI */
       background: #ffffff;
-      padding: 8px 13px;
+      padding: 8px 16px;
       border-bottom: 1px solid #e0e0e0;
-    
-      /* Agar Tetap di Atas */
       position: sticky;
       top: 0;
-      z-index: 1100; /* Paling depan */
+      z-index: 1100;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
 
@@ -26,7 +26,18 @@
       font-weight: 600;
       color: #1B3C53 !important; /* Paksa warna biru gelap agar tidak hilang/putih */
       font-size: 14px;
-      text-align: right;
+      text-align: left;
+    }
+
+    #logoutBtn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 7px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
     }
     
     #loginModal {
@@ -84,7 +95,7 @@
       background: #fff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: sticky;
-      top: 47px;
+      top: 48px;
       z-index: 1000;
       padding: 7px 0;
       gap: 8px;
@@ -571,10 +582,8 @@
   </div>
 
   <div id="userAccount">
-      <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-          <span id="displayUserName"></span>
-          <button onclick="logout()" style="background: #e74c3c; color: white; border: none; padding: 7px 15px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">Keluar</button>
-      </div>
+    <span id="displayUserName"></span>
+    <button id="logoutBtn" onclick="logout()">Keluar</button>
   </div>
 
   <header>
