@@ -9,6 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <style>
 
+     #userAccount {
+       position: sticky; 
+       display: none; 
+       padding: 10px; 
+       background: #fff; 
+       border-bottom: 2px solid #ddd; 
+       text-align: right;
+     }
+      
+     #displayUserName { 
+       font-weight: bold; 
+       margin-right: 15px;
+     }
+      
     #loginModal {
       display: none; /* Sembunyikan secara default */
       opacity: 0;
@@ -547,8 +561,8 @@
     </div>
   </div>
 
-  <div id="userAccount" style="position: sticky; display:none; padding: 10px; background: #fff; border-bottom: 2px solid #ddd; text-align: right;">
-      <span id="displayUserName" style="font-weight: bold; margin-right: 15px;"></span>
+  <div id="userAccount">
+      <span id="displayUserName">
       <button onclick="logOut()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Log Out</button>
   </div>
 
