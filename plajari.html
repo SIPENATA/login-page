@@ -23,6 +23,15 @@
        font-weight: bold; 
        margin-right: 15px;
      }
+
+    #logOut {
+      background: #e74c3c; 
+      color: white; 
+      border: none; 
+      padding: 5px 10px; 
+      border-radius: 4px; 
+      cursor: pointer;
+    }
       
     #loginModal {
       display: none; /* Sembunyikan secara default */
@@ -563,8 +572,11 @@
   </div>
 
   <div id="userAccount">
-      <span id="displayUserName">
-      <button onclick="logOut()" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Log Out</button>
+      <div id="displayUserName">
+      <div id="logOut"; button onclick="logOut()">
+        Keluar </button>
+      </div>
+      </div>
   </div>
 
   <header>
