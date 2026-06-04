@@ -1315,11 +1315,11 @@
       clearInterval(evalCountdownInterval);
       evalSecondsLeft   = EVAL_LOCK_DURATION;
       evalFormSubmitted = false;
-      // Lepas listener iframe agar tidak trigger saat buka video materi biasa
+      // Lepas semua listener agar tidak trigger saat buka video materi biasa
+      window.removeEventListener("message", onGoogleFormMessage);
       const iframe = document.getElementById("videoPlayer");
       if (iframe) {
         iframe.removeEventListener("load", onIframeLoad);
-        iframe._loadCount = 0;
         iframe.src = "";
       }
       document.getElementById("videoModal").classList.remove("show");
@@ -1374,42 +1374,50 @@
       }
     }
 
-    // ---- Syarat 1: Deteksi submit Google Form via iframe ----
-    // Ketika user submit Google Form, iframe akan reload ke halaman konfirmasi.
-    // URL/judul halaman konfirmasi Google Form mengandung kata kunci tertentu.
+    // ---- Syarat 1: Deteksi submit Google Form ----
+    // Google Form setelah submit mengirim postMessage ke parent window
+    // dengan tipe "freebirdFormviewerViewFormConfirmationMessage".
+    // Ini adalah satu-satunya cara andal yang tidak terpengaruh navigasi
+    // antar halaman (Berikutnya / Kembali) dalam form multi-halaman.
     function attachIframeSubmitDetector() {
-      const iframe = document.getElementById("videoPlayer");
-      if (!iframe) return;
-
-      // Hapus listener lama jika ada
-      iframe.removeEventListener("load", onIframeLoad);
-      iframe.addEventListener("load", onIframeLoad);
+      // Pasang listener postMessage di window (bukan di iframe)
+      // Hapus dulu jika sudah ada agar tidak double
+      window.removeEventListener("message", onGoogleFormMessage);
+      window.addEventListener("message", onGoogleFormMessage);
     }
 
-    function onIframeLoad() {
-      if (!isEvalMode) return; // abaikan jika bukan mode evaluasi
+    function onGoogleFormMessage(event) {
+      if (!isEvalMode) return;
 
+      // Google Form mengirim pesan ini HANYA saat form berhasil disubmit
+      const isConfirmation =
+        (typeof event.data === "string" && (
+          event.data.includes("formResponse") ||
+          event.data.includes("freebirdFormviewerViewFormConfirmationMessage")
+        )) ||
+        (typeof event.data === "object" && event.data !== null && (
+          event.data.type === "freebirdFormviewerViewFormConfirmationMessage" ||
+          (event.data.source && event.data.source.includes("google")) ||
+          JSON.stringify(event.data).includes("formResponse") ||
+          JSON.stringify(event.data).includes("Confirmation")
+        ));
+
+      if (isConfirmation) {
+        onFormSubmitDetected();
+      }
+    }
+
+    // Fallback: deteksi via iframe src berubah ke halaman konfirmasi
+    // Hanya berlaku jika browser mengizinkan baca URL (same-origin atau tidak diblokir)
+    function onIframeLoad() {
+      if (!isEvalMode) return;
       try {
-        // Coba baca URL iframe (akan gagal jika cross-origin, tapi kita tangani)
         const iframeUrl = this.contentWindow.location.href;
-        // Google Form setelah submit mengarah ke URL yang mengandung "formResponse"
         if (iframeUrl && iframeUrl.includes("formResponse")) {
           onFormSubmitDetected();
-          return;
         }
       } catch(e) {
-        // Cross-origin block — normal terjadi. Gunakan strategi alternatif.
-      }
-
-      // Strategi alternatif: iframe load KEDUA (setelah load pertama saat form dibuka)
-      // Load pertama = form dimuat. Load kedua = form disubmit (halaman konfirmasi).
-      if (typeof this._loadCount === "undefined") {
-        this._loadCount = 0;
-      }
-      this._loadCount++;
-      // Load ke-2 atau lebih = kemungkinan besar halaman konfirmasi submit
-      if (this._loadCount >= 2) {
-        onFormSubmitDetected();
+        // Cross-origin — normal, abaikan. postMessage sudah menangani ini.
       }
     }
 
@@ -1487,16 +1495,16 @@
         finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
       }
 
-      // Reset loadCount untuk deteksi submit
-      player._loadCount = 0;
       player.src = finalUrl;
 
       document.getElementById("evalDoneWrapper").style.display = "block";
       modal.classList.add("show");
       showToast("📝 Isi dan submit form evaluasi, lalu tunggu timer selesai.");
 
-      // Pasang detektor submit di iframe
+      // Pasang detektor: postMessage (utama) + iframe load (fallback)
       attachIframeSubmitDetector();
+      player.removeEventListener("load", onIframeLoad);
+      player.addEventListener("load", onIframeLoad);
       // Mulai countdown timer
       startEvalCountdown();
     }
