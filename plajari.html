@@ -601,6 +601,55 @@
       cursor: not-allowed;
     }
 
+    /* ===== EVAL TIMER LOCK ===== */
+    #evalCountdownBar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0 4px;
+    }
+
+    #evalCountdownFill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0d6efd, #28a745);
+      border-radius: 10px;
+      transition: width 1s linear;
+    }
+
+    #evalDoneBtn {
+      margin-top: 10px;
+      background: #adb5bd;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-family: Montserrat;
+      font-weight: 600;
+      cursor: not-allowed;
+      width: 100%;
+      font-size: 13px;
+      transition: background 0.4s, transform 0.2s;
+    }
+
+    #evalDoneBtn.unlocked {
+      background: linear-gradient(135deg, #28a745, #1aa179);
+      cursor: pointer;
+      animation: pulse-green 1.5s infinite;
+    }
+
+    #evalDoneBtn.unlocked:hover {
+      transform: scale(1.02);
+    }
+
+    @keyframes pulse-green {
+      0%   { box-shadow: 0 0 0 0 rgba(40,167,69,0.5); }
+      70%  { box-shadow: 0 0 0 10px rgba(40,167,69,0); }
+      100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
+    }
+
     @keyframes slideUp {
       from { bottom: 0; opacity: 0; }
       to { bottom: 50px; opacity: 1; }
@@ -735,12 +784,27 @@
         </iframe>
       </div>
 
-      <!-- FIX #7: Tombol selesai evaluasi MANUAL oleh user -->
-      <div id="evalDoneWrapper" style="display:none; margin-top: 12px; padding: 10px; background: #fff3cd; border-radius: 8px; font-size: 13px; color: #856404; border: 1px solid #ffeeba;">
-        <b>Sudah selesai mengerjakan evaluasi?</b><br>
-        Klik tombol di bawah untuk menandai evaluasi sebagai selesai.
-        <button onclick="markEvalDone()" style="margin-top: 8px; background: #28a745; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; font-family: Montserrat; font-weight: 600; cursor: pointer; width: 100%;">
-          ✅ Saya Sudah Selesai Evaluasi
+      <!-- EVAL: Panel 2 syarat — submit form + timer minimum -->
+      <div id="evalDoneWrapper" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:13px; border:1px solid #ffeeba; background:#fff3cd; color:#856404;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="font-size:18px;">&#x1F4CB;</span>
+          <div style="flex:1;">
+            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 1: Submit Form Evaluasi</b>
+            <span id="submitStatusText" style="font-size:11px; color:#8C1007;">&#x23F3; Belum terdeteksi &mdash; isi dan submit form di atas</span>
+          </div>
+          <span id="submitStatusIcon" style="font-size:18px;">&#x274C;</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <span style="font-size:18px;">&#x23F1;&#xFE0F;</span>
+          <div style="flex:1;">
+            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 2: Waktu Minimum (3 menit)</b>
+            <span style="font-size:11px; color:#666;">Anda harus berada di halaman evaluasi minimal 3 menit</span>
+          </div>
+          <span id="evalCountdownText" style="font-family:monospace; font-weight:700; font-size:14px; color:#8C1007; white-space:nowrap;">03:00</span>
+        </div>
+        <div id="evalCountdownBar"><div id="evalCountdownFill"></div></div>
+        <button id="evalDoneBtn" onclick="markEvalDone()" disabled style="margin-top:10px;">
+          &#x1F512; Selesaikan Kedua Syarat Dulu
         </button>
       </div>
 
@@ -1247,7 +1311,17 @@
         currentActiveId = null;
       }
       isEvalMode = false;
-      document.getElementById("videoPlayer").src = "";
+      // Reset semua state evaluasi
+      clearInterval(evalCountdownInterval);
+      evalSecondsLeft   = EVAL_LOCK_DURATION;
+      evalFormSubmitted = false;
+      // Lepas listener iframe agar tidak trigger saat buka video materi biasa
+      const iframe = document.getElementById("videoPlayer");
+      if (iframe) {
+        iframe.removeEventListener("load", onIframeLoad);
+        iframe._loadCount = 0;
+        iframe.src = "";
+      }
       document.getElementById("videoModal").classList.remove("show");
       document.getElementById("evalDoneWrapper").style.display = "none";
       renderMateri(currentFilter);
@@ -1265,6 +1339,132 @@
       document.getElementById("evaluasiConfirmModal").classList.remove("show");
       currentEvalUrl = "";
       currentEvalId  = null;
+    }
+
+    // ===== SISTEM EVALUASI: 2 SYARAT WAJIB =====
+    // Syarat 1: User benar-benar submit Google Form (deteksi via iframe load event)
+    // Syarat 2: Timer minimum 3 menit di halaman evaluasi
+    const EVAL_LOCK_DURATION = 3 * 60; // detik
+    let evalCountdownInterval = null;
+    let evalSecondsLeft       = EVAL_LOCK_DURATION;
+    let evalFormSubmitted     = false; // flag: apakah form sudah disubmit
+
+    // Cek apakah kedua syarat terpenuhi, lalu unlock tombol jika iya
+    function checkEvalRequirements() {
+      const timerOk  = evalSecondsLeft <= 0;
+      const submitOk = evalFormSubmitted;
+      const btn      = document.getElementById("evalDoneBtn");
+      if (!btn) return;
+
+      if (timerOk && submitOk) {
+        // KEDUA SYARAT TERPENUHI — unlock tombol
+        btn.disabled = false;
+        btn.classList.add("unlocked");
+        btn.innerHTML = "&#x2705; Saya Sudah Selesai Evaluasi";
+        showToast("✅ Kedua syarat terpenuhi! Klik tombol hijau untuk konfirmasi.");
+      } else {
+        // Update teks tombol sesuai kondisi yang belum terpenuhi
+        if (!submitOk && !timerOk) {
+          btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu";
+        } else if (!submitOk) {
+          btn.innerHTML = "&#x1F512; Form Belum Disubmit";
+        } else {
+          btn.innerHTML = "&#x1F512; Tunggu Timer Selesai";
+        }
+      }
+    }
+
+    // ---- Syarat 1: Deteksi submit Google Form via iframe ----
+    // Ketika user submit Google Form, iframe akan reload ke halaman konfirmasi.
+    // URL/judul halaman konfirmasi Google Form mengandung kata kunci tertentu.
+    function attachIframeSubmitDetector() {
+      const iframe = document.getElementById("videoPlayer");
+      if (!iframe) return;
+
+      // Hapus listener lama jika ada
+      iframe.removeEventListener("load", onIframeLoad);
+      iframe.addEventListener("load", onIframeLoad);
+    }
+
+    function onIframeLoad() {
+      if (!isEvalMode) return; // abaikan jika bukan mode evaluasi
+
+      try {
+        // Coba baca URL iframe (akan gagal jika cross-origin, tapi kita tangani)
+        const iframeUrl = this.contentWindow.location.href;
+        // Google Form setelah submit mengarah ke URL yang mengandung "formResponse"
+        if (iframeUrl && iframeUrl.includes("formResponse")) {
+          onFormSubmitDetected();
+          return;
+        }
+      } catch(e) {
+        // Cross-origin block — normal terjadi. Gunakan strategi alternatif.
+      }
+
+      // Strategi alternatif: iframe load KEDUA (setelah load pertama saat form dibuka)
+      // Load pertama = form dimuat. Load kedua = form disubmit (halaman konfirmasi).
+      if (typeof this._loadCount === "undefined") {
+        this._loadCount = 0;
+      }
+      this._loadCount++;
+      // Load ke-2 atau lebih = kemungkinan besar halaman konfirmasi submit
+      if (this._loadCount >= 2) {
+        onFormSubmitDetected();
+      }
+    }
+
+    function onFormSubmitDetected() {
+      if (evalFormSubmitted) return; // jangan trigger dua kali
+      evalFormSubmitted = true;
+
+      const submitText = document.getElementById("submitStatusText");
+      const submitIcon = document.getElementById("submitStatusIcon");
+      if (submitText) {
+        submitText.innerText = "✅ Form berhasil disubmit!";
+        submitText.style.color = "#28a745";
+      }
+      if (submitIcon) submitIcon.innerText = "✅";
+
+      showToast("📋 Form evaluasi berhasil disubmit!");
+      checkEvalRequirements();
+    }
+
+    // ---- Syarat 2: Countdown timer minimum ----
+    function startEvalCountdown() {
+      clearInterval(evalCountdownInterval);
+      evalSecondsLeft   = EVAL_LOCK_DURATION;
+      evalFormSubmitted = false;
+
+      const btn     = document.getElementById("evalDoneBtn");
+      const textEl  = document.getElementById("evalCountdownText");
+      const fillEl  = document.getElementById("evalCountdownFill");
+      const subText = document.getElementById("submitStatusText");
+      const subIcon = document.getElementById("submitStatusIcon");
+
+      // Reset tampilan
+      if (btn)     { btn.disabled = true; btn.classList.remove("unlocked"); btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu"; }
+      if (textEl)  { textEl.style.color = "#8C1007"; }
+      if (fillEl)  { fillEl.style.width = "100%"; }
+      if (subText) { subText.innerHTML = "&#x23F3; Belum terdeteksi &mdash; isi dan submit form di atas"; subText.style.color = "#8C1007"; }
+      if (subIcon) { subIcon.innerText = "❌"; }
+
+      function tick() {
+        evalSecondsLeft = Math.max(0, evalSecondsLeft - 1);
+        const pct    = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
+        const menit  = Math.floor(evalSecondsLeft / 60);
+        const detik  = evalSecondsLeft % 60;
+        if (textEl) textEl.innerText = evalSecondsLeft > 0
+          ? String(menit).padStart(2,"0") + ":" + String(detik).padStart(2,"0")
+          : "SELESAI";
+        if (fillEl) fillEl.style.width = pct + "%";
+        if (evalSecondsLeft <= 0) {
+          clearInterval(evalCountdownInterval);
+          if (textEl) textEl.style.color = "#28a745";
+          checkEvalRequirements();
+        }
+      }
+
+      evalCountdownInterval = setInterval(tick, 1000);
     }
 
     function startGoogleForm() {
@@ -1287,18 +1487,33 @@
         finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
       }
 
+      // Reset loadCount untuk deteksi submit
+      player._loadCount = 0;
       player.src = finalUrl;
 
-      // FIX #7: Tampilkan wrapper konfirmasi manual — evalStatus BELUM true di sini
       document.getElementById("evalDoneWrapper").style.display = "block";
       modal.classList.add("show");
-      showToast("📝 Membuka lembar evaluasi...");
+      showToast("📝 Isi dan submit form evaluasi, lalu tunggu timer selesai.");
+
+      // Pasang detektor submit di iframe
+      attachIframeSubmitDetector();
+      // Mulai countdown timer
+      startEvalCountdown();
     }
 
-    // FIX #7: evalStatus baru true saat user klik tombol ini
     function markEvalDone() {
+      // Double-check kedua syarat sebelum simpan
+      if (!evalFormSubmitted) {
+        showToast("⚠️ Form evaluasi belum disubmit!", "error");
+        return;
+      }
+      if (evalSecondsLeft > 0) {
+        showToast("⚠️ Harap tunggu sampai timer selesai!", "error");
+        return;
+      }
       if (!currentEvalId) return;
-      evalStatus[currentEvalId]   = true;
+      clearInterval(evalCountdownInterval);
+      evalStatus[currentEvalId]    = true;
       printedStatus[currentEvalId] = true;
       localStorage.setItem("evalStatus",    JSON.stringify(evalStatus));
       localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
