@@ -1717,12 +1717,12 @@
           (statusArr[idx] ? " done" : "") +
           (idx === currentVideoIndex ? " active" : "");
         div.id = "vid-item-" + idx;
-        div.innerHTML = \`
-          <div class="vid-num">\${statusArr[idx] ? "✓" : (idx + 1)}</div>
-          <span style="flex:1;">\${vid.judul}</span>
-          <span style="font-size:10px; color:\${statusArr[idx] ? "#28a745" : "#999"};">
-            \${statusArr[idx] ? "Selesai" : ""}
-          </span>\`;
+        div.innerHTML =
+          '<div class="vid-num">' + (statusArr[idx] ? "✓" : (idx + 1)) + '</div>' +
+          '<span style="flex:1;">' + vid.judul + '</span>' +
+          '<span style="font-size:10px; color:' + (statusArr[idx] ? "#28a745" : "#999") + ';">' +
+            (statusArr[idx] ? "Selesai" : "") +
+          '</span>';
         playlist.appendChild(div);
       });
     }
