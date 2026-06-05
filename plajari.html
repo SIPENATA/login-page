@@ -784,16 +784,41 @@
         </iframe>
       </div>
 
-      <!-- EVAL: Panel 2 syarat — submit form + timer minimum -->
+      <!-- EVAL: Panel verifikasi kode + timer -->
       <div id="evalDoneWrapper" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:13px; border:1px solid #ffeeba; background:#fff3cd; color:#856404;">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+
+        <!-- Baris kode verifikasi -->
+        <div style="background:#1B3C53; border-radius:8px; padding:10px 14px; margin-bottom:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-size:11px; color:#aac4d8; margin-bottom:3px;">Kode Verifikasi — masukkan di kolom terakhir Google Form:</div>
+            <span id="evalVerifCode" style="font-family:monospace; font-size:22px; font-weight:700; color:#FFD700; letter-spacing:4px;">------</span>
+          </div>
+          <button onclick="copyVerifCode()" style="background:#FFD700; color:#1B3C53; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; font-family:Montserrat;">
+            Salin
+          </button>
+        </div>
+
+        <!-- Syarat 1: input kode dari form -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
           <span style="font-size:18px;">&#x1F4CB;</span>
           <div style="flex:1;">
-            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 1: Submit Form Evaluasi</b>
-            <span id="submitStatusText" style="font-size:11px; color:#8C1007;">&#x23F3; Belum terdeteksi &mdash; isi dan submit form di atas</span>
+            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 1: Masukkan Kode Konfirmasi dari Google Form</b>
+            <div style="display:flex; gap:6px; margin-top:5px;">
+              <input type="text" id="evalCodeInput" maxlength="6"
+                placeholder="Ketik 6 digit kode..."
+                style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid #ddd; font-family:monospace; font-size:14px; letter-spacing:2px; text-transform:uppercase; outline:none;">
+              <button onclick="verifikasiKode()" style="background:#1B3C53; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-family:Montserrat; font-size:12px;">
+                Cek
+              </button>
+            </div>
+            <span id="submitStatusText" style="font-size:11px; color:#8C1007; margin-top:3px; display:block;">
+              &#x23F3; Belum diverifikasi &mdash; isi form, lalu masukkan kode di atas
+            </span>
           </div>
-          <span id="submitStatusIcon" style="font-size:18px;">&#x274C;</span>
+          <span id="submitStatusIcon" style="font-size:18px; align-self:flex-start; margin-top:4px;">&#x274C;</span>
         </div>
+
+        <!-- Syarat 2: timer -->
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
           <span style="font-size:18px;">&#x23F1;&#xFE0F;</span>
           <div style="flex:1;">
@@ -803,6 +828,7 @@
           <span id="evalCountdownText" style="font-family:monospace; font-weight:700; font-size:14px; color:#8C1007; white-space:nowrap;">03:00</span>
         </div>
         <div id="evalCountdownBar"><div id="evalCountdownFill"></div></div>
+
         <button id="evalDoneBtn" onclick="markEvalDone()" disabled style="margin-top:10px;">
           &#x1F512; Selesaikan Kedua Syarat Dulu
         </button>
@@ -887,7 +913,7 @@
     let isEvalMode        = false; // FIX #7: flag apakah modal sedang mode evaluasi
 
     // FIX #9: konstanta waktu belajar minimum — 5 menit, komentar sekarang benar
-    const MIN_WAKTU_BELAJAR = 1 * 60 * 1000; // 5 menit (dalam milidetik)
+    const MIN_WAKTU_BELAJAR = 5 * 60 * 1000; // 5 menit (dalam milidetik)
 
     let currentFilter = "all";
     const container   = document.getElementById("materi-container");
@@ -1316,12 +1342,8 @@
       evalSecondsLeft   = EVAL_LOCK_DURATION;
       evalFormSubmitted = false;
       // Lepas semua listener agar tidak trigger saat buka video materi biasa
-      window.removeEventListener("message", onGoogleFormMessage);
       const iframe = document.getElementById("videoPlayer");
-      if (iframe) {
-        iframe.removeEventListener("load", onIframeLoad);
-        iframe.src = "";
-      }
+      if (iframe) iframe.src = "";
       document.getElementById("videoModal").classList.remove("show");
       document.getElementById("evalDoneWrapper").style.display = "none";
       renderMateri(currentFilter);
@@ -1341,15 +1363,79 @@
       currentEvalId  = null;
     }
 
-    // ===== SISTEM EVALUASI: 2 SYARAT WAJIB =====
-    // Syarat 1: User benar-benar submit Google Form (deteksi via iframe load event)
-    // Syarat 2: Timer minimum 3 menit di halaman evaluasi
-    const EVAL_LOCK_DURATION = 3 * 60; // detik
-    let evalCountdownInterval = null;
-    let evalSecondsLeft       = EVAL_LOCK_DURATION;
-    let evalFormSubmitted     = false; // flag: apakah form sudah disubmit
+    // ===== SISTEM EVALUASI: KODE VERIFIKASI + TIMER =====
+    //
+    // CARA KERJA:
+    // 1. Saat evaluasi dibuka, sistem generate kode 6 karakter unik (acak).
+    // 2. Kode ini WAJIB dimasukkan peserta di kolom terakhir Google Form
+    //    (admin menambahkan kolom "Kode Verifikasi" di Google Form).
+    // 3. Peserta yang benar-benar submit form akan melihat kode terkonfirmasi,
+    //    lalu memasukkannya kembali ke kolom input di modal.
+    // 4. Kode yang diinput peserta dicocokkan dengan kode yang di-generate sistem.
+    // 5. Syarat 2: Timer minimum 3 menit tetap berjalan bersamaan.
+    // 6. Tombol konfirmasi hanya aktif jika KEDUA syarat terpenuhi.
 
-    // Cek apakah kedua syarat terpenuhi, lalu unlock tombol jika iya
+    const EVAL_LOCK_DURATION   = 3 * 60; // detik
+    let evalCountdownInterval  = null;
+    let evalSecondsLeft        = EVAL_LOCK_DURATION;
+    let evalFormSubmitted      = false;
+    let evalVerifCodeGenerated = "";
+
+    // Generate kode 6 karakter alfanumerik (tanpa 0,O,1,I agar tidak membingungkan)
+    function generateVerifCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 6; i++) {
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return code;
+    }
+
+    function copyVerifCode() {
+      if (!evalVerifCodeGenerated) return;
+      navigator.clipboard.writeText(evalVerifCodeGenerated).then(() => {
+        showToast("Kode disalin: " + evalVerifCodeGenerated);
+      }).catch(() => {
+        showToast("Kode: " + evalVerifCodeGenerated);
+      });
+    }
+
+    // Verifikasi kode yang diinput peserta
+    function verifikasiKode() {
+      const input   = document.getElementById("evalCodeInput");
+      const subText = document.getElementById("submitStatusText");
+      const subIcon = document.getElementById("submitStatusIcon");
+      if (!input) return;
+
+      const inputVal = input.value.trim().toUpperCase();
+      if (inputVal === "") {
+        showToast("Masukkan kode verifikasi dulu!", "error");
+        input.style.borderColor = "#dc3545";
+        return;
+      }
+
+      if (inputVal === evalVerifCodeGenerated) {
+        evalFormSubmitted        = true;
+        input.disabled           = true;
+        input.style.borderColor  = "#28a745";
+        input.style.background   = "#f0fff4";
+        if (subText) { subText.innerText = "Kode benar! Form evaluasi terverifikasi."; subText.style.color = "#28a745"; }
+        if (subIcon) subIcon.innerText = "✅";
+        showToast("Kode verifikasi benar!");
+        checkEvalRequirements();
+      } else {
+        input.style.borderColor = "#dc3545";
+        input.style.background  = "#fff5f5";
+        if (subText) { subText.innerText = "Kode salah. Periksa kembali kode di halaman konfirmasi Google Form."; subText.style.color = "#dc3545"; }
+        showToast("Kode verifikasi salah!", "error");
+        input.animate([
+          {transform:"translateX(-4px)"},{transform:"translateX(4px)"},
+          {transform:"translateX(-4px)"},{transform:"translateX(0)"}
+        ], {duration: 300});
+      }
+    }
+
+    // Cek apakah kedua syarat terpenuhi
     function checkEvalRequirements() {
       const timerOk  = evalSecondsLeft <= 0;
       const submitOk = evalFormSubmitted;
@@ -1357,87 +1443,20 @@
       if (!btn) return;
 
       if (timerOk && submitOk) {
-        // KEDUA SYARAT TERPENUHI — unlock tombol
         btn.disabled = false;
         btn.classList.add("unlocked");
-        btn.innerHTML = "&#x2705; Saya Sudah Selesai Evaluasi";
-        showToast("✅ Kedua syarat terpenuhi! Klik tombol hijau untuk konfirmasi.");
+        btn.innerHTML = "&#x2705; Konfirmasi Evaluasi Selesai";
+        showToast("Kedua syarat terpenuhi! Klik tombol hijau.");
       } else {
-        // Update teks tombol sesuai kondisi yang belum terpenuhi
-        if (!submitOk && !timerOk) {
-          btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu";
-        } else if (!submitOk) {
-          btn.innerHTML = "&#x1F512; Form Belum Disubmit";
-        } else {
-          btn.innerHTML = "&#x1F512; Tunggu Timer Selesai";
-        }
+        btn.disabled = true;
+        btn.classList.remove("unlocked");
+        if (!submitOk && !timerOk)   btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu";
+        else if (!submitOk)          btn.innerHTML = "&#x1F512; Masukkan Kode Verifikasi";
+        else                         btn.innerHTML = "&#x1F512; Tunggu Timer Selesai";
       }
     }
 
-    // ---- Syarat 1: Deteksi submit Google Form ----
-    // Google Form setelah submit mengirim postMessage ke parent window
-    // dengan tipe "freebirdFormviewerViewFormConfirmationMessage".
-    // Ini adalah satu-satunya cara andal yang tidak terpengaruh navigasi
-    // antar halaman (Berikutnya / Kembali) dalam form multi-halaman.
-    function attachIframeSubmitDetector() {
-      // Pasang listener postMessage di window (bukan di iframe)
-      // Hapus dulu jika sudah ada agar tidak double
-      window.removeEventListener("message", onGoogleFormMessage);
-      window.addEventListener("message", onGoogleFormMessage);
-    }
-
-    function onGoogleFormMessage(event) {
-      if (!isEvalMode) return;
-
-      // Google Form mengirim pesan ini HANYA saat form berhasil disubmit
-      const isConfirmation =
-        (typeof event.data === "string" && (
-          event.data.includes("formResponse") ||
-          event.data.includes("freebirdFormviewerViewFormConfirmationMessage")
-        )) ||
-        (typeof event.data === "object" && event.data !== null && (
-          event.data.type === "freebirdFormviewerViewFormConfirmationMessage" ||
-          (event.data.source && event.data.source.includes("google")) ||
-          JSON.stringify(event.data).includes("formResponse") ||
-          JSON.stringify(event.data).includes("Confirmation")
-        ));
-
-      if (isConfirmation) {
-        onFormSubmitDetected();
-      }
-    }
-
-    // Fallback: deteksi via iframe src berubah ke halaman konfirmasi
-    // Hanya berlaku jika browser mengizinkan baca URL (same-origin atau tidak diblokir)
-    function onIframeLoad() {
-      if (!isEvalMode) return;
-      try {
-        const iframeUrl = this.contentWindow.location.href;
-        if (iframeUrl && iframeUrl.includes("formResponse")) {
-          onFormSubmitDetected();
-        }
-      } catch(e) {
-        // Cross-origin — normal, abaikan. postMessage sudah menangani ini.
-      }
-    }
-
-    function onFormSubmitDetected() {
-      if (evalFormSubmitted) return; // jangan trigger dua kali
-      evalFormSubmitted = true;
-
-      const submitText = document.getElementById("submitStatusText");
-      const submitIcon = document.getElementById("submitStatusIcon");
-      if (submitText) {
-        submitText.innerText = "✅ Form berhasil disubmit!";
-        submitText.style.color = "#28a745";
-      }
-      if (submitIcon) submitIcon.innerText = "✅";
-
-      showToast("📋 Form evaluasi berhasil disubmit!");
-      checkEvalRequirements();
-    }
-
-    // ---- Syarat 2: Countdown timer minimum ----
+    // Countdown timer minimum
     function startEvalCountdown() {
       clearInterval(evalCountdownInterval);
       evalSecondsLeft   = EVAL_LOCK_DURATION;
@@ -1448,19 +1467,20 @@
       const fillEl  = document.getElementById("evalCountdownFill");
       const subText = document.getElementById("submitStatusText");
       const subIcon = document.getElementById("submitStatusIcon");
+      const inp     = document.getElementById("evalCodeInput");
 
-      // Reset tampilan
-      if (btn)     { btn.disabled = true; btn.classList.remove("unlocked"); btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu"; }
-      if (textEl)  { textEl.style.color = "#8C1007"; }
-      if (fillEl)  { fillEl.style.width = "100%"; }
-      if (subText) { subText.innerHTML = "&#x23F3; Belum terdeteksi &mdash; isi dan submit form di atas"; subText.style.color = "#8C1007"; }
-      if (subIcon) { subIcon.innerText = "❌"; }
+      if (btn)    { btn.disabled = true; btn.classList.remove("unlocked"); btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu"; }
+      if (textEl) { textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
+      if (fillEl) { fillEl.style.width = "100%"; }
+      if (subText){ subText.innerHTML = "&#x23F3; Belum diverifikasi &mdash; isi form, masukkan kode di atas"; subText.style.color = "#8C1007"; }
+      if (subIcon){ subIcon.innerText = "❌"; }
+      if (inp)    { inp.value = ""; inp.disabled = false; inp.style.borderColor = "#ddd"; inp.style.background = "#fff"; }
 
       function tick() {
         evalSecondsLeft = Math.max(0, evalSecondsLeft - 1);
-        const pct    = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
-        const menit  = Math.floor(evalSecondsLeft / 60);
-        const detik  = evalSecondsLeft % 60;
+        const pct   = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
+        const menit = Math.floor(evalSecondsLeft / 60);
+        const detik = evalSecondsLeft % 60;
         if (textEl) textEl.innerText = evalSecondsLeft > 0
           ? String(menit).padStart(2,"0") + ":" + String(detik).padStart(2,"0")
           : "SELESAI";
@@ -1471,7 +1491,6 @@
           checkEvalRequirements();
         }
       }
-
       evalCountdownInterval = setInterval(tick, 1000);
     }
 
@@ -1483,6 +1502,11 @@
 
       isEvalMode = true;
       document.getElementById("videoTitle").innerText = "Evaluasi Belajar: Selesaikan Kuis";
+
+      // Generate kode unik setiap sesi evaluasi
+      evalVerifCodeGenerated = generateVerifCode();
+      const codeEl = document.getElementById("evalVerifCode");
+      if (codeEl) codeEl.innerText = evalVerifCodeGenerated;
 
       let finalUrl = currentEvalUrl;
       const storedUser = JSON.parse(localStorage.getItem("userData"));
@@ -1496,27 +1520,20 @@
       }
 
       player.src = finalUrl;
-
       document.getElementById("evalDoneWrapper").style.display = "block";
       modal.classList.add("show");
-      showToast("📝 Isi dan submit form evaluasi, lalu tunggu timer selesai.");
+      showToast("Salin kode verifikasi, lalu isi dan submit form evaluasi.");
 
-      // Pasang detektor: postMessage (utama) + iframe load (fallback)
-      attachIframeSubmitDetector();
-      player.removeEventListener("load", onIframeLoad);
-      player.addEventListener("load", onIframeLoad);
-      // Mulai countdown timer
       startEvalCountdown();
     }
 
     function markEvalDone() {
-      // Double-check kedua syarat sebelum simpan
       if (!evalFormSubmitted) {
-        showToast("⚠️ Form evaluasi belum disubmit!", "error");
+        showToast("Masukkan kode verifikasi dari Google Form dulu!", "error");
         return;
       }
       if (evalSecondsLeft > 0) {
-        showToast("⚠️ Harap tunggu sampai timer selesai!", "error");
+        showToast("Harap tunggu sampai timer selesai!", "error");
         return;
       }
       if (!currentEvalId) return;
@@ -1526,7 +1543,7 @@
       localStorage.setItem("evalStatus",    JSON.stringify(evalStatus));
       localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
       document.getElementById("evalDoneWrapper").style.display = "none";
-      showToast("🎉 Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
+      showToast("Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
       renderMateri(currentFilter);
     }
 
