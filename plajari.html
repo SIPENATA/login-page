@@ -1273,8 +1273,31 @@
             nama: result.nama,
             progres: result.progres
           }));
+          showToast("✅ Login Berhasil! Sedang memuat progress...");
+
+          // Ambil status belajar dari server sebelum reload
+          try {
+            const syncResp = await fetch(SCRIPT_URL, {
+              method: "POST",
+              body: JSON.stringify({ action: "ambilStatusBelajar", nip: cleanNip })
+            });
+            const syncData = await syncResp.json();
+            if (syncData.status === "found" && syncData.data) {
+              const d = syncData.data;
+              if (d.readStatus)    localStorage.setItem("readStatus",    JSON.stringify(d.readStatus));
+              if (d.videoStatus)   localStorage.setItem("videoStatus",   JSON.stringify(d.videoStatus));
+              if (d.modulStatus)   localStorage.setItem("modulStatus",   JSON.stringify(d.modulStatus));
+              if (d.evalStatus)    localStorage.setItem("evalStatus",    JSON.stringify(d.evalStatus));
+              if (d.printedStatus) localStorage.setItem("printedStatus", JSON.stringify(d.printedStatus));
+              if (d.readTime)      localStorage.setItem("readTime",      JSON.stringify(d.readTime));
+              if (d.studyTime)     localStorage.setItem("studyTime",     JSON.stringify(d.studyTime));
+            }
+          } catch(syncErr) {
+            console.error("Gagal sync status dari server:", syncErr);
+          }
+
           showToast("✅ Login Berhasil! Selamat datang, " + result.nama);
-          setTimeout(() => location.reload(), 1200);
+          setTimeout(() => location.reload(), 800);
         } else {
           // FIX #10: Pesan error lebih spesifik
           showToast("❌ NIP atau Nama tidak ditemukan di database.");
@@ -1303,6 +1326,31 @@
         });
       } catch (e) {
         console.error("Gagal sinkron ke Cloud:", e);
+      }
+    }
+
+    // Kirim semua status belajar ke server (fire and forget)
+    // Dipanggil setiap kali ada perubahan status penting
+    async function syncStatusKeServer() {
+      const savedUser = JSON.parse(localStorage.getItem("userData"));
+      if (!savedUser || !savedUser.nip) return;
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action:        "simpanStatusBelajar",
+            nip:           savedUser.nip,
+            readStatus:    readStatus,
+            videoStatus:   videoStatus,
+            modulStatus:   modulStatus,
+            evalStatus:    evalStatus,
+            printedStatus: printedStatus,
+            readTime:      readTime,
+            studyTime:     studyTime
+          })
+        });
+      } catch (e) {
+        console.error("Gagal sync status ke server:", e);
       }
     }
 
@@ -1591,6 +1639,7 @@
       hasAutoScrolled               = false;
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
       localStorage.setItem("readTime",   JSON.stringify(readTime));
+      syncStatusKeServer(); // sinkron ke server
       closeModal();
       showToast("✅ Berhasil! Materi dipindahkan ke 'Sudah Dibaca'");
       currentFilter = "read";
@@ -1855,6 +1904,7 @@
       // Update videoStatus di localStorage agar ceklist di kartu aktif
       videoStatus[currentMateri.id] = true;
       localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
+      syncStatusKeServer(); // sinkron ke server
       renderMateri(currentFilter);
     }
 
@@ -2133,6 +2183,7 @@
       printedStatus[currentEvalId] = true;
       localStorage.setItem("evalStatus",    JSON.stringify(evalStatus));
       localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
+      syncStatusKeServer(); // sinkron ke server
 
       // Tutup modal video
       isEvalMode = false;
@@ -2175,6 +2226,7 @@
     function toggleVideo(id) {
       videoStatus[id] = !videoStatus[id];
       localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
+      syncStatusKeServer(); // sinkron ke server
       if (videoStatus[id]) showToast("📺 Video selesai dipelajari!");
       renderMateri(currentFilter);
     }
@@ -2182,6 +2234,7 @@
     function toggleModul(id) {
       modulStatus[id] = !modulStatus[id];
       localStorage.setItem("modulStatus", JSON.stringify(modulStatus));
+      syncStatusKeServer(); // sinkron ke server
       if (modulStatus[id]) showToast("📚 Modul selesai dibaca!");
       renderMateri(currentFilter);
     }
