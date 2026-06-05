@@ -650,6 +650,27 @@
       100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
     }
 
+    @keyframes pulse-green {
+      0%   { box-shadow: 0 0 0 0 rgba(26,161,121,0.5); }
+      70%  { box-shadow: 0 0 0 10px rgba(26,161,121,0); }
+      100% { box-shadow: 0 0 0 0 rgba(26,161,121,0); }
+    }
+
+    /* Tombol Akhiri Evaluasi */
+    #closeVideoBtn.akhiri {
+      background: linear-gradient(135deg, #1aa179, #218838) !important;
+      color: #fff !important;
+      animation: pulse-green 1.5s infinite;
+    }
+
+    /* Input login fokus */
+    #loginModal input:focus {
+      border-color: #2d6a8f !important;
+      background: #fff !important;
+      box-shadow: 0 0 0 3px rgba(45,106,143,0.12) !important;
+      outline: none;
+    }
+
     @keyframes slideUp {
       from { bottom: 0; opacity: 0; }
       to { bottom: 50px; opacity: 1; }
@@ -667,24 +688,50 @@
 
   <!-- ===== LOGIN MODAL ===== -->
   <div id="loginModal" class="modal-overlay" style="display: none;">
-    <div class="modal-box" style="max-width: 400px;">
-      <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
-      <h3 style="color: #1B3C53;">Selamat Datang!</h3>
-      <p>Silakan isi data diri Anda untuk memulai pembelajaran.</p>
-      <div style="text-align: left; margin-top: 15px;">
-        <label style="font-size: 14px; font-weight: 600;">NIP :</label>
-        <!-- FIX #8: type="tel" agar keyboard angka muncul di HP, validasi via JS -->
-        <input type="tel" id="userNIP" placeholder="Masukkan NIP Anda (angka)"
-               oninput="validateNIPInput(this)"
-               style="width: 100%; box-sizing: border-box; padding: 10px; margin: 8px 0 5px; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
-        <div id="nipHint" class="input-hint">⚠ NIP hanya boleh berisi angka.</div>
+    <div class="modal-box" style="max-width: 420px; padding: 0; overflow: hidden; border-radius: 16px; box-shadow: 0 20px 60px rgba(27,60,83,0.18);">
 
-        <label style="font-size: 14px; font-weight: 600;">Nama Lengkap :</label>
-        <input type="text" id="userName" placeholder="Masukkan Nama Lengkap"
-               style="width: 100%; box-sizing: border-box; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; font-family: Montserrat;">
+      <!-- Header biru -->
+      <div style="background: linear-gradient(135deg, #1B3C53 0%, #2d6a8f 100%); padding: 30px 30px 24px; text-align: center; position: relative;">
+        <!-- Lingkaran dekoratif -->
+        <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
+        <div style="position:absolute; bottom:-30px; left:-15px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.04);"></div>
+        <!-- Ikon & judul -->
+        <div style="width:64px; height:64px; background:rgba(255,255,255,0.15); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2);">👤</div>
+        <h3 style="color:#fff; margin:0 0 4px; font-size:20px; font-weight:700;">Selamat Datang!</h3>
+        <p style="color:rgba(255,255,255,0.75); margin:0; font-size:13px;">Platform Belajar Mandiri Sukoharjo</p>
       </div>
-      <div class="modal-actions">
-        <button id="loginBtn" class="btn-confirm" onclick="saveLoginData()" style="width: 100%;">Masuk &amp; Belajar</button>
+
+      <!-- Body putih -->
+      <div style="padding: 24px 28px 28px; background:#fff;">
+        <p style="margin:0 0 18px; font-size:13px; color:#666; text-align:center;">Masukkan data diri Anda untuk mulai belajar</p>
+
+        <div style="text-align: left;">
+          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin-bottom:5px;">NIP</label>
+          <div style="position:relative;">
+            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px;">🪪</span>
+            <input type="tel" id="userNIP" placeholder="Masukkan NIP Anda"
+                   oninput="validateNIPInput(this)"
+                   style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
+          </div>
+          <div id="nipHint" class="input-hint">⚠ NIP hanya boleh berisi angka.</div>
+
+          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin:14px 0 5px;">Nama Lengkap</label>
+          <div style="position:relative;">
+            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px;">✍️</span>
+            <input type="text" id="userName" placeholder="Masukkan Nama Lengkap"
+                   style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div style="margin:16px 0; padding:10px 12px; background:#eef4fb; border-radius:8px; border-left:3px solid #2d6a8f; font-size:11px; color:#2d6a8f; line-height:1.6;">
+          ℹ️ Pastikan NIP dan Nama sesuai dengan data kepegawaian yang terdaftar.
+        </div>
+
+        <button id="loginBtn" onclick="saveLoginData()"
+          style="width:100%; padding:13px; background:linear-gradient(135deg,#1B3C53,#2d6a8f); color:#fff; border:none; border-radius:10px; font-family:Montserrat; font-size:15px; font-weight:700; cursor:pointer; transition: opacity 0.2s; letter-spacing:0.3px;">
+          Masuk &amp; Mulai Belajar →
+        </button>
       </div>
     </div>
   </div>
@@ -749,14 +796,25 @@
   </div>
 
   <!-- Modal Konfirmasi Evaluasi -->
-  <!-- FIX #7: Evaluasi hanya true SETELAH user submit form, bukan saat dibuka -->
   <div id="evaluasiConfirmModal" class="modal-overlay">
-    <div class="modal-box">
-      <h3>Konfirmasi Evaluasi</h3>
-      <p>
-        Apakah Anda sudah siap melaksanakan evaluasi belajar?<br>
-        <small style="color: #8C1007;">Pastikan koneksi internet Anda stabil.</small>
+    <div class="modal-box" style="max-width:440px;">
+      <div style="font-size:46px; margin-bottom:10px;">📋</div>
+      <h3 style="color:#1B3C53; margin-bottom:8px;">Konfirmasi Evaluasi</h3>
+      <p style="margin:0 0 14px; color:#555; font-size:14px;">
+        Apakah Anda sudah siap melaksanakan evaluasi belajar?
       </p>
+
+      <!-- Kotak peringatan -->
+      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
+        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">⚠️ Perhatian Penting:</div>
+        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.8;">
+          <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
+          <li>Pastikan koneksi internet Anda <b>stabil</b> sebelum memulai.</li>
+          <li>Isi semua pertanyaan dengan <b>sungguh-sungguh</b>.</li>
+          <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi.</li>
+        </ul>
+      </div>
+
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeEvalModal()">Belum Siap</button>
         <button class="btn-confirm" onclick="startGoogleForm()">Ya, Saya Siap</button>
@@ -784,58 +842,80 @@
         </iframe>
       </div>
 
-      <!-- EVAL: Panel verifikasi kode + timer -->
+      <!-- EVAL: Panel syarat waktu + ceklist konfirmasi -->
       <div id="evalDoneWrapper" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:13px; border:1px solid #ffeeba; background:#fff3cd; color:#856404;">
 
-        <!-- Baris kode verifikasi -->
-        <div style="background:#1B3C53; border-radius:8px; padding:10px 14px; margin-bottom:10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <div style="flex:1;">
-            <div style="font-size:11px; color:#aac4d8; margin-bottom:3px;">Kode Verifikasi — masukkan di kolom terakhir Google Form:</div>
-            <span id="evalVerifCode" style="font-family:monospace; font-size:22px; font-weight:700; color:#FFD700; letter-spacing:4px;">------</span>
-          </div>
-          <button onclick="copyVerifCode()" style="background:#FFD700; color:#1B3C53; border:none; padding:6px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px; font-family:Montserrat;">
-            Salin
-          </button>
+        <!-- Peringatan sekali kerjakan -->
+        <div style="background:#fdf2f2; border:1px solid #f5c6cb; border-radius:6px; padding:8px 10px; margin-bottom:10px; display:flex; align-items:flex-start; gap:8px;">
+          <span style="font-size:16px;">&#x26A0;&#xFE0F;</span>
+          <span style="font-size:11px; color:#8C1007; line-height:1.5;">
+            <b>Evaluasi hanya bisa dikerjakan 1 kali dan tidak bisa diulang.</b><br>
+            Pastikan Anda telah mengisi Google Form dengan sungguh-sungguh sebelum mengakhiri evaluasi.
+          </span>
         </div>
 
-        <!-- Syarat 1: input kode dari form -->
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-          <span style="font-size:18px;">&#x1F4CB;</span>
-          <div style="flex:1;">
-            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 1: Masukkan Kode Konfirmasi dari Google Form</b>
-            <div style="display:flex; gap:6px; margin-top:5px;">
-              <input type="text" id="evalCodeInput" maxlength="6"
-                placeholder="Ketik 6 digit kode..."
-                style="flex:1; padding:7px 10px; border-radius:6px; border:1px solid #ddd; font-family:monospace; font-size:14px; letter-spacing:2px; text-transform:uppercase; outline:none;">
-              <button onclick="verifikasiKode()" style="background:#1B3C53; color:#fff; border:none; padding:7px 12px; border-radius:6px; font-weight:700; cursor:pointer; font-family:Montserrat; font-size:12px;">
-                Cek
-              </button>
-            </div>
-            <span id="submitStatusText" style="font-size:11px; color:#8C1007; margin-top:3px; display:block;">
-              &#x23F3; Belum diverifikasi &mdash; isi form, lalu masukkan kode di atas
-            </span>
-          </div>
-          <span id="submitStatusIcon" style="font-size:18px; align-self:flex-start; margin-top:4px;">&#x274C;</span>
-        </div>
-
-        <!-- Syarat 2: timer -->
+        <!-- Syarat 1: timer -->
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
           <span style="font-size:18px;">&#x23F1;&#xFE0F;</span>
           <div style="flex:1;">
-            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat 2: Waktu Minimum (3 menit)</b>
+            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat: Waktu Minimum (3 menit)</b>
             <span style="font-size:11px; color:#666;">Anda harus berada di halaman evaluasi minimal 3 menit</span>
           </div>
           <span id="evalCountdownText" style="font-family:monospace; font-weight:700; font-size:14px; color:#8C1007; white-space:nowrap;">03:00</span>
         </div>
         <div id="evalCountdownBar"><div id="evalCountdownFill"></div></div>
 
-        <button id="evalDoneBtn" onclick="markEvalDone()" disabled style="margin-top:10px;">
-          &#x1F512; Selesaikan Kedua Syarat Dulu
-        </button>
+        <!-- Ceklist konfirmasi -->
+        <label id="evalCheckLabel" style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; padding:8px; background:#fff; border-radius:6px; border:1px solid #ddd; cursor:not-allowed; opacity:0.5;">
+          <input type="checkbox" id="evalConfirmCheck" disabled onchange="onEvalCheckChange()"
+            style="margin-top:2px; width:16px; height:16px; cursor:not-allowed; flex-shrink:0;">
+          <span style="font-size:12px; color:#333; line-height:1.5;">
+            Saya menyatakan telah <b>mengisi dan mengirimkan</b> Google Form evaluasi dengan sungguh-sungguh.
+          </span>
+        </label>
+
       </div>
 
+      <!-- Tombol download materi -->
+      <div id="downloadMateriWrapper" style="display:none; margin-top:10px;">
+        <a id="downloadMateriBtn" href="#" target="_blank"
+          style="display:block; text-align:center; background:linear-gradient(135deg,#2d6a8f,#1B3C53);
+                 color:#fff; padding:9px; border-radius:8px; font-weight:700; font-size:13px;
+                 text-decoration:none; font-family:Montserrat; transition: background 0.3s;">
+          📥 Download Modul Materi
+        </a>
+      </div>
+
+      <!-- Tombol tutup — berubah jadi hijau saat evaluasi siap diakhiri -->
+      <div class="modal-actions" style="margin-top:10px;">
+        <button id="closeVideoBtn" class="btn-cancel" onclick="closeVideoModal()">
+          Tutup &amp; Pause Belajar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Peringatan Akhiri Evaluasi -->
+  <div id="akhiriEvalModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:440px;">
+      <div style="font-size:46px; margin-bottom:10px;">⚠️</div>
+      <h3 style="color:#8C1007; margin-bottom:8px;">Konfirmasi Akhiri Evaluasi</h3>
+      <p style="font-size:14px; color:#555; margin-bottom:14px;">
+        Anda akan mengakhiri sesi evaluasi ini.
+      </p>
+      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
+        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">⚠️ Peringatan:</div>
+        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.9;">
+          <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
+          <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi di Google Form.</li>
+          <li>Jika Anda belum mengisi Google Form, <b>kembali dan isi sekarang</b>.</li>
+        </ul>
+      </div>
       <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeVideoModal()">Tutup &amp; Pause Belajar</button>
+        <button class="btn-cancel" onclick="closeAkhiriEvalModal()">Kembali ke Evaluasi</button>
+        <button class="btn-confirm" style="background:#8C1007;" onclick="konfirmasiAkhiriEval()">
+          Ya, Saya Sudah Mengerjakan
+        </button>
       </div>
     </div>
   </div>
@@ -868,26 +948,26 @@
 
     // Daftar Materi
     const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview", sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview", modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo", sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20", link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
     ];
 
     // ===== STATE =====
@@ -913,7 +993,7 @@
     let isEvalMode        = false; // FIX #7: flag apakah modal sedang mode evaluasi
 
     // FIX #9: konstanta waktu belajar minimum — 5 menit, komentar sekarang benar
-    const MIN_WAKTU_BELAJAR = 1 * 60 * 1000; // 5 menit (dalam milidetik)
+    const MIN_WAKTU_BELAJAR = 5 * 60 * 1000; // 5 menit (dalam milidetik)
 
     let currentFilter = "all";
     const container   = document.getElementById("materi-container");
@@ -1318,6 +1398,29 @@
 
       document.getElementById("videoTitle").innerText = "Mempelajari: " + materi.judul;
       document.getElementById("evalDoneWrapper").style.display = "none";
+
+      // Tampilkan / sembunyikan tombol download modul
+      const dlWrapper = document.getElementById("downloadMateriWrapper");
+      const dlBtn     = document.getElementById("downloadMateriBtn");
+      const timerBar  = document.getElementById("modalTimerDisplay");
+      if (timerBar) timerBar.style.display = "";
+      if (materi.modul && dlWrapper && dlBtn) {
+        dlBtn.href              = materi.modul;
+        dlWrapper.style.display = "block";
+      } else if (dlWrapper) {
+        dlWrapper.style.display = "none";
+      }
+
+      // Reset tombol tutup ke semula (jaga-jaga sisa sesi eval sebelumnya)
+      const closeBtn = document.getElementById("closeVideoBtn");
+      if (closeBtn) {
+        closeBtn.style.background = "";
+        closeBtn.style.color      = "";
+        closeBtn.style.animation  = "";
+        closeBtn.innerText        = "Tutup & Pause Belajar";
+        closeBtn.onclick          = function() { closeVideoModal(); };
+      }
+
       player.src = materi.link;
       modal.classList.add("show");
 
@@ -1336,14 +1439,29 @@
         simpanWaktuBelajar();
         currentActiveId = null;
       }
-      isEvalMode = false;
-      // Reset semua state evaluasi
+      isEvalMode    = false;
+      evalTimerDone = false;
+      evalCheckDone = false;
       clearInterval(evalCountdownInterval);
-      evalSecondsLeft   = EVAL_LOCK_DURATION;
-      evalFormSubmitted = false;
-      // Lepas semua listener agar tidak trigger saat buka video materi biasa
+      evalSecondsLeft = EVAL_LOCK_DURATION;
+
       const iframe = document.getElementById("videoPlayer");
       if (iframe) iframe.src = "";
+
+      // Reset tombol tutup ke semula
+      const closeBtn = document.getElementById("closeVideoBtn");
+      if (closeBtn) {
+        closeBtn.style.background = "";
+        closeBtn.style.color      = "";
+        closeBtn.style.animation  = "";
+        closeBtn.innerText        = "Tutup & Pause Belajar";
+        closeBtn.onclick          = function() { closeVideoModal(); };
+      }
+
+      // Tampilkan kembali timer belajar
+      const timerBar = document.getElementById("modalTimerDisplay");
+      if (timerBar) timerBar.style.display = "";
+
       document.getElementById("videoModal").classList.remove("show");
       document.getElementById("evalDoneWrapper").style.display = "none";
       renderMateri(currentFilter);
@@ -1363,131 +1481,105 @@
       currentEvalId  = null;
     }
 
-    // ===== SISTEM EVALUASI: KODE VERIFIKASI + TIMER =====
-    //
-    // CARA KERJA:
-    // 1. Saat evaluasi dibuka, sistem generate kode 6 karakter unik (acak).
-    // 2. Kode ini WAJIB dimasukkan peserta di kolom terakhir Google Form
-    //    (admin menambahkan kolom "Kode Verifikasi" di Google Form).
-    // 3. Peserta yang benar-benar submit form akan melihat kode terkonfirmasi,
-    //    lalu memasukkannya kembali ke kolom input di modal.
-    // 4. Kode yang diinput peserta dicocokkan dengan kode yang di-generate sistem.
-    // 5. Syarat 2: Timer minimum 3 menit tetap berjalan bersamaan.
-    // 6. Tombol konfirmasi hanya aktif jika KEDUA syarat terpenuhi.
+    // ===== SISTEM EVALUASI =====
+    // Syarat 1 (verifikasi server) DIHAPUS sesuai ketentuan.
+    // Syarat yang berlaku:
+    //   A. Timer minimum 3 menit
+    //   B. Ceklist konfirmasi bahwa form sudah dikerjakan
+    // Setelah kedua syarat terpenuhi:
+    //   - Tombol "Tutup & Pause Belajar" berubah HIJAU → "Akhiri Evaluasi"
+    //   - Klik tombol → muncul pop-up peringatan final
+    //   - Klik "Ya, Sudah Mengerjakan" → evalStatus = true
 
-    const EVAL_LOCK_DURATION   = 3 * 60; // detik
-    let evalCountdownInterval  = null;
-    let evalSecondsLeft        = EVAL_LOCK_DURATION;
-    let evalFormSubmitted      = false;
-    let evalVerifCodeGenerated = "";
+    const EVAL_LOCK_DURATION  = 3 * 60; // 3 menit dalam detik
+    let evalCountdownInterval = null;
+    let evalSecondsLeft       = EVAL_LOCK_DURATION;
+    let evalTimerDone         = false;  // syarat A
+    let evalCheckDone         = false;  // syarat B
 
-    // Generate kode 6 karakter alfanumerik (tanpa 0,O,1,I agar tidak membingungkan)
-    function generateVerifCode() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let code = "";
-      for (let i = 0; i < 6; i++) {
-        code += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return code;
-    }
-
-    function copyVerifCode() {
-      if (!evalVerifCodeGenerated) return;
-      navigator.clipboard.writeText(evalVerifCodeGenerated).then(() => {
-        showToast("Kode disalin: " + evalVerifCodeGenerated);
-      }).catch(() => {
-        showToast("Kode: " + evalVerifCodeGenerated);
-      });
-    }
-
-    // Verifikasi kode yang diinput peserta
-    function verifikasiKode() {
-      const input   = document.getElementById("evalCodeInput");
-      const subText = document.getElementById("submitStatusText");
-      const subIcon = document.getElementById("submitStatusIcon");
-      if (!input) return;
-
-      const inputVal = input.value.trim().toUpperCase();
-      if (inputVal === "") {
-        showToast("Masukkan kode verifikasi dulu!", "error");
-        input.style.borderColor = "#dc3545";
-        return;
-      }
-
-      if (inputVal === evalVerifCodeGenerated) {
-        evalFormSubmitted        = true;
-        input.disabled           = true;
-        input.style.borderColor  = "#28a745";
-        input.style.background   = "#f0fff4";
-        if (subText) { subText.innerText = "Kode benar! Form evaluasi terverifikasi."; subText.style.color = "#28a745"; }
-        if (subIcon) subIcon.innerText = "✅";
-        showToast("Kode verifikasi benar!");
-        checkEvalRequirements();
-      } else {
-        input.style.borderColor = "#dc3545";
-        input.style.background  = "#fff5f5";
-        if (subText) { subText.innerText = "Kode salah. Periksa kembali kode di halaman konfirmasi Google Form."; subText.style.color = "#dc3545"; }
-        showToast("Kode verifikasi salah!", "error");
-        input.animate([
-          {transform:"translateX(-4px)"},{transform:"translateX(4px)"},
-          {transform:"translateX(-4px)"},{transform:"translateX(0)"}
-        ], {duration: 300});
-      }
-    }
-
-    // Cek apakah kedua syarat terpenuhi
+    // Dipanggil setiap kali salah satu syarat berubah
     function checkEvalRequirements() {
-      const timerOk  = evalSecondsLeft <= 0;
-      const submitOk = evalFormSubmitted;
-      const btn      = document.getElementById("evalDoneBtn");
-      if (!btn) return;
-
-      if (timerOk && submitOk) {
-        btn.disabled = false;
-        btn.classList.add("unlocked");
-        btn.innerHTML = "&#x2705; Konfirmasi Evaluasi Selesai";
-        showToast("Kedua syarat terpenuhi! Klik tombol hijau.");
-      } else {
-        btn.disabled = true;
-        btn.classList.remove("unlocked");
-        if (!submitOk && !timerOk)   btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu";
-        else if (!submitOk)          btn.innerHTML = "&#x1F512; Masukkan Kode Verifikasi";
-        else                         btn.innerHTML = "&#x1F512; Tunggu Timer Selesai";
+      if (evalTimerDone && evalCheckDone) {
+        // Kedua syarat terpenuhi → ubah tombol tutup jadi "Akhiri Evaluasi"
+        const closeBtn = document.getElementById("closeVideoBtn");
+        if (closeBtn) {
+          closeBtn.style.background    = "linear-gradient(135deg, #1aa179, #218838)";
+          closeBtn.style.color         = "#fff";
+          closeBtn.style.fontWeight    = "700";
+          closeBtn.style.border        = "none";
+          closeBtn.innerText           = "✅ Akhiri Evaluasi";
+          closeBtn.onclick             = function() { bukaAkhiriEvalModal(); };
+          closeBtn.style.animation     = "pulse-green 1.5s infinite";
+        }
+        showToast("Kedua syarat terpenuhi! Klik tombol hijau untuk mengakhiri evaluasi.");
       }
+    }
+
+    // Dipanggil saat ceklist diubah
+    function onEvalCheckChange() {
+      const chk      = document.getElementById("evalConfirmCheck");
+      const label    = document.getElementById("evalCheckLabel");
+      evalCheckDone  = chk && chk.checked;
+
+      if (evalCheckDone) {
+        if (label) { label.style.borderColor = "#28a745"; label.style.background = "#f0fff4"; }
+        showToast("Konfirmasi dicatat.");
+      } else {
+        if (label) { label.style.borderColor = "#ddd"; label.style.background = "#fff"; }
+      }
+      checkEvalRequirements();
     }
 
     // Countdown timer minimum
     function startEvalCountdown() {
       clearInterval(evalCountdownInterval);
-      evalSecondsLeft   = EVAL_LOCK_DURATION;
-      evalFormSubmitted = false;
+      evalSecondsLeft = EVAL_LOCK_DURATION;
+      evalTimerDone   = false;
+      evalCheckDone   = false;
 
-      const btn     = document.getElementById("evalDoneBtn");
-      const textEl  = document.getElementById("evalCountdownText");
-      const fillEl  = document.getElementById("evalCountdownFill");
-      const subText = document.getElementById("submitStatusText");
-      const subIcon = document.getElementById("submitStatusIcon");
-      const inp     = document.getElementById("evalCodeInput");
+      const textEl   = document.getElementById("evalCountdownText");
+      const fillEl   = document.getElementById("evalCountdownFill");
+      const chk      = document.getElementById("evalConfirmCheck");
+      const label    = document.getElementById("evalCheckLabel");
+      const closeBtn = document.getElementById("closeVideoBtn");
 
-      if (btn)    { btn.disabled = true; btn.classList.remove("unlocked"); btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu"; }
-      if (textEl) { textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
-      if (fillEl) { fillEl.style.width = "100%"; }
-      if (subText){ subText.innerHTML = "&#x23F3; Belum diverifikasi &mdash; isi form, masukkan kode di atas"; subText.style.color = "#8C1007"; }
-      if (subIcon){ subIcon.innerText = "❌"; }
-      if (inp)    { inp.value = ""; inp.disabled = false; inp.style.borderColor = "#ddd"; inp.style.background = "#fff"; }
+      // Reset ceklist — dikunci sampai timer selesai
+      if (chk)   { chk.checked = false; chk.disabled = true; chk.style.cursor = "not-allowed"; }
+      if (label) { label.style.opacity = "0.5"; label.style.cursor = "not-allowed";
+                   label.style.borderColor = "#ddd"; label.style.background = "#fff"; }
+      if (textEl){ textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
+      if (fillEl){ fillEl.style.width = "100%"; }
+
+      // Reset tombol tutup ke semula
+      if (closeBtn) {
+        closeBtn.style.background = "";
+        closeBtn.style.color      = "";
+        closeBtn.style.animation  = "";
+        closeBtn.innerText        = "Tutup & Pause Belajar";
+        closeBtn.onclick          = function() { closeVideoModal(); };
+      }
 
       function tick() {
         evalSecondsLeft = Math.max(0, evalSecondsLeft - 1);
         const pct   = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
         const menit = Math.floor(evalSecondsLeft / 60);
         const detik = evalSecondsLeft % 60;
+
         if (textEl) textEl.innerText = evalSecondsLeft > 0
           ? String(menit).padStart(2,"0") + ":" + String(detik).padStart(2,"0")
-          : "SELESAI";
+          : "SELESAI ✔";
         if (fillEl) fillEl.style.width = pct + "%";
+
         if (evalSecondsLeft <= 0) {
           clearInterval(evalCountdownInterval);
+          evalTimerDone = true;
           if (textEl) textEl.style.color = "#28a745";
+
+          // Aktifkan ceklist
+          if (chk)   { chk.disabled = false; chk.style.cursor = "pointer"; }
+          if (label) { label.style.opacity = "1"; label.style.cursor = "pointer"; }
+
+          showToast("Waktu terpenuhi! Centang konfirmasi lalu klik Akhiri Evaluasi.");
           checkEvalRequirements();
         }
       }
@@ -1497,16 +1589,19 @@
     function startGoogleForm() {
       document.getElementById("evaluasiConfirmModal").classList.remove("show");
 
-      const modal  = document.getElementById("videoModal");
-      const player = document.getElementById("videoPlayer");
+      const modal    = document.getElementById("videoModal");
+      const player   = document.getElementById("videoPlayer");
+      const timerBar = document.getElementById("modalTimerDisplay");
 
       isEvalMode = true;
       document.getElementById("videoTitle").innerText = "Evaluasi Belajar: Selesaikan Kuis";
 
-      // Generate kode unik setiap sesi evaluasi
-      evalVerifCodeGenerated = generateVerifCode();
-      const codeEl = document.getElementById("evalVerifCode");
-      if (codeEl) codeEl.innerText = evalVerifCodeGenerated;
+      // Sembunyikan timer belajar (bukan timer evaluasi) saat mode eval
+      if (timerBar) timerBar.style.display = "none";
+
+      // Sembunyikan tombol download materi saat mode evaluasi
+      const dlWrapper = document.getElementById("downloadMateriWrapper");
+      if (dlWrapper) dlWrapper.style.display = "none";
 
       let finalUrl = currentEvalUrl;
       const storedUser = JSON.parse(localStorage.getItem("userData"));
@@ -1522,29 +1617,50 @@
       player.src = finalUrl;
       document.getElementById("evalDoneWrapper").style.display = "block";
       modal.classList.add("show");
-      showToast("Salin kode verifikasi, lalu isi dan submit form evaluasi.");
+      showToast("Isi dan submit Google Form evaluasi, lalu centang konfirmasi.");
 
       startEvalCountdown();
     }
 
-    function markEvalDone() {
-      if (!evalFormSubmitted) {
-        showToast("Masukkan kode verifikasi dari Google Form dulu!", "error");
-        return;
-      }
-      if (evalSecondsLeft > 0) {
-        showToast("Harap tunggu sampai timer selesai!", "error");
-        return;
-      }
+    // Buka pop-up peringatan akhiri evaluasi
+    function bukaAkhiriEvalModal() {
+      document.getElementById("akhiriEvalModal").classList.add("show");
+    }
+
+    function closeAkhiriEvalModal() {
+      document.getElementById("akhiriEvalModal").classList.remove("show");
+    }
+
+    // Konfirmasi final — evalStatus = true
+    function konfirmasiAkhiriEval() {
       if (!currentEvalId) return;
+      closeAkhiriEvalModal();
       clearInterval(evalCountdownInterval);
+
       evalStatus[currentEvalId]    = true;
       printedStatus[currentEvalId] = true;
       localStorage.setItem("evalStatus",    JSON.stringify(evalStatus));
       localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
+
+      // Tutup modal video
+      isEvalMode = false;
+      currentActiveId = null;
+      const iframe = document.getElementById("videoPlayer");
+      if (iframe) iframe.src = "";
+      document.getElementById("videoModal").classList.remove("show");
       document.getElementById("evalDoneWrapper").style.display = "none";
-      showToast("Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
+
+      // Tampilkan kembali timer belajar untuk sesi berikutnya
+      const timerBar = document.getElementById("modalTimerDisplay");
+      if (timerBar) timerBar.style.display = "";
+
+      showToast("🎉 Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
       renderMateri(currentFilter);
+    }
+
+    function markEvalDone() {
+      // Fungsi lama — tidak dipakai, dialihkan ke konfirmasiAkhiriEval
+      konfirmasiAkhiriEval();
     }
 
     function openDownload(url) {
