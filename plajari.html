@@ -443,6 +443,20 @@
       animation: badgePop 0.5s ease;
     }
 
+    .badge-belum-selesai {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: linear-gradient(135deg, #e74c3c, #8C1007);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      z-index: 2;
+      animation: badgePop 0.5s ease;
+    }
+
     .label-time {
       margin: 6px 15px 0;
       font-size: 12px;
@@ -715,23 +729,32 @@
     /* Daftar video (playlist kecil) */
     #videoPlaylist {
       display: none;
+      flex-direction: row;        /* horizontal */
+      flex-wrap: nowrap;
       gap: 5px;
-      flex-direction: column;
       margin-bottom: 8px;
-      max-height: 110px;
-      overflow-y: auto;
+      overflow-x: auto;           /* scroll horizontal jika banyak */
+      padding-bottom: 4px;
     }
+
+    /* Sembunyikan scrollbar horizontal tapi tetap bisa scroll */
+    #videoPlaylist::-webkit-scrollbar { height: 4px; }
+    #videoPlaylist::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
     .vid-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
+      gap: 6px;
+      padding: 6px 10px;
       border-radius: 6px;
       background: #f0f4f8;
-      font-size: 12px;
+      font-size: 11px;
       cursor: default;
       border: 1px solid #dde;
+      white-space: nowrap;        /* jangan wrap teks */
+      flex-shrink: 0;             /* jangan diperkecil */
+      min-width: 100px;
+      max-width: 160px;
     }
 
     .vid-item.active {
@@ -943,8 +966,8 @@
     <!-- Menu navigasi -->
     <nav>
       <button id="btn-all" class="active">Semua Materi</button>
-      <button id="btn-unread">Belum Dibaca</button>
-      <button id="btn-read">Sudah Dibaca</button>
+      <button id="btn-unread">Belum Selesai Dipelajari</button>
+      <button id="btn-read">Sudah Selesai Dipelajari</button>
     </nav>
 
     <div class="container" id="materi-container"></div>
@@ -979,9 +1002,9 @@
       </p>
 
       <!-- Kotak peringatan -->
-      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
+      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left; max-width:100%; box-sizing:border-box;">
         <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">⚠️ Perhatian Penting:</div>
-        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.8;">
+        <ul style="margin:0; padding-left:16px; font-size:12px; color:#555; line-height:1.8;">
           <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
           <li>Pastikan koneksi internet Anda <b>stabil</b> sebelum memulai.</li>
           <li>Isi semua pertanyaan dengan <b>sungguh-sungguh</b>.</li>
@@ -1121,6 +1144,7 @@
           <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
           <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi di Google Form.</li>
           <li>Jika Anda belum mengisi Google Form, <b>kembali dan isi sekarang</b>.</li>
+          <li>Jangan <b>berpindah tab atau menutup halaman</b> saat evaluasi — sesi akan otomatis tertutup.</li>
         </ul>
       </div>
       <div class="modal-actions">
@@ -1221,38 +1245,53 @@
     // Field 'modul' : link download modul/bahan ajar
     // Field 'link'  : masih dipakai sebagai link preview utama (opsional)
     const materiList = [
-      {id:1, judul:"Keuangan Daerah", img:"https://drive.google.com/thumbnail?id=1PuJIEptjTUfZe9mXqxyHooR_7izGfCnE&sz=w400",
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg",
        modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
        videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
+         {judul:"Bagian 1 - Pengantar Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
+         {judul:"Bagian 2 - Penyusunan Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
+         {judul:"Bagian 3 - Evaluasi & Pelaporan", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"}
+       ],
        sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
        download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:2, judul:"English for Workplace", img:"https://drive.google.com/thumbnail?id=1GUxuGKrAuvVdo2yUlW07qVAbsrZY_snC&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:3, judul:"Arsip Dinamis", img:"https://drive.google.com/thumbnail?id=1p9EbDimewgkqZImhrqpBgJ_fbEpmYzjk&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:4, judul:"Cara Budidaya Ikan", img:"https://drive.google.com/thumbnail?id=1Bt-LYOwmNuNX3aX5FkPfmlR_FNt7IBnj&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
     ];
 
     // ===== STATE =====
@@ -1509,37 +1548,41 @@
       const kataKunci  = (document.getElementById("searchInput")?.value || "").toLowerCase();
       let dataRender   = urutkanMateriPermanen(materiList, filter);
 
-      // FIX #5: Filter dilakukan SEPENUHNYA di sini, tidak lagi di dalam forEach
+      // Filter berdasarkan status:
+      // "all"    = semua materi
+      // "unread" = sudah diklik mulai belajar TAPI belum selesai semua tahapan
+      // "read"   = sudah selesai semua tahapan (evalStatus = true)
       dataRender = dataRender.filter(materi => {
-        const isRead = readStatus[materi.id] === true;
-        if (filter === "read"   && !isRead) return false;
-        if (filter === "unread" && isRead)  return false;
+        const sudahMulai   = readStatus[materi.id] === true;
+        const sudahSelesai = evalStatus[materi.id]  === true;
+        if (filter === "unread") return sudahMulai && !sudahSelesai;
+        if (filter === "read")   return sudahSelesai;
         return materi.judul.toLowerCase().includes(kataKunci);
       });
 
-      // FIX #15: Empty state yang informatif dan menarik
+      // Empty state
       if (dataRender.length === 0) {
         if (kataKunci !== "") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">🔍</span>
-              <h3>Tidak Ditemukan</h3>
-              <p>Materi dengan judul "<b>${kataKunci}</b>" tidak ditemukan.<br>Coba kata kunci lain.</p>
-            </div>`;
+          container.innerHTML =
+            '<div class="empty-state">' +
+            '<span class="empty-icon">🔍</span>' +
+            '<h3>Tidak Ditemukan</h3>' +
+            '<p>Materi dengan judul "<b>' + kataKunci + '</b>" tidak ditemukan.<br>Coba kata kunci lain.</p>' +
+            '</div>';
         } else if (filter === "unread") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">🎉</span>
-              <h3>Selamat!</h3>
-              <p>Semua materi sudah Anda baca.<br>Lanjutkan belajar di tab <b>Sudah Dibaca</b>.</p>
-            </div>`;
+          container.innerHTML =
+            '<div class="empty-state">' +
+            '<span class="empty-icon">📖</span>' +
+            '<h3>Belum Ada Materi Dipelajari</h3>' +
+            '<p>Klik <b>"Mulai Belajar"</b> pada materi di tab <b>Semua Materi</b><br>untuk memulai pembelajaran.</p>' +
+            '</div>';
         } else if (filter === "read") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">📚</span>
-              <h3>Belum Ada Materi Dibaca</h3>
-              <p>Mulai perjalanan belajar Anda dengan memilih materi<br>di tab <b>Belum Dibaca</b>.</p>
-            </div>`;
+          container.innerHTML =
+            '<div class="empty-state">' +
+            '<span class="empty-icon">🎓</span>' +
+            '<h3>Belum Ada Materi Selesai</h3>' +
+            '<p>Selesaikan semua tahapan belajar untuk memindahkan materi ke sini.<br>Tahapan: Video → Modul → Evaluasi.</p>' +
+            '</div>';
         }
         return;
       }
@@ -1561,8 +1604,12 @@
           localStorage.setItem("newBadgeShown", JSON.stringify(newBadgeShown));
         }
 
-        let completeBadgeHtml = printedStatus[materi.id]
-          ? `<div class="badge-complete">SELESAI DIPELAJARI</div>` : "";
+        let completeBadgeHtml = "";
+        if (evalStatus[materi.id]) {
+          completeBadgeHtml = '<div class="badge-complete">SELESAI DIPELAJARI</div>';
+        } else if (readStatus[materi.id]) {
+          completeBadgeHtml = '<div class="badge-belum-selesai">BELUM SELESAI</div>';
+        }
 
         let html = `${badgeHtml}${completeBadgeHtml}
           <img src="${materi.img}" alt="${materi.judul}" loading="lazy">
@@ -1578,7 +1625,7 @@
 
           const waktuSkr  = getWaktuBelajarAktif(materi.id);
           const sisa      = MIN_WAKTU_BELAJAR - waktuSkr;
-          const timeOk    = waktuSkr >= MIN_WAKTU_BELAJAR;
+          const timeOk    = videoSelesaiStatus[materi.id] || (waktuSkr >= MIN_WAKTU_BELAJAR);
           const videoOk   = videoStatus[materi.id]  === true;
           const modulOk   = modulStatus[materi.id]  === true;
           const isEvalDone = evalStatus[materi.id]  === true;
@@ -1587,25 +1634,31 @@
           html += `
             <div class="label-time">
               ⏳ Waktu belajar:
-              <span id="timer-${materi.id}" class="${timeOk ? 'timer-selesai' : ''}">
-                ${timeOk ? 'SELESAI' : formatCountdown(sisa)}
+              <span id="timer-${materi.id}"
+                class="${(videoSelesaiStatus[materi.id] || timeOk) ? 'timer-selesai' : ''}">
+                ${(videoSelesaiStatus[materi.id] || timeOk) ? 'SELESAI' : formatCountdown(sisa)}
               </span>
             </div>
 
+            ${videoSelesaiStatus[materi.id] ? `
             <div style="text-align:left; margin:10px 15px; font-size:13px">
               <label>
                 <input type="checkbox" ${videoOk ? "checked" : ""}
-                  ${printedStatus[materi.id] || !timeOk ? "disabled" : ""}
+                  ${isEvalDone ? "disabled" : ""}
                   onchange="toggleVideo(${materi.id})">
                 Video telah dipelajari
               </label><br>
               <label>
                 <input type="checkbox" ${modulOk ? "checked" : ""}
-                  ${printedStatus[materi.id] ? "disabled" : ""}
+                  ${isEvalDone ? "disabled" : ""}
                   onchange="toggleModul(${materi.id})">
                 Modul telah dipelajari
               </label>
-            </div>
+            </div>` : `
+            <div style="text-align:left; margin:10px 15px; font-size:12px; padding:8px;
+              background:#f8f9fa; border-radius:6px; border:1px solid #dee2e6; color:#888;">
+              ⏳ Selesaikan semua video terlebih dahulu untuk mengaktifkan ceklist ini.
+            </div>`}
 
             <div style="text-align:left; margin:10px 15px; font-size:11px; padding:8px; background:#fdf2f2; border-radius:5px; border:1px solid #f8d7da;">
               <b style="color:#1B3C53; display:block; margin-bottom:3px;">Syarat Kelulusan:</b>
@@ -1660,21 +1713,16 @@
         });
       });
 
-      // Auto scroll sekali per sesi
-      if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
-        setTimeout(() => {
-          const target = document.getElementById(`materi-${lastMovedMateriId}`);
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-            // FIX #14: Instruksi hanya muncul jika belum pernah ditampilkan untuk materi ini
-            if (!instruksiShown[lastMovedMateriId]) {
-              document.getElementById("instructionModal").classList.add("show");
-              instruksiShown[lastMovedMateriId] = true;
-              localStorage.setItem("instruksiShown", JSON.stringify(instruksiShown));
-            }
-            hasAutoScrolled = true;
-          }
-        }, 300);
+      // Instruksi hanya muncul sekali per materi (tanpa auto-scroll)
+      if (filter === "unread" && lastMovedMateriId && !hasAutoScrolled) {
+        if (!instruksiShown[lastMovedMateriId]) {
+          setTimeout(() => {
+            document.getElementById("instructionModal").classList.add("show");
+            instruksiShown[lastMovedMateriId] = true;
+            localStorage.setItem("instruksiShown", JSON.stringify(instruksiShown));
+          }, 400);
+        }
+        hasAutoScrolled = true;
       }
     }
 
@@ -1682,12 +1730,12 @@
     function hitungProgress(id) {
       if (evalStatus[id]) return 100;
       let progress = 0;
-      if (openedStatus[id])                        progress += 25;
-      if (getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR) progress += 25;
-      if (videoStatus[id])                         progress += 25;
-      if (modulStatus[id])                         progress += 25;
-      // Jika video sudah selesai semua → kunci di 99% permanen
-      if (videoStatus[id] && progress >= 75)       return 99;
+      const waktuOk = videoSelesaiStatus[id] || (getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR);
+      if (openedStatus[id])  progress += 25;
+      if (waktuOk)           progress += 25;
+      if (videoStatus[id])   progress += 25;
+      if (modulStatus[id])   progress += 25;
+      if (videoStatus[id] && progress >= 75) return 99;
       return Math.min(progress, 99);
     }
 
@@ -1713,11 +1761,20 @@
       localStorage.setItem("readStatus", JSON.stringify(readStatus));
       localStorage.setItem("readTime",   JSON.stringify(readTime));
       syncStatusKeServer(); // sinkron ke server
+
+      // Poin 11: Catat status card ke spreadsheet
+      const materiMulai = materiList.find(m => m.id === selectedMateriId);
+      if (materiMulai) catatStatusCard(selectedMateriId, materiMulai.judul, "Belum Selesai Dipelajari");
+
       closeModal();
-      showToast("✅ Berhasil! Materi dipindahkan ke 'Sudah Dibaca'");
-      currentFilter = "read";
-      setActive("btn-read");
-      renderMateri("read");
+      showToast("✅ Berhasil! Materi ditambahkan ke 'Belum Selesai Dipelajari'");
+      // Poin 7: Arahkan ke tab belum selesai
+      currentFilter = "unread";
+      setActive("btn-unread");
+      // Poin 9: Tidak auto-scroll, render saja
+      lastMovedMateriId = null;
+      hasAutoScrolled   = true;
+      renderMateri("unread");
     }
 
     // ===== MULTI VIDEO: State =====
@@ -1729,7 +1786,9 @@
     let videoTimerDoneFlag   = false;   // timer video aktif sudah selesai
     let videoTimerRunning    = false;   // apakah timer sedang berjalan
     let videoSecondsMap      = {};      // sisa waktu per video
-    let videoTimerStartTime  = 0;       // timestamp saat timer video mulai jalan: {index: seconds}
+    let videoTimerStartTime  = 0;       // timestamp saat timer video mulai jalan
+    let videoSelesaiStatus   = JSON.parse(localStorage.getItem("videoSelesaiStatus")) || {};
+    // videoSelesaiStatus[id] = true berarti peserta sudah klik "Semua Video Selesai - Tutup" : {index: seconds}
     const VIDEO_MIN_SECONDS  = 5 * 60; // 5 menit per video
 
     // ===== MODAL: Video / Materi =====
@@ -2066,31 +2125,77 @@
       }
     }
 
-    // Semua video selesai — poin 6 & 8
+    // Semua video selesai — tampilkan tombol hijau
     function onSemuaVideoSelesai() {
-      showToast("Semua video selesai dipelajari!");
+      showToast("Semua video selesai! Klik tombol hijau untuk melanjutkan.");
       tampilkanSemuaVideoSelesai();
-
-      // Ceklist video di kartu materi aktif (poin 6)
-      videoStatus[currentMateri.id] = true;
-      localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
-      syncStatusKeServer();
-      renderMateri(currentFilter);
+      // Ceklist & studyTime baru diset saat klik tombol "Semua Video Selesai - Tutup"
     }
 
-    // Tampilkan tombol hijau "Semua Video Selesai - Tutup" (poin 8)
+    // Tampilkan tombol hijau "Semua Video Selesai - Tutup"
     function tampilkanSemuaVideoSelesai() {
       const closeBtn = document.getElementById("closeVideoBtn");
       const btnNext  = document.getElementById("btnVideoBerikutnya");
       if (btnNext) btnNext.style.display = "none";
       if (closeBtn) {
+        closeBtn.disabled         = false;
         closeBtn.style.background = "linear-gradient(135deg, #1aa179, #218838)";
         closeBtn.style.color      = "#fff";
         closeBtn.style.fontWeight = "700";
+        closeBtn.style.opacity    = "1";
+        closeBtn.style.cursor     = "pointer";
         closeBtn.style.animation  = "pulse-green 1.5s infinite";
         closeBtn.innerText        = "✅ Semua Video Selesai Dipelajari — Tutup";
-        closeBtn.onclick          = function() { closeVideoModal(); };
+        // Poin 2&3: saat diklik, set status dan tutup modal
+        closeBtn.onclick = function() { selesaiVideoModal(); };
       }
+    }
+
+    // Dipanggil saat peserta klik "Semua Video Selesai - Tutup"
+    function selesaiVideoModal() {
+      if (!currentMateri) { closeVideoModal(); return; }
+      const id = currentMateri.id;
+
+      // Poin 2: Set ceklist video & modul baru aktif sekarang
+      videoStatus[id]        = true;
+      videoSelesaiStatus[id] = true;
+      localStorage.setItem("videoStatus",       JSON.stringify(videoStatus));
+      localStorage.setItem("videoSelesaiStatus", JSON.stringify(videoSelesaiStatus));
+
+      // Poin 3: Set waktu belajar = sudah memenuhi syarat minimal
+      // Gunakan waktu total dari semua video yang selesai
+      const totalWaktuMs = (currentMateri.videos || []).length * VIDEO_MIN_SECONDS * 1000;
+      if ((studyTime[id] || 0) < totalWaktuMs) {
+        studyTime[id] = totalWaktuMs;
+        localStorage.setItem("studyTime", JSON.stringify(studyTime));
+      }
+
+      syncStatusKeServer();
+      showToast("✅ Video selesai dipelajari! Lanjutkan ke Ceklist & Evaluasi.");
+
+      // Catat aktivitas
+      catatAktivitasLokal(id, currentMateri.judul, "Semua Video Selesai");
+
+      closeVideoModal();
+    }
+
+    // Catat status card ke sheet StatusCard (poin 11)
+    async function catatStatusCard(materiId, judulMateri, status) {
+      try {
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+        if (!savedUser || !savedUser.nip) return;
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action:      "catatStatusCard",
+            nip:         savedUser.nip,
+            nama:        savedUser.nama,
+            materiId:    String(materiId),
+            judulMateri: judulMateri,
+            status:      status
+          })
+        });
+      } catch(e) { console.error("Gagal catat status card:", e); }
     }
 
     // Tombol lanjut ke video berikutnya
@@ -2498,13 +2603,39 @@
       const timerBar = document.getElementById("modalTimerDisplay");
       if (timerBar) timerBar.style.display = "";
 
-      // Catat ke spreadsheet
-      catatAktivitasLokal(currentEvalId,
-        (materiList.find(m => m.id === currentEvalId) || {}).judul || "",
-        "Evaluasi Selesai");
+      const judulMateri = (materiList.find(m => m.id === currentEvalId) || {}).judul || "";
+
+      // Catat ke sheet Aktivitas
+      catatAktivitasLokal(currentEvalId, judulMateri, "Evaluasi Selesai");
+
+      // Catat ke sheet EvalSubmit (poin 5)
+      catatEvalSubmit(currentEvalId, judulMateri);
+
+      // Sinkron semua status ke server
+      syncStatusKeServer();
 
       showToast("🎉 Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
       renderMateri(currentFilter);
+    }
+
+    // Catat ke sheet EvalSubmit via Apps Script
+    async function catatEvalSubmit(materiId, judulMateri) {
+      try {
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+        if (!savedUser || !savedUser.nip) return;
+        const now = new Date().toLocaleString("id-ID", {timeZone:"Asia/Jakarta"});
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action:      "catatEvalSubmit",
+            nip:         savedUser.nip,
+            nama:        savedUser.nama,
+            materiId:    String(materiId),
+            judulMateri: judulMateri,
+            timestamp:   now
+          })
+        });
+      } catch(e) { console.error("Gagal catat EvalSubmit:", e); }
     }
 
     function markEvalDone() {
