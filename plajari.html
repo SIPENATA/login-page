@@ -1116,6 +1116,37 @@
     </div>
   </div>
 
+  <!-- Modal Peringatan Evaluasi Belum Selesai (poin 3) -->
+  <div id="peringatanEvalModal" class="modal-overlay">
+    <div class="modal-box" style="max-width:440px;">
+      <div style="font-size:46px; margin-bottom:10px;">⚠️</div>
+      <h3 style="color:#8C1007; margin-bottom:8px;">Evaluasi Belum Selesai</h3>
+      <p style="font-size:14px; color:#555; margin-bottom:14px;">
+        Anda belum menyelesaikan semua syarat evaluasi.
+      </p>
+      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
+        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:8px;">Syarat yang harus dipenuhi:</div>
+        <div style="font-size:12px; color:#555; line-height:2;">
+          <div id="peringatanEvalTimer" style="display:flex; align-items:center; gap:6px;">
+            <span id="peringatanEvalTimerIcon">❌</span>
+            <span>Timer minimal 3 menit harus selesai</span>
+          </div>
+          <div id="peringatanEvalCheck" style="display:flex; align-items:center; gap:6px;">
+            <span id="peringatanEvalCheckIcon">❌</span>
+            <span>Ceklist konfirmasi pengisian form harus dicentang</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-confirm"
+          onclick="document.getElementById('peringatanEvalModal').classList.remove('show')"
+          style="background: linear-gradient(135deg,#1B3C53,#2d6a8f);">
+          Kembali & Selesaikan
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Peringatan Video Belum Selesai (poin 7) -->
   <div id="peringatanVideoModal" class="modal-overlay">
     <div class="modal-box" style="max-width:440px;">
@@ -1705,7 +1736,9 @@
       currentMateri   = materi;
       currentActiveId = id;
       isEvalMode      = false;
-      // videoSecondsMap TIDAK di-reset di sini agar sisa waktu persist
+      // Ambil sisa waktu dari localStorage (persist antar buka-tutup modal)
+      const savedMap = localStorage.getItem("vidSecondsMap_" + id);
+      videoSecondsMap = savedMap ? JSON.parse(savedMap) : {};
 
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
@@ -2065,9 +2098,26 @@
       }
     }
 
-    // Handle klik tombol tutup — poin 7
+    // Handle klik tombol tutup — berlaku untuk mode video DAN evaluasi
     function handleTutupVideo() {
-      if (isEvalMode) { closeVideoModal(); return; }
+      // === MODE EVALUASI ===
+      if (isEvalMode) {
+        // Cek apakah syarat evaluasi sudah terpenuhi (poin 4)
+        if (evalTimerDone && evalCheckDone) {
+          // Syarat terpenuhi — tampilkan konfirmasi akhiri evaluasi
+          bukaAkhiriEvalModal();
+        } else {
+          // Syarat belum terpenuhi — tampilkan peringatan dengan status (poin 3)
+          const timerIcon = document.getElementById("peringatanEvalTimerIcon");
+          const checkIcon = document.getElementById("peringatanEvalCheckIcon");
+          if (timerIcon) timerIcon.innerText = evalTimerDone ? "✅" : "❌";
+          if (checkIcon) checkIcon.innerText = evalCheckDone ? "✅" : "❌";
+          document.getElementById("peringatanEvalModal").classList.add("show");
+        }
+        return;
+      }
+
+      // === MODE VIDEO ===
       if (!currentMateri || !currentMateri.videos) { closeVideoModal(); return; }
 
       const semuaSelesai = videoStatusArr.every(Boolean);
@@ -2076,7 +2126,7 @@
         return;
       }
 
-      // Belum semua selesai → tampilkan pop-up peringatan (poin 7)
+      // Belum semua selesai → tampilkan pop-up peringatan
       document.getElementById("peringatanVideoModal").classList.add("show");
     }
 
@@ -2146,6 +2196,15 @@
 
       // Bersihkan state multi-video
       pauseTimerVideo(); // simpan sisa waktu sebelum tutup
+
+      // Simpan sisa waktu per video ke localStorage agar persist saat dibuka kembali
+      if (currentMateri) {
+        localStorage.setItem(
+          "vidSecondsMap_" + currentMateri.id,
+          JSON.stringify(videoSecondsMap)
+        );
+      }
+
       clearInterval(videoTimerInterval);
       videoTimerInterval = null;
       videoTimerRunning  = false;
@@ -2214,19 +2273,41 @@
 
     // Dipanggil setiap kali salah satu syarat berubah
     function checkEvalRequirements() {
-      if (evalTimerDone && evalCheckDone) {
-        // Kedua syarat terpenuhi → ubah tombol tutup jadi "Akhiri Evaluasi"
-        const closeBtn = document.getElementById("closeVideoBtn");
+      const timerOk  = evalTimerDone;
+      const submitOk = evalCheckDone;
+      const btn      = document.getElementById("evalDoneBtn");
+      const closeBtn = document.getElementById("closeVideoBtn");
+
+      if (timerOk && submitOk) {
+        // Semua syarat terpenuhi — aktifkan tombol konfirmasi hijau
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.add("unlocked");
+          btn.innerHTML = "&#x2705; Konfirmasi Evaluasi Selesai";
+        }
+
+        // Aktifkan tombol tutup dan ubah jadi "Akhiri Evaluasi" (poin 4)
         if (closeBtn) {
-          closeBtn.style.background    = "linear-gradient(135deg, #1aa179, #218838)";
-          closeBtn.style.color         = "#fff";
-          closeBtn.style.fontWeight    = "700";
-          closeBtn.style.border        = "none";
-          closeBtn.innerText           = "✅ Akhiri Evaluasi";
-          closeBtn.onclick             = function() { bukaAkhiriEvalModal(); };
-          closeBtn.style.animation     = "pulse-green 1.5s infinite";
+          closeBtn.disabled         = false;
+          closeBtn.style.background = "linear-gradient(135deg, #1aa179, #218838)";
+          closeBtn.style.color      = "#fff";
+          closeBtn.style.fontWeight = "700";
+          closeBtn.style.cursor     = "pointer";
+          closeBtn.style.opacity    = "1";
+          closeBtn.style.animation  = "pulse-green 1.5s infinite";
+          closeBtn.innerText        = "✅ Akhiri Evaluasi";
+          closeBtn.onclick          = function() { bukaAkhiriEvalModal(); };
         }
         showToast("Kedua syarat terpenuhi! Klik tombol hijau untuk mengakhiri evaluasi.");
+      } else {
+        // Syarat belum terpenuhi — update teks tombol konfirmasi
+        if (btn) {
+          btn.disabled = true;
+          btn.classList.remove("unlocked");
+          if (!timerOk && !submitOk) btn.innerHTML = "&#x1F512; Selesaikan Kedua Syarat Dulu";
+          else if (!timerOk)         btn.innerHTML = "&#x1F512; Tunggu Timer Selesai";
+          else                       btn.innerHTML = "&#x1F512; Centang Konfirmasi Dulu";
+        }
       }
     }
 
@@ -2265,12 +2346,15 @@
       if (textEl){ textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
       if (fillEl){ fillEl.style.width = "100%"; }
 
-      // Reset tombol tutup - gunakan handleTutupVideo
+      // Kunci tombol tutup sampai syarat evaluasi terpenuhi (poin 4)
       if (closeBtn) {
-        closeBtn.style.background = "";
-        closeBtn.style.color      = "";
-        closeBtn.style.animation  = "";
-        closeBtn.innerText        = "Tutup & Pause Belajar";
+        closeBtn.disabled         = true;
+        closeBtn.style.background = "#adb5bd";
+        closeBtn.style.color      = "#fff";
+        closeBtn.style.animation  = "none";
+        closeBtn.style.cursor     = "not-allowed";
+        closeBtn.style.opacity    = "0.7";
+        closeBtn.innerText        = "🔒 Selesaikan Evaluasi Dulu";
         closeBtn.onclick          = function() { handleTutupVideo(); };
       }
 
@@ -2535,7 +2619,7 @@
 
     // ===== TOAST =====
     function showToast(message, type = "success") {
-      const toast = document.getElementById("toast");
+    const toast = document.getElementById("toast");
       toast.innerText = message;
       toast.style.background = type === "error"
         ? "rgba(220,53,69,0.95)"
