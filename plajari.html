@@ -729,68 +729,112 @@
     /* Daftar video (playlist kecil) */
     #videoPlaylist {
       display: none;
-      flex-direction: row;        /* horizontal */
-      flex-wrap: nowrap;
-      gap: 5px;
+      flex-direction: row;
+      flex-wrap: wrap;            /* wrap ke baris baru, tidak scroll */
+      gap: 6px;
       margin-bottom: 8px;
-      overflow-x: auto;           /* scroll horizontal jika banyak */
-      padding-bottom: 4px;
     }
-
-    /* Sembunyikan scrollbar horizontal tapi tetap bisa scroll */
-    #videoPlaylist::-webkit-scrollbar { height: 4px; }
-    #videoPlaylist::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
 
     .vid-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 6px;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 10px;
+      border-radius: 10px;
       background: #f0f4f8;
       font-size: 11px;
       cursor: default;
-      border: 1px solid #dde;
-      white-space: nowrap;        /* jangan wrap teks */
-      flex-shrink: 0;             /* jangan diperkecil */
-      min-width: 100px;
-      max-width: 160px;
+      border: 2px solid #e0e8f0;
+      text-align: center;
+      flex: 1 1 calc(50% - 6px);  /* 2 kolom default */
+      min-width: 80px;
+      max-width: calc(50% - 3px);
+      transition: all 0.2s ease;
+      line-height: 1.3;
+    }
+
+    /* 3 kolom jika lebih dari 2 video */
+    #videoPlaylist.cols-3 .vid-item {
+      flex: 1 1 calc(33.33% - 8px);
+      max-width: calc(33.33% - 4px);
+    }
+
+    /* 4 kolom jika lebih dari 3 video */
+    #videoPlaylist.cols-4 .vid-item {
+      flex: 1 1 calc(25% - 7px);
+      max-width: calc(25% - 5px);
+    }
+
+    .vid-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     }
 
     .vid-item.active {
-      background: #dbeafe;
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
       border-color: #2d6a8f;
-      font-weight: 700;
       color: #1B3C53;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(45,106,143,0.2);
     }
 
     .vid-item.done {
-      background: #f0fff4;
+      background: linear-gradient(135deg, #f0fff4, #ecfdf5);
       border-color: #28a745;
       color: #218838;
+      cursor: pointer;
+    }
+
+    .vid-item.done:hover {
+      background: linear-gradient(135deg, #d1fae5, #ecfdf5);
     }
 
     .vid-item .vid-num {
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
-      background: #1B3C53;
+      background: linear-gradient(135deg, #1B3C53, #2d6a8f);
       color: #fff;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      margin-bottom: 2px;
     }
 
     .vid-item.done .vid-num {
-      background: #28a745;
+      background: linear-gradient(135deg, #28a745, #1aa179);
     }
 
     .vid-item.active .vid-num {
-      background: #2d6a8f;
+      background: linear-gradient(135deg, #2d6a8f, #1B3C53);
+      box-shadow: 0 0 0 3px rgba(45,106,143,0.2);
     }
+
+    .vid-item .vid-judul {
+      font-size: 10px;
+      color: #555;
+      line-height: 1.3;
+      word-break: break-word;
+      white-space: normal;
+      max-width: 100%;
+    }
+
+    .vid-item.active .vid-judul { color: #1B3C53; font-weight: 600; }
+    .vid-item.done   .vid-judul { color: #218838; }
+
+    .vid-item .vid-status {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #999;
+    }
+    .vid-item.done   .vid-status { color: #28a745; }
+    .vid-item.active .vid-status { color: #2d6a8f; }
 
     /* Tombol lanjut video */
     #btnVideoBerikutnya {
@@ -1276,7 +1320,7 @@
          {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
          {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
        sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}, 
+       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
     ];
 
     // ===== STATE =====
@@ -1625,25 +1669,24 @@
               </span>
             </div>
 
-            ${videoSelesaiStatus[materi.id] ? `
-            <div style="text-align:left; margin:10px 15px; font-size:13px">
-              <label>
-                <input type="checkbox" ${videoOk ? "checked" : ""}
-                  ${isEvalDone ? "disabled" : ""}
-                  onchange="toggleVideo(${materi.id})">
-                Video telah dipelajari
-              </label><br>
-              <label>
-                <input type="checkbox" ${modulOk ? "checked" : ""}
-                  ${isEvalDone ? "disabled" : ""}
-                  onchange="toggleModul(${materi.id})">
-                Modul telah dipelajari
-              </label>
-            </div>` : `
-            <div style="text-align:left; margin:10px 15px; font-size:12px; padding:8px;
-              background:#f8f9fa; border-radius:6px; border:1px solid #dee2e6; color:#888;">
-              ⏳ Selesaikan semua video terlebih dahulu untuk mengaktifkan ceklist ini.
-            </div>`}
+            ${isEvalDone ?
+              // Filter "sudah selesai": ceklist muncul, disabled, semua tercentang (poin 2)
+              '<div style="text-align:left; margin:10px 15px; font-size:13px">' +
+              '<label style="color:#888;"><input type="checkbox" checked disabled> Video telah dipelajari</label><br>' +
+              '<label style="color:#888;"><input type="checkbox" checked disabled> Modul telah dipelajari</label>' +
+              '</div>'
+            : videoSelesaiStatus[materi.id] ?
+              // Video selesai, belum evaluasi: ceklist aktif bisa diubah
+              '<div style="text-align:left; margin:10px 15px; font-size:13px">' +
+              '<label><input type="checkbox" ' + (videoOk ? "checked" : "") + ' onchange="toggleVideo(' + materi.id + ')"> Video telah dipelajari</label><br>' +
+              '<label><input type="checkbox" ' + (modulOk ? "checked" : "") + ' onchange="toggleModul(' + materi.id + ')"> Modul telah dipelajari</label>' +
+              '</div>'
+            :
+              // Belum selesai video: tampilkan pesan
+              '<div style="text-align:left; margin:10px 15px; font-size:12px; padding:8px; background:#f8f9fa; border-radius:6px; border:1px solid #dee2e6; color:#888;">' +
+              '⏳ Selesaikan semua video terlebih dahulu untuk mengaktifkan ceklist ini.' +
+              '</div>'
+            }
 
             <div style="text-align:left; margin:10px 15px; font-size:11px; padding:8px; background:#fdf2f2; border-radius:5px; border:1px solid #f8d7da;">
               <b style="color:#1B3C53; display:block; margin-bottom:3px;">Syarat Kelulusan:</b>
@@ -1676,9 +1719,20 @@
           updateStats();
         }
 
-        // Tombol "Mulai Belajar" hanya di filter "all" untuk yang belum mulai
-        if (filter === "all" && !isRead) {
-          html += `<button class="start" onclick="openModal(${materi.id})">Mulai Belajar</button>`;
+        // Tombol di filter "all" berdasarkan status materi
+        if (filter === "all") {
+          const sudahSelesai = evalStatus[materi.id] === true;
+          const sedangBelajar = readStatus[materi.id] === true;
+          if (!sedangBelajar) {
+            // Belum pernah diklik mulai belajar
+            html += '<button class="start" onclick="openModal(' + materi.id + ')">Mulai Belajar</button>';
+          } else if (sedangBelajar && !sudahSelesai) {
+            // Sudah mulai tapi belum selesai
+            html += '<button class="btn-status-belajar" disabled style="background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;cursor:default;width:calc(100% - 30px);margin:0 15px 15px;padding:10px;border:none;border-radius:8px;font-family:Montserrat;font-weight:700;">📖 Sedang Dipelajari</button>';
+          } else {
+            // Sudah selesai semua
+            html += '<button class="btn-status-selesai" disabled style="background:linear-gradient(135deg,#1aa179,#218838);color:#fff;cursor:default;width:calc(100% - 30px);margin:0 15px 15px;padding:10px;border:none;border-radius:8px;font-family:Montserrat;font-weight:700;">✅ Sudah Selesai Dipelajari</button>';
+          }
         }
 
         card.innerHTML = html;
@@ -1869,7 +1923,7 @@
       renderMateri(currentFilter);
     }
 
-    // Render playlist
+    // Render playlist — grid kotak rapi (poin 3)
     function renderPlaylist(videos, statusArr) {
       const playlist = document.getElementById("videoPlaylist");
       const navbar   = document.getElementById("videoNavBar");
@@ -1877,29 +1931,41 @@
 
       playlist.innerHTML = "";
       playlist.style.display = "flex";
+
+      // Set class kolom berdasarkan jumlah video
+      playlist.classList.remove("cols-3", "cols-4");
+      if (videos.length >= 4)      playlist.classList.add("cols-4");
+      else if (videos.length >= 3) playlist.classList.add("cols-3");
+
       if (navbar) navbar.style.display = "flex";
 
+      const semuaSelesai = statusArr.every(Boolean);
+
       videos.forEach((vid, idx) => {
-        const div = document.createElement("div");
         const isDone   = statusArr[idx] === true;
         const isActive = idx === currentVideoIndex;
-        // Bisa diklik jika: (1) video sudah selesai, atau (2) semua selesai
-        const semuaSelesai = statusArr.every(Boolean);
-        const bisa = isDone || semuaSelesai;
+        const bisa     = isDone || semuaSelesai;
 
+        const div = document.createElement("div");
         div.className = "vid-item" + (isDone ? " done" : "") + (isActive ? " active" : "");
         div.id = "vid-item-" + idx;
-        div.style.cursor = bisa ? "pointer" : "default";
-        div.style.opacity = (!isDone && !isActive && !semuaSelesai) ? "0.55" : "1";
+
+        if (!isDone && !isActive && !semuaSelesai) div.style.opacity = "0.5";
+
+        // Judul diperpendek jika terlalu panjang
+        const judulPendek = vid.judul.length > 20
+          ? vid.judul.substring(0, 18) + "…"
+          : vid.judul;
+
+        const statusTeks = isDone ? "Selesai ✔" : (isActive ? "Sedang Diputar" : "Belum");
 
         div.innerHTML =
           '<div class="vid-num">' + (isDone ? "✓" : (idx + 1)) + '</div>' +
-          '<span style="flex:1;">' + vid.judul + '</span>' +
-          '<span style="font-size:10px; color:' + (isDone ? "#28a745" : "#999") + ';">' +
-            (isDone ? "Selesai" : "") +
-          '</span>';
+          '<div class="vid-judul">' + judulPendek + '</div>' +
+          '<div class="vid-status">' + statusTeks + '</div>';
 
         if (bisa) {
+          div.style.cursor = "pointer";
           div.onclick = function() { klikPlaylistItem(idx); };
         }
 
