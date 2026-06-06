@@ -864,7 +864,12 @@
         <div style="text-align: left;">
           <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin-bottom:5px;">NIP</label>
           <div style="position:relative;">
-            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:#2d6a8f; font-family:monospace;">#</span>
+            <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; align-items:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a8f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                <line x1="7" y1="15" x2="9" y2="15"/><line x1="12" y1="15" x2="16" y2="15"/>
+              </svg>
+            </span>
             <input type="tel" id="userNIP" placeholder="Masukkan NIP Anda"
                    oninput="validateNIPInput(this)"
                    style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
@@ -873,7 +878,12 @@
 
           <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin:14px 0 5px;">Nama Depan</label>
           <div style="position:relative;">
-            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:#2d6a8f;">A</span>
+            <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; align-items:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a8f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
             <input type="text" id="userName" placeholder="Masukkan Nama Depan"
                    style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
           </div>
@@ -1063,6 +1073,7 @@
       <!-- Tombol download materi -->
       <div id="downloadMateriWrapper" style="display:none; margin-top:10px;">
         <a id="downloadMateriBtn" href="#" target="_blank"
+          onclick="onDownloadModul()"
           style="display:block; text-align:center; background:linear-gradient(135deg,#2d6a8f,#1B3C53);
                  color:#fff; padding:9px; border-radius:8px; font-weight:700; font-size:13px;
                  text-decoration:none; font-family:Montserrat; transition: background 0.3s;">
@@ -1072,7 +1083,7 @@
 
       <!-- Tombol tutup — berubah jadi hijau saat evaluasi siap diakhiri -->
       <div class="modal-actions" style="margin-top:10px;">
-        <button id="closeVideoBtn" class="btn-cancel" onclick="closeVideoModal()">
+        <button id="closeVideoBtn" class="btn-cancel" onclick="handleTutupVideo()">
           Tutup &amp; Pause Belajar
         </button>
       </div>
@@ -1093,6 +1104,7 @@
           <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
           <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi di Google Form.</li>
           <li>Jika Anda belum mengisi Google Form, <b>kembali dan isi sekarang</b>.</li>
+          <li>Jangan <b>berpindah tab atau menutup halaman</b> saat evaluasi — sesi akan otomatis tertutup.</li>
         </ul>
       </div>
       <div class="modal-actions">
@@ -1693,7 +1705,7 @@
       currentMateri   = materi;
       currentActiveId = id;
       isEvalMode      = false;
-      videoSecondsMap = {};  // reset peta sisa waktu
+      // videoSecondsMap TIDAK di-reset di sini agar sisa waktu persist
 
       openedStatus[id] = true;
       localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
@@ -1959,6 +1971,8 @@
           videoSecondsMap[currentVideoIndex] = videoSecondsLeft;
         }
       }
+      // Simpan waktu belajar total saat pause
+      if (currentActiveId) simpanWaktuBelajar();
     }
 
     // Resume timer saat tab aktif kembali (poin 2&12)
@@ -1975,6 +1989,12 @@
     async function onVideoSelesai(index) {
       videoStatusArr[index] = true;
       renderPlaylist(currentMateri.videos, videoStatusArr);
+
+      // Sinkron waktu belajar ke kartu materi:
+      // Tambahkan VIDEO_MIN_SECONDS ke studyTime materi ini
+      const matId = String(currentMateri.id);
+      studyTime[matId] = (studyTime[matId] || 0) + (VIDEO_MIN_SECONDS * 1000);
+      localStorage.setItem("studyTime", JSON.stringify(studyTime));
 
       try {
         const savedUser = JSON.parse(localStorage.getItem("userData"));
@@ -2245,13 +2265,13 @@
       if (textEl){ textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
       if (fillEl){ fillEl.style.width = "100%"; }
 
-      // Reset tombol tutup ke semula
+      // Reset tombol tutup - gunakan handleTutupVideo
       if (closeBtn) {
         closeBtn.style.background = "";
         closeBtn.style.color      = "";
         closeBtn.style.animation  = "";
         closeBtn.innerText        = "Tutup & Pause Belajar";
-        closeBtn.onclick          = function() { closeVideoModal(); };
+        closeBtn.onclick          = function() { handleTutupVideo(); };
       }
 
       function tick() {
@@ -2409,6 +2429,19 @@
       window.open(url, "_blank");
     }
 
+    // Otomatis ceklist modul saat download diklik (Tambahan 1)
+    function onDownloadModul() {
+      if (!currentMateri) return;
+      const id = currentMateri.id;
+      if (!modulStatus[id]) {
+        modulStatus[id] = true;
+        localStorage.setItem("modulStatus", JSON.stringify(modulStatus));
+        syncStatusKeServer();
+        showToast("📚 Modul berhasil diunduh & ditandai sudah dipelajari!");
+        renderMateri(currentFilter);
+      }
+    }
+
     // ===== INSTRUKSI MODAL =====
     // FIX #14: Sudah dikelola via instruksiShown di renderMateri
     function closeInstructionModal() {
@@ -2525,6 +2558,26 @@
         if (currentActiveId) simpanWaktuBelajar();
         pauseTimerVideo();   // pause timer video (poin 2)
         pauseTimerEval();    // pause timer evaluasi (poin 12)
+
+        // Auto tutup modal evaluasi saat pindah/tutup tab (Tambahan 4)
+        if (isEvalMode) {
+          const videoModal = document.getElementById("videoModal");
+          if (videoModal && videoModal.classList.contains("show")) {
+            // Tutup modal dan reset state evaluasi
+            isEvalMode = false;
+            clearInterval(evalCountdownInterval);
+            evalCountdownInterval = null;
+            evalSecondsLeft = EVAL_LOCK_DURATION;
+            evalTimerDone   = false;
+            evalCheckDone   = false;
+            const iframe = document.getElementById("videoPlayer");
+            if (iframe) iframe.src = "";
+            videoModal.classList.remove("show");
+            document.getElementById("evalDoneWrapper").style.display = "none";
+            showToast("Sesi evaluasi ditutup karena Anda berpindah tab.", "error");
+            renderMateri(currentFilter);
+          }
+        }
       } else {
         // Tab aktif kembali — resume timer
         if (currentActiveId) {
