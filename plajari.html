@@ -1593,11 +1593,11 @@
         card.className = "card";
         card.id        = `materi-${materi.id}`;
 
-        if (printedStatus[materi.id]) card.classList.add("completed");
+        if (evalStatus[materi.id]) card.classList.add("completed");
 
         // Badge BARU: sekali saja
         let badgeHtml = "";
-        if (materi.id === lastMovedMateriId && filter === "read" && !newBadgeShown[materi.id]) {
+        if (materi.id === lastMovedMateriId && (filter === "read" || filter === "unread") && !newBadgeShown[materi.id]) {
           badgeHtml = `<div class="badge-new">BARU</div>`;
           card.classList.add("highlight");
           newBadgeShown[materi.id] = true;
@@ -1615,8 +1615,8 @@
           <img src="${materi.img}" alt="${materi.judul}" loading="lazy">
           <h3>${materi.judul}</h3>`;
 
-        if (filter === "read") {
-          // Tombol lihat video
+        if (filter === "read" || filter === "unread") {
+          // Tombol lihat video — tampil di kedua filter
           html += `
             <button class="start" style="width:calc(100% - 30px); margin:10px 15px;" onclick="markOpened(${materi.id})">
               Lihat Video Materi
@@ -1691,10 +1691,9 @@
           updateStats();
         }
 
-        if (filter !== "read") {
-          html += isRead
-            ? `<button class="read" disabled>Sudah Dipelajari</button>`
-            : `<button class="start" onclick="openModal(${materi.id})">Mulai Belajar</button>`;
+        // Tombol "Mulai Belajar" hanya di filter "all" untuk yang belum mulai
+        if (filter === "all" && !isRead) {
+          html += `<button class="start" onclick="openModal(${materi.id})">Mulai Belajar</button>`;
         }
 
         card.innerHTML = html;
