@@ -656,6 +656,14 @@
       100% { box-shadow: 0 0 0 0 rgba(26,161,121,0); }
     }
 
+    /* ===== ANTI COPY URL VIDEO ===== */
+    #videoModal iframe,
+    #videoModal .modal-box {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
     /* ===== MULTI VIDEO PLAYER ===== */
     #videoNavBar {
       display: none;
@@ -978,7 +986,6 @@
           <li>Pastikan koneksi internet Anda <b>stabil</b> sebelum memulai.</li>
           <li>Isi semua pertanyaan dengan <b>sungguh-sungguh</b>.</li>
           <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi.</li>
-          <li><b>Jangan berpindah tab atau menutup halaman</b> saat evaluasi — sesi akan otomatis tertutup.</li>
         </ul>
       </div>
 
@@ -1023,12 +1030,21 @@
           <div class="spinner"></div>
           <span>Mengambil data progress...</span>
         </div>
+        <!-- Protective overlay: mencegah klik kanan & copy URL iframe -->
+        <div id="iframeProtector"
+          oncontextmenu="return false;"
+          ondragstart="return false;"
+          style="position:absolute; top:0; left:0; width:100%; height:30px;
+                 z-index:5; background:transparent; user-select:none;">
+        </div>
         <iframe id="videoPlayer"
-          style="position: absolute; top:0; left:0; width:100%; height:100%;"
+          style="position: absolute; top:0; left:0; width:100%; height:100%;
+                 pointer-events:auto;"
           src=""
           frameborder="0"
           allow="autoplay; fullscreen"
-          allowfullscreen>
+          allowfullscreen
+          oncontextmenu="return false;">
         </iframe>
       </div>
 
@@ -1105,6 +1121,7 @@
           <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
           <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi di Google Form.</li>
           <li>Jika Anda belum mengisi Google Form, <b>kembali dan isi sekarang</b>.</li>
+          <li>Jangan <b>berpindah tab atau menutup halaman</b> saat evaluasi — sesi akan otomatis tertutup.</li>
         </ul>
       </div>
       <div class="modal-actions">
@@ -1727,7 +1744,8 @@
     let videoSecondsLeft     = 0;       // sisa detik timer video aktif
     let videoTimerDoneFlag   = false;   // timer video aktif sudah selesai
     let videoTimerRunning    = false;   // apakah timer sedang berjalan
-    let videoSecondsMap      = {};      // sisa waktu per video: {index: seconds}
+    let videoSecondsMap      = {};      // sisa waktu per video
+    let videoTimerStartTime  = 0;       // timestamp saat timer video mulai jalan: {index: seconds}
     const VIDEO_MIN_SECONDS  = 5 * 60; // 5 menit per video
 
     // ===== MODAL: Video / Materi =====
@@ -1767,6 +1785,8 @@
       // Tampilkan modal dengan loading
       player.src = "";
       modal.classList.add("show");
+      // Nonaktifkan klik kanan di seluruh modal video
+      modal.oncontextmenu = function(e) { e.preventDefault(); return false; };
       if (loading) loading.style.display = "flex";
 
       readTime[id] = Date.now();
@@ -1961,7 +1981,14 @@
       if (!materi) return;
 
       clearInterval(videoTimerInterval);
-      videoTimerRunning = true;
+      videoTimerRunning   = true;
+      videoTimerStartTime = Date.now(); // catat waktu mulai
+
+      // Mulai juga studyStart agar kartu materi ikut update real-time
+      if (currentActiveId) {
+        studyStart[currentActiveId] = Date.now();
+        localStorage.setItem("studyStart", JSON.stringify(studyStart));
+      }
 
       const timerBar = document.getElementById("videoTimerBar");
       const timerTxt = document.getElementById("videoTimerText");
@@ -2000,11 +2027,20 @@
       if (videoTimerRunning) {
         clearInterval(videoTimerInterval);
         videoTimerRunning = false;
+
+        // Hitung waktu aktual yang sudah berjalan sejak timer mulai
+        if (videoTimerStartTime > 0 && currentActiveId) {
+          const elapsed = Date.now() - videoTimerStartTime;
+          studyTime[currentActiveId] = (studyTime[currentActiveId] || 0) + elapsed;
+          localStorage.setItem("studyTime", JSON.stringify(studyTime));
+          videoTimerStartTime = 0;
+        }
+
         if (!videoStatusArr[currentVideoIndex]) {
           videoSecondsMap[currentVideoIndex] = videoSecondsLeft;
         }
       }
-      // Simpan waktu belajar total saat pause
+      // Simpan waktu belajar ke localStorage
       if (currentActiveId) simpanWaktuBelajar();
     }
 
@@ -2012,7 +2048,7 @@
     function resumeTimerVideo() {
       if (!videoTimerRunning && !videoTimerDoneFlag && currentMateri && !isEvalMode) {
         const idx = currentVideoIndex;
-        if (!videoStatusArr[idx]) {
+        if (idx < videoStatusArr.length && !videoStatusArr[idx]) {
           mulaiTimerVideo(idx);
         }
       }
@@ -2023,11 +2059,7 @@
       videoStatusArr[index] = true;
       renderPlaylist(currentMateri.videos, videoStatusArr);
 
-      // Sinkron waktu belajar ke kartu materi:
-      // Tambahkan VIDEO_MIN_SECONDS ke studyTime materi ini
-      const matId = String(currentMateri.id);
-      studyTime[matId] = (studyTime[matId] || 0) + (VIDEO_MIN_SECONDS * 1000);
-      localStorage.setItem("studyTime", JSON.stringify(studyTime));
+      // studyTime sudah ditangani oleh pauseTimerVideo (elapsed time actual)
 
       try {
         const savedUser = JSON.parse(localStorage.getItem("userData"));
@@ -2155,18 +2187,6 @@
       const m = Math.floor(detik / 60);
       const s = detik % 60;
       return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-    }
-
-    // Reset tombol tutup ke default
-    function resetCloseBtnToDefault() {
-      const closeBtn = document.getElementById("closeVideoBtn");
-      if (closeBtn) {
-        closeBtn.style.background = "";
-        closeBtn.style.color      = "";
-        closeBtn.style.animation  = "";
-        closeBtn.innerText        = "Tutup & Pause Belajar";
-        closeBtn.onclick          = function() { closeVideoModal(); };
-      }
     }
 
     // Catat aktivitas ke server (fire and forget)
@@ -2619,7 +2639,7 @@
 
     // ===== TOAST =====
     function showToast(message, type = "success") {
-    const toast = document.getElementById("toast");
+      const toast = document.getElementById("toast");
       toast.innerText = message;
       toast.style.background = type === "error"
         ? "rgba(220,53,69,0.95)"
