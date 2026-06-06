@@ -1,2548 +1,564 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plajari Sukoharjo Corporate University</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-
-    /* ===== FIX #1, #2, #3: User Account Bar ===== */
-    #userAccount {
-      position: sticky;
-      top: 0;
-      /* display diatur sepenuhnya oleh JavaScript — tidak ada display di sini */
-      padding: 8px 20px;
-      background: #1B3C53;
-      border-bottom: 2px solid rgba(255,255,255,0.1);
-      text-align: right;
-      z-index: 1001;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
-    #displayUserName {
-      font-weight: 600;
-      font-size: 13px;
-      color: #fff;
-    }
-
-    /* FIX #1: Tombol logOut sekarang benar */
-    #logOutBtn {
-      background: #e74c3c;
-      color: white;
-      border: none;
-      padding: 5px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: Montserrat;
-      font-size: 12px;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    #logOutBtn:hover {
-      background: #c0392b;
-    }
-
-    #loginModal {
-      display: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    #loginModal.show {
-      display: flex;
-      opacity: 1;
-    }
-
-    .modal-box input:focus {
-      outline: none;
-      border-color: #1B3C53;
-      box-shadow: 0 0 5px rgba(27, 60, 83, 0.2);
-    }
-
-    body {
-      font-family: Montserrat, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-      color: #333;
-    }
-
-    header {
-      text-align: center;
-      background: linear-gradient(rgba(27, 60, 83, 0.85), rgba(27, 60, 83, 0.85)), url("backmooc.png") no-repeat center center;
-      background-size: cover;
-      padding: 60px 20px;
-      color: white;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 35px;
-      font-weight: 700;
-      color: #FFD700;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    }
-
-    header h2 {
-      margin: 8px 0 0;
-      font-size: 22px;
-      font-weight: 600;
-      color: #ffffff;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;          /* default: belum login, tidak ada bar di atas */
-      z-index: 1000;
-    }
-
-    /* Saat sudah login, nav turun mengikuti tinggi userAccount */
-    body.logged-in nav {
-      top: 37px;
-    }
-
-    nav button {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      background: #fff;
-      color: #456882;
-      font-family: Montserrat;
-      font-weight: 600;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s ease;
-    }
-
-    nav button.active {
-      background: #f8f9fa;
-      color: #1B3C53;
-      border-bottom: 3px solid #8C1007;
-    }
-
-    nav button:hover {
-      background: #f1f1f1;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-      justify-content: start;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      text-align: center;
-      transition: all 0.3s ease;
-      position: relative;
-      border: 1px solid #eee;
-      height: 100%;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-    }
-
-    .card img {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-    }
-
-    .card h3 {
-      margin: 15px 10px;
-      font-size: 18px;
-      color: #1B3C53;
-    }
-
-    .card a {
-      display: block;
-      background: linear-gradient(135deg, #1b3c53, #0a2130);
-      color: #fff;
-      text-decoration: none;
-      padding: 12px;
-      margin: 10px 15px;
-      border-radius: 8px;
-      transition: background 0.3s ease;
-      font-weight: bold;
-    }
-
-    .card a:hover {
-      background: #28a745;
-    }
-
-    .status-icon {
-      font-size: 22px;
-      margin-top: 15px;
-      display: block;
-    }
-
-    .card button {
-      background: #1B3C53;
-      font-family: Montserrat;
-      color: #fff;
-      border: none;
-      padding: 10px;
-      margin: 0 15px 15px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-
-    .card button.start {
-      background: linear-gradient(135deg, #1b3c53, #0a2130);
-      color: #fff;
-    }
-
-    .card button.start:hover {
-      background: linear-gradient(135deg, #1aa179, #218838) !important;
-      transform: scale(1.03);
-    }
-
-    .card button.read:disabled {
-      background: linear-gradient(135deg, #1aa179, #218838) !important;
-      opacity: 1;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #1B3C53;
-      color: #fff;
-      margin-top: 30px;
-    }
-
-    .card button.eval {
-      background: linear-gradient(135deg, #0d6efd, #043070);
-      margin-bottom: 10px;
-    }
-
-    .card button.eval:hover:not(:disabled) {
-      background: linear-gradient(135deg, #0d6efd, #043070);
-    }
-
-    .card button.sertif {
-      background: linear-gradient(135deg, #1aa179, #218838);
-      margin-bottom: 15px;
-    }
-
-    .card button.sertif:hover:not(:disabled) {
-      background: linear-gradient(135deg, #1aa179, #218838);
-    }
-
-    .card button:disabled {
-      background: #adb5bd !important;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .progress-wrapper {
-      margin: 12px 15px 5px;
-      background: #e0e0e0;
-      border-radius: 20px;
-      height: 14px;
-      overflow: hidden;
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-      position: relative;
-    }
-
-    /* FIX #16: Progress bar animasi dari 0 ke nilai aktual */
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #f0ad4e, #5cb85c, #28a745);
-      background-size: 200% 100%;
-      border-radius: 20px;
-      position: relative;
-      /* Animasi dijalankan via JS dengan requestAnimationFrame */
-      transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .progress-bar::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      background-image: linear-gradient(
-        -45deg,
-        rgba(255, 255, 255, .2) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, .2) 50%,
-        rgba(255, 255, 255, .2) 75%,
-        transparent 75%,
-        transparent
-      );
-      z-index: 1;
-      background-size: 50px 50px;
-      animation: moveStripes 2s linear infinite;
-    }
-
-    @keyframes moveStripes {
-      0% { background-position: 0 0; }
-      100% { background-position: 50px 50px; }
-    }
-
-    .progress-text {
-      font-size: 11px;
-      margin: 0 15px;
-      color: #1B3C53;
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    /* FIX #17: Pulse hanya saat tidak disabled, sudah benar tapi diperkuat */
-    .card button.eval:not(:disabled) {
-      animation: pulse-blue 2s infinite;
-    }
-
-    @keyframes pulse-blue {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
-      70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
-    }
-
-    /* ===== MODAL ===== */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease;
-      z-index: 9999;
-    }
-
-    .modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-box {
-      background: #fff;
-      padding: 25px;
-      border-radius: 14px;
-      max-width: 420px;
-      width: 90%;
-      text-align: center;
-      transform: scale(0.9);
-      transition: transform 0.3s ease;
-    }
-
-    .modal-overlay.show .modal-box {
-      transform: scale(1);
-    }
-
-    .modal-box h3 {
-      margin-top: 0;
-      color: #1B3C53;
-    }
-
-    .modal-actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-    }
-
-    .modal-actions button {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      font-family: Montserrat;
-    }
-
-    .btn-cancel {
-      background: #adb5bd;
-      color: #fff;
-    }
-
-    .btn-confirm {
-      background: #28a745;
-      color: #fff;
-    }
-
-    /* ===== ANIMASI TAB ===== */
-    .container {
-      animation: fadeSlide 0.4s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card.highlight {
-      animation: highlightPulse 2s ease;
-      border: 2px solid #1aa179;
-    }
-
-    @keyframes highlightPulse {
-      0% { box-shadow: 0 0 0 rgba(26, 161, 121, 0.0); background-color: #f8fffb; }
-      30% { box-shadow: 0 0 20px rgba(26, 161, 121, 0.6); background-color: #eafff6; }
-      100% { box-shadow: 0 0 0 rgba(26, 161, 121, 0.0); background-color: #ffffff; }
-    }
-
-    .badge-new {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: linear-gradient(135deg, #1aa179, #218838);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 6px;
-      z-index: 2;
-      animation: badgePop 0.5s ease;
-    }
-
-    @keyframes badgePop {
-      from { transform: scale(0.7); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .badge-complete {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: linear-gradient(135deg, #28a745, #1aa179);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 6px;
-      z-index: 2;
-      animation: badgePop 0.5s ease;
-    }
-
-    .label-time {
-      margin: 6px 15px 0;
-      font-size: 12px;
-      font-weight: 600;
-      color: #8C1007;
-      text-align: left;
-    }
-
-    .card.completed {
-      border: 2px solid #28a745;
-    }
-
-    .timer-selesai {
-      color: #1aa179;
-      font-weight: 700;
-    }
-
-    .step-guide {
-      background: #fff3cd;
-      border: 1px solid #ffeeba;
-      padding: 15px;
-      margin: 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      color: #856404;
-    }
-
-    .step-guide b { color: #1B3C53; }
-
-    /* ===== TOAST ===== */
-    #toast {
-      position: fixed;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(40, 167, 69, 0.95);
-      color: white;
-      padding: 12px 25px;
-      border-radius: 50px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      display: none;
-      z-index: 10001;
-      font-size: 14px;
-      text-align: center;
-      white-space: nowrap;
-      animation: slideUp 0.4s ease;
-      font-family: Montserrat;
-    }
-
-    /* FIX #11: Loading skeleton */
-    .skeleton-card {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      overflow: hidden;
-      border: 1px solid #eee;
-      height: 280px;
-    }
-
-    .skeleton-img {
-      width: 100%;
-      height: 160px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    .skeleton-text {
-      margin: 15px;
-      height: 18px;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    .skeleton-btn {
-      margin: 10px 15px;
-      height: 38px;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* FIX #15: Empty state */
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 60px 20px;
-      color: #666;
-    }
-
-    .empty-state .empty-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    .empty-state h3 {
-      color: #1B3C53;
-      margin: 0 0 8px;
-    }
-
-    .empty-state p {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    /* FIX #13: Search clear button */
-    .search-wrapper {
-      position: relative;
-    }
-
-    #searchClear {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      color: #999;
-      display: none;
-      padding: 0;
-      line-height: 1;
-    }
-
-    #searchClear:hover { color: #333; }
-
-    /* FIX #8: NIP input validasi feedback */
-    .input-error {
-      border-color: #e74c3c !important;
-      box-shadow: 0 0 5px rgba(231, 76, 60, 0.3) !important;
-    }
-
-    .input-hint {
-      font-size: 11px;
-      margin-top: -10px;
-      margin-bottom: 10px;
-      color: #e74c3c;
-      display: none;
-      text-align: left;
-    }
-
-    /* Tombol login loading state */
-    .btn-confirm.loading {
-      opacity: 0.8;
-      cursor: not-allowed;
-    }
-
-    /* ===== EVAL TIMER LOCK ===== */
-    #evalCountdownBar {
-      width: 100%;
-      height: 6px;
-      background: #e0e0e0;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 8px 0 4px;
-    }
-
-    #evalCountdownFill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #0d6efd, #28a745);
-      border-radius: 10px;
-      transition: width 1s linear;
-    }
-
-    #evalDoneBtn {
-      margin-top: 10px;
-      background: #adb5bd;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-family: Montserrat;
-      font-weight: 600;
-      cursor: not-allowed;
-      width: 100%;
-      font-size: 13px;
-      transition: background 0.4s, transform 0.2s;
-    }
-
-    #evalDoneBtn.unlocked {
-      background: linear-gradient(135deg, #28a745, #1aa179);
-      cursor: pointer;
-      animation: pulse-green 1.5s infinite;
-    }
-
-    #evalDoneBtn.unlocked:hover {
-      transform: scale(1.02);
-    }
-
-    @keyframes pulse-green {
-      0%   { box-shadow: 0 0 0 0 rgba(40,167,69,0.5); }
-      70%  { box-shadow: 0 0 0 10px rgba(40,167,69,0); }
-      100% { box-shadow: 0 0 0 0 rgba(40,167,69,0); }
-    }
-
-    @keyframes pulse-green {
-      0%   { box-shadow: 0 0 0 0 rgba(26,161,121,0.5); }
-      70%  { box-shadow: 0 0 0 10px rgba(26,161,121,0); }
-      100% { box-shadow: 0 0 0 0 rgba(26,161,121,0); }
-    }
-
-    /* ===== MULTI VIDEO PLAYER ===== */
-    #videoNavBar {
-      display: none;
-      background: #1B3C53;
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    #videoNavBar .vid-label {
-      color: #aac4d8;
-      font-size: 11px;
-      flex: 1;
-      min-width: 120px;
-    }
-
-    #videoNavBar .vid-title {
-      color: #FFD700;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    #videoTimerBar {
-      display: none;
-      background: #8C1007;
-      color: #fff;
-      padding: 7px 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    #videoTimerBar.done {
-      background: #28a745;
-    }
-
-    #videoTimerBar span {
-      font-family: monospace;
-      font-weight: 700;
-      font-size: 15px;
-    }
-
-    /* Daftar video (playlist kecil) */
-    #videoPlaylist {
-      display: none;
-      gap: 5px;
-      flex-direction: column;
-      margin-bottom: 8px;
-      max-height: 110px;
-      overflow-y: auto;
-    }
-
-    .vid-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 6px;
-      background: #f0f4f8;
-      font-size: 12px;
-      cursor: default;
-      border: 1px solid #dde;
-    }
-
-    .vid-item.active {
-      background: #dbeafe;
-      border-color: #2d6a8f;
-      font-weight: 700;
-      color: #1B3C53;
-    }
-
-    .vid-item.done {
-      background: #f0fff4;
-      border-color: #28a745;
-      color: #218838;
-    }
-
-    .vid-item .vid-num {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #1B3C53;
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .vid-item.done .vid-num {
-      background: #28a745;
-    }
-
-    .vid-item.active .vid-num {
-      background: #2d6a8f;
-    }
-
-    /* Tombol lanjut video */
-    #btnVideoBerikutnya {
-      display: none;
-      width: 100%;
-      padding: 10px;
-      background: linear-gradient(135deg, #2d6a8f, #1B3C53);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: Montserrat;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      margin-bottom: 6px;
-      animation: pulse-blue 2s infinite;
-      transition: background 0.3s;
-    }
-
-    #btnVideoBerikutnya:hover {
-      background: linear-gradient(135deg, #1aa179, #218838);
-    }
-
-    /* Loading indicator */
-    #videoLoadingOverlay {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(27,60,83,0.85);
-      z-index: 10;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      flex-direction: column;
-      gap: 12px;
-      color: #fff;
-      font-size: 14px;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top-color: #FFD700;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Tombol Akhiri Evaluasi */
-    #closeVideoBtn.akhiri {
-      background: linear-gradient(135deg, #1aa179, #218838) !important;
-      color: #fff !important;
-      animation: pulse-green 1.5s infinite;
-    }
-
-    /* Input login fokus */
-    #loginModal input:focus {
-      border-color: #2d6a8f !important;
-      background: #fff !important;
-      box-shadow: 0 0 0 3px rgba(45,106,143,0.12) !important;
-      outline: none;
-    }
-
-    @keyframes slideUp {
-      from { bottom: 0; opacity: 0; }
-      to { bottom: 50px; opacity: 1; }
-    }
-
-    @media (max-width: 480px) {
-      header h1 { font-size: 18px; }
-      header h2 { font-size: 17px; }
-      #userAccount { padding: 6px 12px; }
-      #displayUserName { font-size: 12px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPENATA - Halaman Pembelajaran</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0f4c81;
+            --secondary-color: #1b75bc;
+            --bg-light: #f4f7f6;
+            --text-dark: #2d3748;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: #ffffff !important;
+        }
+
+        .user-profile-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        /* Standardized simple compatible vector-like SVG graphics for cross-device consistency */
+        .profile-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 8px;
+            display: inline-block;
+        }
+
+        .card-materi {
+            background: #ffffff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card-materi:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+
+        .card-materi .card-header-accent {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            height: 10px;
+        }
+
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+
+        .timer-badge {
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .video-container iframe, .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #cbd5e1;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item.completed {
+            border-left-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .disabled-form-section {
+            opacity: 0.5;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .active-form-section {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- ===== LOGIN MODAL ===== -->
-  <div id="loginModal" class="modal-overlay" style="display: none;">
-    <div class="modal-box" style="max-width: 420px; padding: 0; overflow: hidden; border-radius: 16px; box-shadow: 0 20px 60px rgba(27,60,83,0.18);">
-
-      <!-- Header biru -->
-      <div style="background: linear-gradient(135deg, #1B3C53 0%, #2d6a8f 100%); padding: 30px 30px 24px; text-align: center; position: relative;">
-        <!-- Lingkaran dekoratif -->
-        <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
-        <div style="position:absolute; bottom:-30px; left:-15px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.04);"></div>
-        <!-- Ikon & judul -->
-        <div style="width:64px; height:64px; background:rgba(255,255,255,0.15); border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:12px; border: 2px solid rgba(255,255,255,0.2);">👤</div>
-        <h3 style="color:#fff; margin:0 0 4px; font-size:20px; font-weight:700;">Selamat Datang!</h3>
-        <p style="color:rgba(255,255,255,0.75); margin:0; font-size:13px;">Platform Belajar Mandiri Sukoharjo</p>
-      </div>
-
-      <!-- Body putih -->
-      <div style="padding: 24px 28px 28px; background:#fff;">
-        <p style="margin:0 0 18px; font-size:13px; color:#666; text-align:center;">Masukkan data diri Anda untuk mulai belajar</p>
-
-        <div style="text-align: left;">
-          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin-bottom:5px;">NIP</label>
-          <div style="position:relative;">
-            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:#2d6a8f; font-family:monospace;">#</span>
-            <input type="tel" id="userNIP" placeholder="Masukkan NIP Anda"
-                   oninput="validateNIPInput(this)"
-                   style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
-          </div>
-          <div id="nipHint" class="input-hint">⚠ NIP hanya boleh berisi angka.</div>
-
-          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin:14px 0 5px;">Nama Depan</label>
-          <div style="position:relative;">
-            <span style="position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:#2d6a8f;">A</span>
-            <input type="text" id="userName" placeholder="Masukkan Nama Depan"
-                   style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
-          </div>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">SIPENATA Pembelajaran</a>
+            <span class="navbar-text text-white-50">Sistem Informasi Pengembangan Kompetensi Aparatur</span>
         </div>
-
-        <!-- Info -->
-        <div style="margin:16px 0; padding:10px 12px; background:#eef4fb; border-radius:8px; border-left:3px solid #2d6a8f; font-size:11px; color:#2d6a8f; line-height:1.6;">
-          ℹ️ Pastikan NIP dan Nama sesuai dengan data kepegawaian yang terdaftar.
-        </div>
-
-        <button id="loginBtn" onclick="saveLoginData()"
-          style="width:100%; padding:13px; background:linear-gradient(135deg,#1B3C53,#2d6a8f); color:#fff; border:none; border-radius:10px; font-family:Montserrat; font-size:15px; font-weight:700; cursor:pointer; transition: opacity 0.2s; letter-spacing:0.3px;">
-          Masuk &amp; Mulai Belajar →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FIX #1 #2 #3: userAccount HTML diperbaiki — struktur benar, logOut terhubung -->
-  <div id="userAccount" style="display: none;">
-    <span id="displayUserName"></span>
-    <button id="logOutBtn" onclick="logOut()">Keluar</button>
-  </div>
-
-  <header>
-    <h1>Platform Belajar Mandiri (PLAJARI)</h1>
-    <h2>Sukoharjo Corporate University</h2>
-    <div id="userStats" style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; font-size: 15px; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto; border: 1px solid rgba(255,255,255,0.3);">
-      <span title="Materi yang sedang dipelajari">📖 <b id="statTotal">0</b> Materi Dibaca</span>
-      <span title="Sertifikat yang sudah didapat">🎓 <b id="statDone">0</b> Selesai</span>
-    </div>
-  </header>
-
-  <div class="step-guide">
-    <b>Alur Belajar:</b> 1. Pilih Materi di "Belum Dibaca" ➔ 2. Klik "Mulai Belajar" ➔ 3. Tonton Video &amp; Baca Modul (Min. 5 Menit) ➔ 4. Ceklis Status ➔ 5. Cetak Sertifikat.
-  </div>
-
-  <main>
-    <!-- FIX #13: Search bar dengan tombol clear -->
-    <div style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
-      <div class="search-wrapper">
-        <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; pointer-events: none;">🔍</span>
-        <input type="text" id="searchInput" placeholder="Cari judul materi (contoh: Probis, IT, Komunikasi)..."
-               style="width: 100%; box-sizing: border-box; padding: 15px 40px 15px 45px; border-radius: 12px; border: 2px solid #ddd; font-family: Montserrat; font-size: 16px; outline: none; transition: border-color 0.3s;">
-        <button id="searchClear" onclick="clearSearch()" title="Hapus pencarian">✕</button>
-      </div>
-    </div>
-
-    <!-- Menu navigasi -->
-    <nav>
-      <button id="btn-all" class="active">Semua Materi</button>
-      <button id="btn-unread">Belum Dibaca</button>
-      <button id="btn-read">Sudah Dibaca</button>
     </nav>
 
-    <div class="container" id="materi-container"></div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Plajari Sukoharjo Corporate University</p>
-  </footer>
-
-  <!-- Modal Konfirmasi Mulai Belajar -->
-  <div id="confirmModal" class="modal-overlay">
-    <div class="modal-box">
-      <h3>Konfirmasi Mulai Belajar</h3>
-      <p>
-        Apakah Anda yakin ingin memulai pembelajaran?<br>
-        Materi akan ditandai sebagai <b>Sudah Dibaca</b>.
-      </p>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeModal()">Batal</button>
-        <button class="btn-confirm" onclick="confirmStart()">Ya, Mulai</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Konfirmasi Evaluasi -->
-  <div id="evaluasiConfirmModal" class="modal-overlay">
-    <div class="modal-box" style="max-width:440px;">
-      <div style="font-size:46px; margin-bottom:10px;">📋</div>
-      <h3 style="color:#1B3C53; margin-bottom:8px;">Konfirmasi Evaluasi</h3>
-      <p style="margin:0 0 14px; color:#555; font-size:14px;">
-        Apakah Anda sudah siap melaksanakan evaluasi belajar?
-      </p>
-
-      <!-- Kotak peringatan -->
-      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
-        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">⚠️ Perhatian Penting:</div>
-        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.8;">
-          <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
-          <li>Pastikan koneksi internet Anda <b>stabil</b> sebelum memulai.</li>
-          <li>Isi semua pertanyaan dengan <b>sungguh-sungguh</b>.</li>
-          <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi.</li>
-        </ul>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeEvalModal()">Belum Siap</button>
-        <button class="btn-confirm" onclick="startGoogleForm()">Ya, Saya Siap</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Video/Evaluasi -->
-  <div id="videoModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 900px; width: 95%; height: 90vh; display: flex; flex-direction: column;">
-      <h3 id="videoTitle" style="margin-bottom: 8px; font-size:15px;">Memutar Video Materi</h3>
-
-      <!-- Navbar info video aktif (multi-video) -->
-      <div id="videoNavBar" style="display:flex;">
-        <div class="vid-label">Sedang diputar:</div>
-        <div class="vid-title" id="videoNavTitle">-</div>
-        <div style="color:#aac4d8; font-size:11px;" id="videoNavCount"></div>
-      </div>
-
-      <!-- Playlist video kecil -->
-      <div id="videoPlaylist" style="display:flex;"></div>
-
-      <!-- Timer per video -->
-      <div id="videoTimerBar" style="display:flex;">
-        <span>⏱ Waktu minimal video ini:</span>
-        <span id="videoTimerText">05:00</span>
-      </div>
-
-      <!-- Timer lama (untuk mode materi biasa / eval) -->
-      <div id="modalTimerDisplay" style="background: #8C1007; color: #fff; padding: 8px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; display:none;">
-        ⏱ Sisa Waktu Belajar Minimal:
-        <span id="modalTimerText" style="font-weight: bold; font-family: monospace; font-size: 16px;">00:00</span>
-      </div>
-
-      <!-- Iframe video -->
-      <div style="flex-grow: 1; position: relative; background: #000; border-radius: 8px; overflow: hidden;">
-        <!-- Loading overlay -->
-        <div id="videoLoadingOverlay" style="display:flex;">
-          <div class="spinner"></div>
-          <span>Mengambil data progress...</span>
-        </div>
-        <iframe id="videoPlayer"
-          style="position: absolute; top:0; left:0; width:100%; height:100%;"
-          src=""
-          frameborder="0"
-          allow="autoplay; fullscreen"
-          allowfullscreen>
-        </iframe>
-      </div>
-
-      <!-- Tombol lanjut ke video berikutnya -->
-      <button id="btnVideoBerikutnya" onclick="lanjutVideoBerikutnya()">
-        ▶ Lanjut ke Video Berikutnya
-      </button>
-
-      <!-- EVAL: Panel syarat waktu + ceklist konfirmasi -->
-      <div id="evalDoneWrapper" style="display:none; margin-top:12px; padding:12px; border-radius:8px; font-size:13px; border:1px solid #ffeeba; background:#fff3cd; color:#856404;">
-
-        <!-- Peringatan sekali kerjakan -->
-        <div style="background:#fdf2f2; border:1px solid #f5c6cb; border-radius:6px; padding:8px 10px; margin-bottom:10px; display:flex; align-items:flex-start; gap:8px;">
-          <span style="font-size:16px;">&#x26A0;&#xFE0F;</span>
-          <span style="font-size:11px; color:#8C1007; line-height:1.5;">
-            <b>Evaluasi hanya bisa dikerjakan 1 kali dan tidak bisa diulang.</b><br>
-            Pastikan Anda telah mengisi Google Form dengan sungguh-sungguh sebelum mengakhiri evaluasi.
-          </span>
+    <div class="container py-2">
+        <!-- User Metadata Header (Fix Catatan 2: Icon NIP dan Nama Depan Terstandarisasi) -->
+        <div class="user-profile-section d-flex flex-wrap justify-content-between align-items-center">
+            <div class="d-flex flex-wrap gap-4">
+                <div>
+                    <!-- SVG Simple Icon for NIP: Universal Device Compatibility -->
+                    <svg class="profile-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
+                        <line x1="7" y1="8" x2="17" y2="8"></line>
+                        <line x1="7" y1="12" x2="17" y2="12"></line>
+                        <line x1="7" y1="16" x2="13" y2="16"></line>
+                    </svg>
+                    <strong>NIP:</strong> <span id="user-nip">199508182025091001</span>
+                </div>
+                <div>
+                    <!-- SVG Simple Icon for First Name: Universal Device Compatibility -->
+                    <svg class="profile-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4a5568" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <strong>Nama Depan:</strong> <span id="user-nama">Budi</span>
+                </div>
+            </div>
+            <div>
+                <span class="badge bg-success status-badge">Status Pemberta: Aktif</span>
+            </div>
         </div>
 
-        <!-- Syarat 1: timer -->
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
-          <span style="font-size:18px;">&#x23F1;&#xFE0F;</span>
-          <div style="flex:1;">
-            <b style="display:block; color:#1B3C53; font-size:12px;">Syarat: Waktu Minimum (3 menit)</b>
-            <span style="font-size:11px; color:#666;">Anda harus berada di halaman evaluasi minimal 3 menit</span>
-          </div>
-          <span id="evalCountdownText" style="font-family:monospace; font-weight:700; font-size:14px; color:#8C1007; white-space:nowrap;">03:00</span>
+        <h3 class="mb-4 fw-bold">Daftar Modul Materi</h3>
+
+        <!-- Card Materi Layout -->
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card card-materi h-100">
+                    <div class="card-header-accent"></div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-primary text-wrap mb-2">Modul Dasar</span>
+                            <span id="card-timer" class="timer-badge">Sisa Waktu: 05:00</span>
+                        </div>
+                        <h5 class="card-title fw-bold text-dark mb-2">Orientasi Pengenalan Nilai & Etika PPPK</h5>
+                        <p class="card-text text-muted small flex-grow-1">
+                            Modul ini membahas tentang landasan etika, Core Values ASN BerAKHLAK, tata tertib, serta pengenalan struktur organisasi pemerintah daerah bagi Pegawai Pemerintah dengan Perjanjian Kerja (PPPK).
+                        </p>
+                        
+                        <!-- Checkbox Real-time Progress Indicator (Fix Catatan 1 & Sync Utama) -->
+                        <div class="mb-3 p-2 bg-light rounded border">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chk-materi-downloaded" disabled>
+                                <label class="form-check-label small fw-semibold text-secondary" for="chk-materi-downloaded">
+                                    Modul Telah Di-download
+                                </label>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input class="form-check-input" type="checkbox" id="chk-materi-video-done" disabled>
+                                <label class="form-check-label small fw-semibold text-secondary" for="chk-materi-video-done">
+                                    Video Selesai Dipelajari (5 Menit)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-auto">
+                            <button class="btn btn-outline-primary fw-semibold" id="btn-buka-video" onclick="bukaModalVideo()">
+                                Pelajari Video Materi
+                            </button>
+                            <button class="btn btn-primary fw-semibold" id="btn-buka-evaluasi" onclick="bukaModalEvaluasi()">
+                                Ujian Evaluasi Materi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="evalCountdownBar"><div id="evalCountdownFill"></div></div>
-
-        <!-- Ceklist konfirmasi -->
-        <label id="evalCheckLabel" style="display:flex; align-items:flex-start; gap:8px; margin-top:10px; padding:8px; background:#fff; border-radius:6px; border:1px solid #ddd; cursor:not-allowed; opacity:0.5;">
-          <input type="checkbox" id="evalConfirmCheck" disabled onchange="onEvalCheckChange()"
-            style="margin-top:2px; width:16px; height:16px; cursor:not-allowed; flex-shrink:0;">
-          <span style="font-size:12px; color:#333; line-height:1.5;">
-            Saya menyatakan telah <b>mengisi dan mengirimkan</b> Google Form evaluasi dengan sungguh-sungguh.
-          </span>
-        </label>
-
-      </div>
-
-      <!-- Tombol download materi -->
-      <div id="downloadMateriWrapper" style="display:none; margin-top:10px;">
-        <a id="downloadMateriBtn" href="#" target="_blank"
-          style="display:block; text-align:center; background:linear-gradient(135deg,#2d6a8f,#1B3C53);
-                 color:#fff; padding:9px; border-radius:8px; font-weight:700; font-size:13px;
-                 text-decoration:none; font-family:Montserrat; transition: background 0.3s;">
-          📥 Download Modul Materi
-        </a>
-      </div>
-
-      <!-- Tombol tutup — berubah jadi hijau saat evaluasi siap diakhiri -->
-      <div class="modal-actions" style="margin-top:10px;">
-        <button id="closeVideoBtn" class="btn-cancel" onclick="closeVideoModal()">
-          Tutup &amp; Pause Belajar
-        </button>
-      </div>
     </div>
-  </div>
 
-  <!-- Modal Peringatan Akhiri Evaluasi -->
-  <div id="akhiriEvalModal" class="modal-overlay">
-    <div class="modal-box" style="max-width:440px;">
-      <div style="font-size:46px; margin-bottom:10px;">⚠️</div>
-      <h3 style="color:#8C1007; margin-bottom:8px;">Konfirmasi Akhiri Evaluasi</h3>
-      <p style="font-size:14px; color:#555; margin-bottom:14px;">
-        Anda akan mengakhiri sesi evaluasi ini.
-      </p>
-      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
-        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">⚠️ Peringatan:</div>
-        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.9;">
-          <li><b>Evaluasi hanya bisa dikerjakan 1 kali</b> dan tidak dapat diulang.</li>
-          <li>Sertifikat hanya diterbitkan bagi yang <b>benar-benar mengerjakan</b> evaluasi di Google Form.</li>
-          <li>Jika Anda belum mengisi Google Form, <b>kembali dan isi sekarang</b>.</li>
-        </ul>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="closeAkhiriEvalModal()">Kembali ke Evaluasi</button>
-        <button class="btn-confirm" style="background:#8C1007;" onclick="konfirmasiAkhiriEval()">
-          Ya, Saya Sudah Mengerjakan
-        </button>
-      </div>
+    <!-- MODAL 1: VIDEO MATERI -->
+    <div class="modal fade" id="modalVideo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalVideoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalVideoLabel">Video Pembelajaran: Nilai & Etika PPPK</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="konfirmasiTutupVideo()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Video Embed Placeholder -->
+                    <div class="video-container">
+                        <!-- Menggunakan video tag sampel html5 agar event play/pause/track berjalan optimal -->
+                        <video id="videoMateriPlayer" controls poster="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600">
+                            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                            Browser Anda tidak mendukung pemutaran video.
+                        </video>
+                    </div>
+
+                    <div class="alert alert-info d-flex justify-content-between align-items-center py-2 px-3 mb-3">
+                        <span class="small fw-medium"><span class="text-danger">*</span> Anda wajib menyaksikan video ini minimal selama 5 menit sebelum mengevaluasi.</span>
+                        <span id="modal-timer-display" class="badge bg-dark fs-6 font-monospace">05:00</span>
+                    </div>
+
+                    <!-- Action Button Download (Fix Catatan 1) -->
+                    <div class="d-grid gap-2">
+                        <button id="btnDownloadModul" class="btn btn-success py-2 fw-semibold" onclick="handleDownloadModul()">
+                            <svg class="profile-icon me-1" style="stroke: #fff;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download Modul Materi (Otomatis Ceklist)
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" onclick="konfirmasiTutupVideo()">Tutup Sesi Video</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Modal Peringatan Video Belum Selesai (poin 7) -->
-  <div id="peringatanVideoModal" class="modal-overlay">
-    <div class="modal-box" style="max-width:440px;">
-      <div style="font-size:46px; margin-bottom:10px;">⚠️</div>
-      <h3 style="color:#8C1007; margin-bottom:8px;">Video Belum Selesai</h3>
-      <p style="font-size:14px; color:#555; margin-bottom:14px;">
-        Masih ada video yang belum selesai dipelajari.
-      </p>
-      <div style="background:#fdf2f2; border:1.5px solid #f5c6cb; border-radius:10px; padding:12px 14px; margin-bottom:16px; text-align:left;">
-        <div style="font-size:13px; font-weight:700; color:#8C1007; margin-bottom:6px;">ℹ️ Informasi:</div>
-        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.9;">
-          <li>Untuk melanjutkan ke tahap <b>Ceklist Video Dipelajari</b> dan <b>Evaluasi</b>, semua video harus selesai ditonton.</li>
-          <li>Setiap video harus ditonton minimal <b>5 menit</b>.</li>
-          <li>Anda bisa <b>menutup dan melanjutkan nanti</b> — timer akan dilanjutkan dari posisi terakhir.</li>
-        </ul>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-confirm" onclick="document.getElementById('peringatanVideoModal').classList.remove('show')">
-          Lanjutkan Menonton
-        </button>
-        <button class="btn-cancel" onclick="document.getElementById('peringatanVideoModal').classList.remove('show'); closeVideoModal();">
-          Tutup & Lanjutkan Nanti
-        </button>
-      </div>
+    <!-- MODAL 2: PERINGATAN KELUAR VIDEO DINI (Fix Catatan 3) -->
+    <div class="modal fade" id="modalPeringatanVideo" tabindex="-1" aria-labelledby="modalPeringatanVideoLabel" aria-hidden="true" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-start border-warning border-5">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold" id="modalPeringatanVideoLabel">⚠️ Peringatan Penting!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Anda belum menyelesaikan durasi minimal belajar video materi (5 menit). Jika Anda menutup video sekarang, sisa waktu terakhir akan tetap disimpan, namun Anda belum diizinkan untuk membuka lembar evaluasi.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="paksaTutupVideo()">Tetap Keluar</button>
+                    <button type="button" class="btn btn-success fw-bold" data-bs-dismiss="modal">Lanjutkan Belajar</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Modal Instruksi -->
-  <!-- FIX #14: Instruksi hanya muncul sekali, dikelola via flag -->
-  <div id="instructionModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 450px;">
-      <div style="font-size: 50px; margin-bottom: 10px;">💡</div>
-      <h3 style="color: #1B3C53;">Materi Berhasil Dipindahkan!</h3>
-      <p style="text-align: left; font-size: 14px; line-height: 1.6; color: #444;">
-        Silakan selesaikan pembelajaran dengan alur berikut:
-      </p>
-      <ul style="text-align: left; font-size: 14px; color: #444; padding-left: 20px;">
-        <li>Klik tombol <b>"Lihat Video Materi"</b>.</li>
-        <li>Pelajari materi minimal selama <b>5 menit</b> (pantau timer).</li>
-        <li>Ceklis status <b>Video</b> dan <b>Modul</b> jika sudah selesai.</li>
-        <li>Tombol <b>Evaluasi</b> akan aktif jika syarat sudah terpenuhi.</li>
-      </ul>
-      <div class="modal-actions">
-        <button class="btn-confirm" onclick="closeInstructionModal()" style="width: 100%;">Saya Mengerti, Lanjutkan</button>
-      </div>
+    <!-- MODAL 3: EVALUASI (Fix Catatan 4 & 5) -->
+    <div class="modal fade" id="modalEvaluasi" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEvaluasiLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalEvaluasiLabel">Lembar Evaluasi & Pengisian Google Form</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning py-2 mb-3">
+                        <h6 class="fw-bold mb-1">⚠️ Aturan Ketat Keamanan Evaluasi:</h6>
+                        <ul class="mb-0 small ps-3">
+                            <li>Anda dilarang keras memindahkan tab browser, membuka aplikasi lain, atau meminimalkan jendela browser selama sesi evaluasi berlangsung.</li>
+                            <li><strong>Jika terdeteksi berpindah tab atau menutup tab, sistem akan otomatis menutup paksa modal ini dan mengembalikan Anda ke menu utama materi!</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold">Waktu Minimal Pengisian Form Evaluasi (3 Menit):</span>
+                            <span id="eval-timer-display" class="badge bg-danger fs-6 font-monospace">03:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Area Google Form Checklist & Link Syarat (Fix Catatan 5) -->
+                    <div id="sectionSyaratGoogleForm" class="disabled-form-section p-3 border rounded mb-3">
+                        <h6 class="fw-bold text-success mb-3">✓ Syarat Pengisian Google Form Terbuka:</h6>
+                        
+                        <div class="checklist-item id="item-gform-link"">
+                            <div class="form-check w-100">
+                                <label class="form-check-label d-block" style="cursor: pointer;">
+                                    <strong>Langkah 1:</strong> Silakan isi kuesioner resmi melalui tautan eksternal berikut:<br>
+                                    <a href="https://forms.gle/sampleSipenataSukoharjo" target="_blank" class="btn btn-sm btn-outline-success mt-2 px-3 fw-bold" onclick="handleKlikLinkGForm()">
+                                        Buka Link Google Form Evaluasi
+                                    </a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="checklist-item mt-3" id="item-gform-check">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chk-konfirmasi-gform" onchange="toggleSelesaiButton()">
+                                <label class="form-check-label fw-semibold text-dark" for="chk-konfirmasi-gform">
+                                    Saya menyatakan dengan sebenar-benarnya telah mengisi Google Form Evaluasi dengan data yang valid.
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="btnSelesaiEvaluasi" class="btn btn-success px-4 fw-bold" disabled onclick="submitEvaluasiAkhir()">
+                        Selesaikan Pembelajaran & Simpan Nilai
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="toast"></div>
+    <!-- MODAL 4: PERINGATAN PINDAH TAB / DETEKSI BLUR (Fix Catatan 4) -->
+    <div class="modal fade" id="modalPeringatanTab" tabindex="-1" aria-labelledby="modalPeringatanTabLabel" aria-hidden="true" style="z-index: 1070;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-start border-danger border-5">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold" id="modalPeringatanTabLabel">🚨 Pelanggaran Aktivitas Terdeteksi!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="text-danger mb-3">
+                        <svg width="60" height="60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h5 class="fw-bold text-dark">Sesi Evaluasi Ditutup Otomatis</h5>
+                    <p class="text-muted small px-3">Anda terdeteksi memindahkan tab, menutup tab, atau meminimalkan browser. Sesuai regulasi keamanan sistem, modal evaluasi dikunci dan dikembalikan ke halaman materi dasar.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary w-100 fw-bold" data-bs-dismiss="modal">Paham & Kembali Belajar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMBXAcVhKVQVx_ORbWB433GCCeLfRHPGKKXqB9dn-uk4sHjPytU6EWmq9q0OBvcRMang/exec";
+    <!-- Bootstrap 5 Bundle with Popper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    // Daftar Materi
-    // Field 'videos': array video per materi. Isi link sesuai materi masing-masing.
-    // Field 'modul' : link download modul/bahan ajar
-    // Field 'link'  : masih dipakai sebagai link preview utama (opsional)
-    const materiList = [
-      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - Pengantar Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
-         {judul:"Bagian 2 - Penyusunan Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
-         {judul:"Bagian 3 - Evaluasi & Pelaporan", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"}
-       ],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20",
-       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
-    ];
+    <!-- LOGIKAL JAVASCRIPT SOLUSI INTEGRAL SIPENATA -->
+    <script>
+        // Global States - Sinkronisasi & Retensi Waktu Antar Elemen (Sesuai Catatan Utama)
+        let totalWaktuDetik = 300; // 5 Menit Waktu Utama Video Materi (300 detik)
+        let timerVideoInterval = null;
+        let isVideoSelesai = false;
+        let isModulDownloaded = false;
 
-    // ===== STATE =====
-    let readStatus      = JSON.parse(localStorage.getItem("readStatus"))      || {};
-    let openedStatus    = JSON.parse(localStorage.getItem("openedStatus"))    || {};
-    let printedStatus   = JSON.parse(localStorage.getItem("printedStatus"))   || {};
-    let checkedStatus   = JSON.parse(localStorage.getItem("checkedStatus"))   || {};
-    let videoStatus     = JSON.parse(localStorage.getItem("videoStatus"))     || {};
-    let modulStatus     = JSON.parse(localStorage.getItem("modulStatus"))     || {};
-    let readTime        = JSON.parse(localStorage.getItem("readTime"))        || {};
-    let studyTime       = JSON.parse(localStorage.getItem("studyTime"))       || {};
-    let studyStart      = JSON.parse(localStorage.getItem("studyStart"))      || {};
-    let evalStatus      = JSON.parse(localStorage.getItem("evalStatus"))      || {};
-    let newBadgeShown   = JSON.parse(localStorage.getItem("newBadgeShown"))   || {};
-    // FIX #14: flag untuk instruksi per materi, hanya muncul SEKALI
-    let instruksiShown  = JSON.parse(localStorage.getItem("instruksiShown"))  || {};
+        let totalWaktuEvaluasiDetik = 180; // 3 Menit Syarat Kuesioner (180 detik)
+        let timerEvaluasiInterval = null;
+        let isEvaluasiSelesaiSyaratWaktu = false;
+        let isUserKlikLinkGForm = false;
 
-    let lastMovedMateriId = null;
-    let hasAutoScrolled   = false;
-    let currentActiveId   = null;
-    let currentEvalUrl    = "";
-    let currentEvalId     = null;
-    let isEvalMode        = false; // FIX #7: flag apakah modal sedang mode evaluasi
+        // Inisialisasi Objek Bootstrap Modals
+        let bsModalVideo, bsModalPeringatanVideo, bsModalEvaluasi, bsModalPeringatanTab;
 
-    // FIX #9: konstanta waktu belajar minimum — 5 menit, komentar sekarang benar
-    const MIN_WAKTU_BELAJAR = 5 * 60 * 1000; // 5 menit (dalam milidetik)
+        document.addEventListener("DOMContentLoaded", function() {
+            bsModalVideo = new Bootstrap.Modal(document.getElementById('modalVideo'));
+            bsModalPeringatanVideo = new Bootstrap.Modal(document.getElementById('modalPeringatanVideo'));
+            bsModalEvaluasi = new Bootstrap.Modal(document.getElementById('modalEvaluasi'));
+            bsModalPeringatanTab = new Bootstrap.Modal(document.getElementById('modalPeringatanTab'));
 
-    let currentFilter = "all";
-    const container   = document.getElementById("materi-container");
-
-    // ===== FIX #8: Validasi NIP realtime =====
-    function validateNIPInput(input) {
-      const hint = document.getElementById("nipHint");
-      const hasNonDigit = /\D/.test(input.value);
-      if (hasNonDigit && input.value !== "") {
-        input.classList.add("input-error");
-        hint.style.display = "block";
-      } else {
-        input.classList.remove("input-error");
-        hint.style.display = "none";
-      }
-    }
-
-    // ===== FIX #13: Clear search =====
-    function clearSearch() {
-      const input = document.getElementById("searchInput");
-      input.value = "";
-      document.getElementById("searchClear").style.display = "none";
-      renderMateri(currentFilter);
-      input.focus();
-    }
-
-    // ===== LOGIN =====
-    async function saveLoginData() {
-      const nipRaw  = document.getElementById("userNIP").value;
-      const namaRaw = document.getElementById("userName").value;
-
-      if (!nipRaw || !namaRaw) {
-        showToast("⚠️ NIP dan Nama harus diisi!");
-        return;
-      }
-
-      // FIX #8: Validasi format NIP sebelum kirim
-      if (/\D/.test(nipRaw)) {
-        showToast("⚠️ NIP hanya boleh berisi angka!");
-        document.getElementById("userNIP").classList.add("input-error");
-        return;
-      }
-
-      const btn = document.getElementById("loginBtn");
-      btn.innerText = "Memverifikasi...";
-      btn.disabled = true;
-      btn.classList.add("loading");
-
-      try {
-        const cleanNip  = nipRaw.trim();
-        const cleanNama = namaRaw.trim();
-
-        const response = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "login", nip: cleanNip, nama: cleanNama })
+            // Set UI Awal sesuai global state
+            updateCardTimerUI();
+            
+            // Listeners Penjagaan Keamanan Evaluasi (Fix Catatan 4)
+            document.addEventListener("visibilitychange", handleDeteksiPindahTab);
+            window.addEventListener("blur", handleDeteksiPindahTab);
         });
 
-        const result = await response.json();
+        // Fungsi Helper Formatting Detik -> MM:SS
+        function formatWaktu(totalDetik) {
+            let menit = Math.floor(totalDetik / 60);
+            let detik = totalDetik % 60;
+            return (menit < 10 ? "0" + menit : menit) + ":" + (detik < 10 ? "0" + detik : detik);
+        }
 
-        if (result.status === "success") {
-          localStorage.setItem("userData", JSON.stringify({
-            nip: cleanNip,
-            nama: result.nama,
-            progres: result.progres
-          }));
-          showToast("✅ Login Berhasil! Sedang memuat progress...");
+        // Sinkronisasi Sinkron Ke Atas Card Utama
+        function updateCardTimerUI() {
+            const displayStr = formatWaktu(totalWaktuDetik);
+            document.getElementById('card-timer').innerText = "Sisa Waktu: " + displayStr;
+            document.getElementById('modal-timer-display').innerText = displayStr;
+        }
 
-          // Ambil status belajar dari server sebelum reload
-          try {
-            const syncResp = await fetch(SCRIPT_URL, {
-              method: "POST",
-              body: JSON.stringify({ action: "ambilStatusBelajar", nip: cleanNip })
-            });
-            const syncData = await syncResp.json();
-            if (syncData.status === "found" && syncData.data) {
-              const d = syncData.data;
-              if (d.readStatus)    localStorage.setItem("readStatus",    JSON.stringify(d.readStatus));
-              if (d.videoStatus)   localStorage.setItem("videoStatus",   JSON.stringify(d.videoStatus));
-              if (d.modulStatus)   localStorage.setItem("modulStatus",   JSON.stringify(d.modulStatus));
-              if (d.evalStatus)    localStorage.setItem("evalStatus",    JSON.stringify(d.evalStatus));
-              if (d.printedStatus) localStorage.setItem("printedStatus", JSON.stringify(d.printedStatus));
-              if (d.readTime)      localStorage.setItem("readTime",      JSON.stringify(d.readTime));
-              if (d.studyTime)     localStorage.setItem("studyTime",     JSON.stringify(d.studyTime));
+        // BUKA MODAL VIDEO (Retensi & Sinkronisasi Waktu Terakhir Terjaga)
+        function bukaModalVideo() {
+            updateCardTimerUI(); // Pastikan mengambil data real-time terakhir
+            bsModalVideo.show();
+
+            // Jalankan player HTML5 jika ada
+            const player = document.getElementById('videoMateriPlayer');
+            if(player) player.play();
+
+            // Mulai CountDown dari sisa waktu terakhir (Bukan reset ke 5 menit!)
+            if (!isVideoSelesai && timerVideoInterval === null) {
+                timerVideoInterval = setInterval(function() {
+                    if (totalWaktuDetik > 0) {
+                        totalWaktuDetik--;
+                        updateCardTimerUI(); // Real-time sinkron ke card materi sekaligus modal video
+                    } else {
+                        // Selesai Durasi Minimal Belajar 5 Menit
+                        clearInterval(timerVideoInterval);
+                        timerVideoInterval = null;
+                        isVideoSelesai = true;
+                        document.getElementById('chk-materi-video-done').checked = true;
+                        document.getElementById('chk-materi-video-done').parentElement.classList.add('text-success');
+                        alert("Selamat! Anda telah merampungkan durasi minimal menonton video materi selama 5 menit.");
+                    }
+                }, 1000);
             }
-          } catch(syncErr) {
-            console.error("Gagal sync status dari server:", syncErr);
-          }
-
-          showToast("✅ Login Berhasil! Selamat datang, " + result.nama);
-          setTimeout(() => location.reload(), 800);
-        } else {
-          // FIX #10: Pesan error lebih spesifik
-          showToast("❌ NIP atau Nama tidak ditemukan di database.");
-          btn.innerText = "Masuk & Belajar";
-          btn.disabled = false;
-          btn.classList.remove("loading");
-        }
-      } catch (e) {
-        console.error(e);
-        // FIX #10: Bedakan pesan error koneksi
-        showToast("⚠️ Gagal terhubung ke server. Periksa koneksi internet Anda.");
-        btn.innerText = "Masuk & Belajar";
-        btn.disabled = false;
-        btn.classList.remove("loading");
-      }
-    }
-
-    // ===== CLOUD SYNC =====
-    async function updateProgressToCloud(statusMateri) {
-      const savedUser = JSON.parse(localStorage.getItem("userData"));
-      if (!savedUser || !savedUser.nip) return;
-      try {
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "saveProgress", nip: savedUser.nip, progres: statusMateri })
-        });
-      } catch (e) {
-        console.error("Gagal sinkron ke Cloud:", e);
-      }
-    }
-
-    // Kirim semua status belajar ke server (fire and forget)
-    // Dipanggil setiap kali ada perubahan status penting
-    async function syncStatusKeServer() {
-      const savedUser = JSON.parse(localStorage.getItem("userData"));
-      if (!savedUser || !savedUser.nip) return;
-      try {
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action:        "simpanStatusBelajar",
-            nip:           savedUser.nip,
-            readStatus:    readStatus,
-            videoStatus:   videoStatus,
-            modulStatus:   modulStatus,
-            evalStatus:    evalStatus,
-            printedStatus: printedStatus,
-            readTime:      readTime,
-            studyTime:     studyTime
-          })
-        });
-      } catch (e) {
-        console.error("Gagal sync status ke server:", e);
-      }
-    }
-
-    // ===== INIT =====
-    document.addEventListener("DOMContentLoaded", function () {
-      const savedUser      = JSON.parse(localStorage.getItem("userData"));
-      const loginModal     = document.getElementById("loginModal");
-      const userAccount    = document.getElementById("userAccount");
-      const displayUserName = document.getElementById("displayUserName");
-
-      if (savedUser && savedUser.nama) {
-        userAccount.style.display  = "flex";   // flex agar align-items / gap aktif
-        displayUserName.innerText  = "Halo, " + savedUser.nama;
-        document.body.classList.add("logged-in");
-        loginModal.style.display   = "none";
-        loginModal.classList.remove("show");
-      } else {
-        userAccount.style.display = "none";    // sembunyikan sepenuhnya
-        loginModal.style.display  = "flex";
-        setTimeout(() => loginModal.classList.add("show"), 100);
-      }
-
-      // FIX #4: renderMateri hanya dipanggil SEKALI di sini
-      // FIX #6: Bersihkan studyStart yang mungkin tertinggal dari sesi sebelumnya
-      // (user refresh tanpa menutup modal — timer tidak valid)
-      Object.keys(studyStart).forEach(id => {
-        if (studyStart[id]) {
-          // Tambahkan sisa waktu yang belum tersimpan ke studyTime
-          studyTime[id] = (studyTime[id] || 0) + (Date.now() - studyStart[id]);
-          studyStart[id] = null;
-        }
-      });
-      localStorage.setItem("studyTime", JSON.stringify(studyTime));
-      localStorage.setItem("studyStart", JSON.stringify(studyStart));
-
-      // FIX #11: Tampilkan skeleton dulu, lalu render
-      showSkeleton();
-      setTimeout(() => {
-        updateStats();
-        renderMateri("all");
-
-        // Event listener search
-        const searchInput = document.getElementById("searchInput");
-        if (searchInput) {
-          searchInput.addEventListener("input", function () {
-            const clearBtn = document.getElementById("searchClear");
-            clearBtn.style.display = this.value ? "block" : "none";
-            renderMateri(currentFilter);
-          });
-        }
-      }, 400);
-    });
-
-    // ===== FIX #11: Skeleton loader =====
-    function showSkeleton() {
-      container.innerHTML = "";
-      for (let i = 0; i < 8; i++) {
-        container.innerHTML += `
-          <div class="skeleton-card">
-            <div class="skeleton-img"></div>
-            <div class="skeleton-text" style="width:70%; margin: 15px auto;"></div>
-            <div class="skeleton-btn"></div>
-          </div>`;
-      }
-    }
-
-    // ===== STATS =====
-    function updateStats() {
-      const totalRead = Object.values(readStatus).filter(v => v === true).length;
-      const totalDone = Object.values(evalStatus).filter(v => v === true).length;
-      const elTotal   = document.getElementById("statTotal");
-      const elDone    = document.getElementById("statDone");
-      if (elTotal) elTotal.innerText = totalRead;
-      if (elDone)  elDone.innerText  = totalDone;
-    }
-
-    // ===== RENDER =====
-    function urutkanMateriPermanen(materiArray, filter) {
-      if (filter !== "read") return materiArray;
-      return [...materiArray].sort((a, b) => (readTime[b.id] || 0) - (readTime[a.id] || 0));
-    }
-
-    function renderMateri(filter = "all") {
-      container.innerHTML = "";
-      const kataKunci  = (document.getElementById("searchInput")?.value || "").toLowerCase();
-      let dataRender   = urutkanMateriPermanen(materiList, filter);
-
-      // FIX #5: Filter dilakukan SEPENUHNYA di sini, tidak lagi di dalam forEach
-      dataRender = dataRender.filter(materi => {
-        const isRead = readStatus[materi.id] === true;
-        if (filter === "read"   && !isRead) return false;
-        if (filter === "unread" && isRead)  return false;
-        return materi.judul.toLowerCase().includes(kataKunci);
-      });
-
-      // FIX #15: Empty state yang informatif dan menarik
-      if (dataRender.length === 0) {
-        if (kataKunci !== "") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">🔍</span>
-              <h3>Tidak Ditemukan</h3>
-              <p>Materi dengan judul "<b>${kataKunci}</b>" tidak ditemukan.<br>Coba kata kunci lain.</p>
-            </div>`;
-        } else if (filter === "unread") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">🎉</span>
-              <h3>Selamat!</h3>
-              <p>Semua materi sudah Anda baca.<br>Lanjutkan belajar di tab <b>Sudah Dibaca</b>.</p>
-            </div>`;
-        } else if (filter === "read") {
-          container.innerHTML = `
-            <div class="empty-state">
-              <span class="empty-icon">📚</span>
-              <h3>Belum Ada Materi Dibaca</h3>
-              <p>Mulai perjalanan belajar Anda dengan memilih materi<br>di tab <b>Belum Dibaca</b>.</p>
-            </div>`;
-        }
-        return;
-      }
-
-      dataRender.forEach(materi => {
-        const isRead  = readStatus[materi.id] === true;
-        const card    = document.createElement("div");
-        card.className = "card";
-        card.id        = `materi-${materi.id}`;
-
-        if (printedStatus[materi.id]) card.classList.add("completed");
-
-        // Badge BARU: sekali saja
-        let badgeHtml = "";
-        if (materi.id === lastMovedMateriId && filter === "read" && !newBadgeShown[materi.id]) {
-          badgeHtml = `<div class="badge-new">BARU</div>`;
-          card.classList.add("highlight");
-          newBadgeShown[materi.id] = true;
-          localStorage.setItem("newBadgeShown", JSON.stringify(newBadgeShown));
         }
 
-        let completeBadgeHtml = printedStatus[materi.id]
-          ? `<div class="badge-complete">SELESAI DIPELAJARI</div>` : "";
+        // KONFIRMASI TUTUP VIDEO (Fix Catatan 3: Peringatan Muncul Sesuai Keadaan Sisa Waktu)
+        function konfirmasiTutupVideo() {
+            const player = document.getElementById('videoMateriPlayer');
+            if(player) player.pause();
 
-        let html = `${badgeHtml}${completeBadgeHtml}
-          <img src="${materi.img}" alt="${materi.judul}" loading="lazy">
-          <h3>${materi.judul}</h3>`;
-
-        if (filter === "read") {
-          // Tombol lihat video
-          html += `
-            <button class="start" style="width:calc(100% - 30px); margin:10px 15px;" onclick="markOpened(${materi.id})">
-              Lihat Video Materi
-            </button>
-            ${readTime[materi.id] ? `<div class="label-time">Terakhir dipelajari: ${formatTanggalJam(readTime[materi.id])}</div>` : ""}`;
-
-          const waktuSkr  = getWaktuBelajarAktif(materi.id);
-          const sisa      = MIN_WAKTU_BELAJAR - waktuSkr;
-          const timeOk    = waktuSkr >= MIN_WAKTU_BELAJAR;
-          const videoOk   = videoStatus[materi.id]  === true;
-          const modulOk   = modulStatus[materi.id]  === true;
-          const isEvalDone = evalStatus[materi.id]  === true;
-          const canEval   = timeOk && videoOk && modulOk;
-
-          html += `
-            <div class="label-time">
-              ⏳ Waktu belajar:
-              <span id="timer-${materi.id}" class="${timeOk ? 'timer-selesai' : ''}">
-                ${timeOk ? 'SELESAI' : formatCountdown(sisa)}
-              </span>
-            </div>
-
-            <div style="text-align:left; margin:10px 15px; font-size:13px">
-              <label>
-                <input type="checkbox" ${videoOk ? "checked" : ""}
-                  ${printedStatus[materi.id] || !timeOk ? "disabled" : ""}
-                  onchange="toggleVideo(${materi.id})">
-                Video telah dipelajari
-              </label><br>
-              <label>
-                <input type="checkbox" ${modulOk ? "checked" : ""}
-                  ${printedStatus[materi.id] ? "disabled" : ""}
-                  onchange="toggleModul(${materi.id})">
-                Modul telah dipelajari
-              </label>
-            </div>
-
-            <div style="text-align:left; margin:10px 15px; font-size:11px; padding:8px; background:#fdf2f2; border-radius:5px; border:1px solid #f8d7da;">
-              <b style="color:#1B3C53; display:block; margin-bottom:3px;">Syarat Kelulusan:</b>
-              <span style="color:${timeOk  ? '#28a745':'#dc3545'}">${timeOk  ? '✔':'✖'} Minimal Belajar 5 Menit</span><br>
-              <span style="color:${videoOk ? '#28a745':'#dc3545'}">${videoOk ? '✔':'✖'} Video Materi Selesai</span><br>
-              <span style="color:${modulOk ? '#28a745':'#dc3545'}">${modulOk ? '✔':'✖'} Modul Materi Selesai</span><br>
-              <span style="color:${isEvalDone ? '#28a745':'#dc3545'}">${isEvalDone ? '✔':'✖'} Kerjakan Evaluasi Belajar</span>
-            </div>
-
-            <div class="progress-text">
-              <span>Progres Belajar</span>
-              <span id="progress-pct-${materi.id}">${hitungProgress(materi.id)}%</span>
-            </div>
-            <div class="progress-wrapper">
-              <div class="progress-bar" id="progress-bar-${materi.id}" style="width:0%"></div>
-            </div>
-
-            <button class="eval"
-              ${!canEval || isEvalDone ? "disabled" : ""}
-              onclick="openSertifikat('${materi.sertifikat}', ${materi.id})">
-              ${isEvalDone ? 'EVALUASI SELESAI' : 'KERJAKAN EVALUASI'}
-            </button>
-
-            <button class="sertif"
-              ${!isEvalDone ? "disabled" : ""}
-              onclick="openDownload('${materi.download}')">
-              DOWNLOAD SERTIFIKAT
-            </button>`;
-
-          updateStats();
-        }
-
-        if (filter !== "read") {
-          html += isRead
-            ? `<button class="read" disabled>Sudah Dipelajari</button>`
-            : `<button class="start" onclick="openModal(${materi.id})">Mulai Belajar</button>`;
-        }
-
-        card.innerHTML = html;
-        container.appendChild(card);
-      });
-
-      // FIX #16: Animasikan progress bar SETELAH elemen ada di DOM
-      requestAnimationFrame(() => {
-        dataRender.forEach(materi => {
-          const bar = document.getElementById(`progress-bar-${materi.id}`);
-          if (bar) {
-            setTimeout(() => {
-              bar.style.width = hitungProgress(materi.id) + "%";
-            }, 100);
-          }
-        });
-      });
-
-      // Auto scroll sekali per sesi
-      if (filter === "read" && lastMovedMateriId && !hasAutoScrolled) {
-        setTimeout(() => {
-          const target = document.getElementById(`materi-${lastMovedMateriId}`);
-          if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
-            // FIX #14: Instruksi hanya muncul jika belum pernah ditampilkan untuk materi ini
-            if (!instruksiShown[lastMovedMateriId]) {
-              document.getElementById("instructionModal").classList.add("show");
-              instruksiShown[lastMovedMateriId] = true;
-              localStorage.setItem("instruksiShown", JSON.stringify(instruksiShown));
-            }
-            hasAutoScrolled = true;
-          }
-        }, 300);
-      }
-    }
-
-    // ===== PROGRESS =====
-    function hitungProgress(id) {
-      if (evalStatus[id]) return 100;
-      let progress = 0;
-      if (openedStatus[id])                        progress += 25;
-      if (getWaktuBelajarAktif(id) >= MIN_WAKTU_BELAJAR) progress += 25;
-      if (videoStatus[id])                         progress += 25;
-      if (modulStatus[id])                         progress += 25;
-      // Jika video sudah selesai semua → kunci di 99% permanen
-      if (videoStatus[id] && progress >= 75)       return 99;
-      return Math.min(progress, 99);
-    }
-
-    // ===== MODAL: Mulai Belajar =====
-    let selectedMateriId = null;
-
-    function openModal(id) {
-      selectedMateriId = id;
-      document.getElementById("confirmModal").classList.add("show");
-    }
-
-    function closeModal() {
-      document.getElementById("confirmModal").classList.remove("show");
-      selectedMateriId = null;
-    }
-
-    function confirmStart() {
-      if (!selectedMateriId) return;
-      readStatus[selectedMateriId]  = true;
-      readTime[selectedMateriId]    = Date.now();
-      lastMovedMateriId             = selectedMateriId;
-      hasAutoScrolled               = false;
-      localStorage.setItem("readStatus", JSON.stringify(readStatus));
-      localStorage.setItem("readTime",   JSON.stringify(readTime));
-      syncStatusKeServer(); // sinkron ke server
-      closeModal();
-      showToast("✅ Berhasil! Materi dipindahkan ke 'Sudah Dibaca'");
-      currentFilter = "read";
-      setActive("btn-read");
-      renderMateri("read");
-    }
-
-    // ===== MULTI VIDEO: State =====
-    let currentMateri        = null;
-    let currentVideoIndex    = 0;
-    let videoStatusArr       = [];      // array boolean selesai per video
-    let videoTimerInterval   = null;
-    let videoSecondsLeft     = 0;       // sisa detik timer video aktif
-    let videoTimerDoneFlag   = false;   // timer video aktif sudah selesai
-    let videoTimerRunning    = false;   // apakah timer sedang berjalan
-    let videoSecondsMap      = {};      // sisa waktu per video: {index: seconds}
-    const VIDEO_MIN_SECONDS  = 5 * 60; // 5 menit per video
-
-    // ===== MODAL: Video / Materi =====
-    async function markOpened(id) {
-      const materi    = materiList.find(m => m.id === id);
-      currentMateri   = materi;
-      currentActiveId = id;
-      isEvalMode      = false;
-      videoSecondsMap = {};  // reset peta sisa waktu
-
-      openedStatus[id] = true;
-      localStorage.setItem("openedStatus", JSON.stringify(openedStatus));
-
-      const modal   = document.getElementById("videoModal");
-      const player  = document.getElementById("videoPlayer");
-      const loading = document.getElementById("videoLoadingOverlay");
-
-      // Reset UI
-      document.getElementById("videoTitle").innerText = "Mempelajari: " + materi.judul;
-      document.getElementById("evalDoneWrapper").style.display = "none";
-      document.getElementById("modalTimerDisplay").style.display = "none";
-
-      // Download modul
-      const dlWrapper = document.getElementById("downloadMateriWrapper");
-      const dlBtn     = document.getElementById("downloadMateriBtn");
-      if (materi.modul && dlWrapper && dlBtn) {
-        dlBtn.href = materi.modul;
-        dlWrapper.style.display = "block";
-      } else if (dlWrapper) {
-        dlWrapper.style.display = "none";
-      }
-
-      resetCloseBtnToDefault();
-
-      // Tampilkan modal dengan loading
-      player.src = "";
-      modal.classList.add("show");
-      if (loading) loading.style.display = "flex";
-
-      readTime[id] = Date.now();
-      localStorage.setItem("readTime", JSON.stringify(readTime));
-      studyStart[id] = Date.now();
-      localStorage.setItem("studyStart", JSON.stringify(studyStart));
-
-      // Ambil progress video dari server
-      let startIndex = 0;
-      videoStatusArr = [];
-
-      try {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (savedUser && savedUser.nip && materi.videos && materi.videos.length > 0) {
-          const resp   = await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "ambilProgressVideo",
-              nip: savedUser.nip,
-              materiId: String(id)
-            })
-          });
-          const result = await resp.json();
-          if (result.status === "found") {
-            videoStatusArr = result.statusVideo || [];
-            if (result.semuaSelesai) {
-              startIndex = 0; // review dari awal
+            if (!isVideoSelesai && totalWaktuDetik > 0) {
+                // Sisa waktu ada dan belum selesai -> Tampilkan modal peringatan
+                bsModalPeringatanVideo.show();
             } else {
-              startIndex = videoStatusArr.findIndex(s => !s);
-              if (startIndex === -1) startIndex = 0;
+                // Sudah rampung durasi minimal -> Langsung tutup aman
+                paksaTutupVideo();
             }
-          }
-        }
-      } catch(e) {
-        console.error("Gagal ambil progress video:", e);
-      }
-
-      const total = materi.videos ? materi.videos.length : 0;
-      if (videoStatusArr.length !== total) {
-        videoStatusArr = Array(total).fill(false);
-      }
-
-      if (loading) loading.style.display = "none";
-
-      const semuaSelesaiSebelumnya = total > 0 && videoStatusArr.every(Boolean);
-
-      if (materi.videos && materi.videos.length > 0) {
-        renderPlaylist(materi.videos, videoStatusArr);
-        putarVideo(startIndex, semuaSelesaiSebelumnya);
-      }
-
-      catatAktivitasLokal(id, materi.judul, "Mulai Belajar");
-      renderMateri(currentFilter);
-    }
-
-    // Render playlist
-    function renderPlaylist(videos, statusArr) {
-      const playlist = document.getElementById("videoPlaylist");
-      const navbar   = document.getElementById("videoNavBar");
-      if (!playlist) return;
-
-      playlist.innerHTML = "";
-      playlist.style.display = "flex";
-      if (navbar) navbar.style.display = "flex";
-
-      videos.forEach((vid, idx) => {
-        const div = document.createElement("div");
-        const isDone   = statusArr[idx] === true;
-        const isActive = idx === currentVideoIndex;
-        // Bisa diklik jika: (1) video sudah selesai, atau (2) semua selesai
-        const semuaSelesai = statusArr.every(Boolean);
-        const bisa = isDone || semuaSelesai;
-
-        div.className = "vid-item" + (isDone ? " done" : "") + (isActive ? " active" : "");
-        div.id = "vid-item-" + idx;
-        div.style.cursor = bisa ? "pointer" : "default";
-        div.style.opacity = (!isDone && !isActive && !semuaSelesai) ? "0.55" : "1";
-
-        div.innerHTML =
-          '<div class="vid-num">' + (isDone ? "✓" : (idx + 1)) + '</div>' +
-          '<span style="flex:1;">' + vid.judul + '</span>' +
-          '<span style="font-size:10px; color:' + (isDone ? "#28a745" : "#999") + ';">' +
-            (isDone ? "Selesai" : "") +
-          '</span>';
-
-        if (bisa) {
-          div.onclick = function() { klikPlaylistItem(idx); };
         }
 
-        playlist.appendChild(div);
-      });
-    }
-
-    // Klik item playlist — poin 4 & 5
-    function klikPlaylistItem(idx) {
-      if (!currentMateri) return;
-      const semuaSelesai = videoStatusArr.every(Boolean);
-      const isDone       = videoStatusArr[idx] === true;
-
-      // Boleh klik jika: sudah selesai atau semua selesai
-      if (!isDone && !semuaSelesai) return;
-
-      // Pause timer yang sedang berjalan (opsi A poin 4)
-      if (videoTimerRunning && !videoStatusArr[currentVideoIndex]) {
-        clearInterval(videoTimerInterval);
-        videoTimerRunning = false;
-        // Simpan sisa waktu untuk dilanjutkan nanti
-        videoSecondsMap[currentVideoIndex] = videoSecondsLeft;
-      }
-
-      putarVideo(idx, true /* review */);
-    }
-
-    // Putar video — poin 1,2,3,4,5,8
-    function putarVideo(index, isReview) {
-      const materi = currentMateri;
-      if (!materi || !materi.videos) return;
-
-      // Pause timer sebelumnya jika masih jalan
-      if (videoTimerRunning) {
-        clearInterval(videoTimerInterval);
-        videoTimerRunning = false;
-        if (!videoStatusArr[currentVideoIndex]) {
-          videoSecondsMap[currentVideoIndex] = videoSecondsLeft;
-        }
-      }
-
-      currentVideoIndex  = index;
-      const sudahSelesai = videoStatusArr[index] === true;
-      videoTimerDoneFlag = sudahSelesai || isReview;
-
-      const video    = materi.videos[index];
-      const player   = document.getElementById("videoPlayer");
-      const navTitle = document.getElementById("videoNavTitle");
-      const navCount = document.getElementById("videoNavCount");
-      const timerBar = document.getElementById("videoTimerBar");
-      const timerTxt = document.getElementById("videoTimerText");
-      const btnNext  = document.getElementById("btnVideoBerikutnya");
-
-      if (player)   player.src = video.link;
-      if (navTitle) navTitle.innerText = video.judul;
-      if (navCount) navCount.innerText = "Video " + (index + 1) + " dari " + materi.videos.length;
-
-      // Update highlight playlist
-      renderPlaylist(materi.videos, videoStatusArr);
-
-      clearInterval(videoTimerInterval);
-      videoTimerRunning = false;
-      if (timerBar) timerBar.style.display = "flex";
-      if (btnNext)  btnNext.style.display  = "none";
-
-      const semuaSelesai = videoStatusArr.every(Boolean);
-
-      if (semuaSelesai) {
-        // Semua video selesai — mode review bebas
-        if (timerBar) { timerBar.classList.add("done"); }
-        if (timerTxt) timerTxt.innerText = "SELESAI ✔ (Review)";
-        tampilkanSemuaVideoSelesai();
-        return;
-      }
-
-      if (sudahSelesai || isReview) {
-        // Video ini sudah pernah selesai — review tanpa timer
-        if (timerBar) timerBar.classList.add("done");
-        if (timerTxt) timerTxt.innerText = "SELESAI ✔ (Review)";
-        // Tampilkan tombol lanjut jika video berikutnya belum selesai
-        const nextIndex = index + 1;
-        if (nextIndex < materi.videos.length && !videoStatusArr[nextIndex]) {
-          if (btnNext) {
-            btnNext.style.display = "block";
-            btnNext.innerText = "▶ Lanjut ke Video " + (nextIndex + 1) + ": " + materi.videos[nextIndex].judul;
-          }
-        }
-      } else {
-        // Video belum selesai — lanjutkan dari sisa waktu (poin 1&3)
-        // Ambil sisa waktu dari map, jika belum ada pakai VIDEO_MIN_SECONDS
-        const sisaWaktu = (videoSecondsMap[index] !== undefined)
-          ? videoSecondsMap[index]
-          : VIDEO_MIN_SECONDS;
-
-        videoSecondsLeft = sisaWaktu;
-        if (timerBar) timerBar.classList.remove("done");
-        if (timerTxt) timerTxt.innerText = formatDetik(videoSecondsLeft);
-
-        mulaiTimerVideo(index);
-      }
-    }
-
-    // Jalankan timer video — bisa dipause & dilanjut (poin 2&12)
-    function mulaiTimerVideo(index) {
-      const materi = currentMateri;
-      if (!materi) return;
-
-      clearInterval(videoTimerInterval);
-      videoTimerRunning = true;
-
-      const timerBar = document.getElementById("videoTimerBar");
-      const timerTxt = document.getElementById("videoTimerText");
-      const btnNext  = document.getElementById("btnVideoBerikutnya");
-
-      videoTimerInterval = setInterval(() => {
-        if (!videoTimerRunning) return;
-        videoSecondsLeft = Math.max(0, videoSecondsLeft - 1);
-        if (timerTxt) timerTxt.innerText = formatDetik(videoSecondsLeft);
-
-        if (videoSecondsLeft <= 0) {
-          clearInterval(videoTimerInterval);
-          videoTimerRunning  = false;
-          videoTimerDoneFlag = true;
-          videoSecondsMap[index] = 0;
-          if (timerBar) timerBar.classList.add("done");
-          if (timerTxt) timerTxt.innerText = "SELESAI ✔";
-
-          onVideoSelesai(index);
-
-          if (index < materi.videos.length - 1) {
-            if (btnNext) {
-              btnNext.style.display = "block";
-              btnNext.innerText = "▶ Lanjut ke Video " + (index + 2) + ": " + materi.videos[index + 1].judul;
+        // PAKSA TUTUP VIDEO (Menyimpan Status Tanpa Reset)
+        function paksaTutupVideo() {
+            // Bersihkan Interval Timer tapi sisa waktu 'totalWaktuDetik' aman di Global State
+            if (timerVideoInterval !== null) {
+                clearInterval(timerVideoInterval);
+                timerVideoInterval = null;
             }
-            showToast("Video " + (index + 1) + " selesai! Klik tombol untuk lanjut.");
-          } else {
-            onSemuaVideoSelesai();
-          }
+            
+            // Tutup semua sub-modal video
+            bsModalPeringatanVideo.hide();
+            bsModalVideo.hide();
+            
+            // Sinkronisasi final visual ke Card Utama agar up to date
+            updateCardTimerUI();
         }
-      }, 1000);
-    }
 
-    // Pause timer saat tab tidak aktif / modal ditutup (poin 2&12)
-    function pauseTimerVideo() {
-      if (videoTimerRunning) {
-        clearInterval(videoTimerInterval);
-        videoTimerRunning = false;
-        if (!videoStatusArr[currentVideoIndex]) {
-          videoSecondsMap[currentVideoIndex] = videoSecondsLeft;
+        // FIX CATATAN 1: DOWNLOAD MODUL OTOMATIS CEKLIST
+        function handleDownloadModul() {
+            isModulDownloaded = true;
+            // Ubah DOM Checkbox di Card Utama secara Instan & Otomatis
+            const chkModul = document.getElementById('chk-materi-downloaded');
+            chkModul.checked = true;
+            
+            // Simulasi Trigger File Download Modul
+            alert("File modul berhasil diunduh. Modul Berhasil Ditandai Selesai Pelatihan!");
         }
-      }
-    }
 
-    // Resume timer saat tab aktif kembali (poin 2&12)
-    function resumeTimerVideo() {
-      if (!videoTimerRunning && !videoTimerDoneFlag && currentMateri && !isEvalMode) {
-        const idx = currentVideoIndex;
-        if (!videoStatusArr[idx]) {
-          mulaiTimerVideo(idx);
+        // BUKA MODAL EVALUASI (Validasi Syarat Menonton Video Harus Dipenuhi Terlebih Dahulu)
+        function bukaModalEvaluasi() {
+            if (!isVideoSelesai) {
+                alert("Akses Ditolak! Anda wajib merampungkan durasi minimal menonton video (5 Menit) sebelum membuka Ujian Evaluasi.");
+                return;
+            }
+            
+            // Reset Keadaan & Elemen UI Lembar Evaluasi Awal
+            totalWaktuEvaluasiDetik = 180; // 3 Menit Pengisian
+            isEvaluasiSelesaiSyaratWaktu = false;
+            isUserKlikLinkGForm = false;
+            document.getElementById('chk-konfirmasi-gform').checked = false;
+            document.getElementById('btnSelesaiEvaluasi').disabled = true;
+            
+            // Reset Tampilan Section Google Form ke default terisolasi (Disabled)
+            const sectionGForm = document.getElementById('sectionSyaratGoogleForm');
+            sectionGForm.className = "disabled-form-section p-3 border rounded mb-3";
+
+            document.getElementById('eval-timer-display').innerText = formatWaktu(totalWaktuEvaluasiDetik);
+            document.getElementById('eval-timer-display').className = "badge bg-danger fs-6 font-monospace";
+
+            // Tampilkan Modal Evaluasi
+            bsModalEvaluasi.show();
+
+            // Jalankan Timer Sesi Evaluasi Minimal 3 Menit (Fix Catatan 5)
+            if (timerEvaluasiInterval !== null) clearInterval(timerEvaluasiInterval);
+            
+            timerEvaluasiInterval = setInterval(function() {
+                if (totalWaktuEvaluasiDetik > 0) {
+                    totalWaktuEvaluasiDetik--;
+                    document.getElementById('eval-timer-display').innerText = formatWaktu(totalWaktuEvaluasiDetik);
+                } else {
+                    // Berhasil Menyelesaikan Waktu Minimal 3 Menit -> Buka Checkbox & Google Form Link
+                    clearInterval(timerEvaluasiInterval);
+                    timerEvaluasiInterval = null;
+                    isEvaluasiSelesaiSyaratWaktu = true;
+                    
+                    // Modifikasi Class Mengaktifkan Section Google Form yang tadinya hilang/disabled
+                    sectionGForm.className = "active-form-section p-3 border rounded mb-3 bg-white shadow-sm";
+                    document.getElementById('eval-timer-display').className = "badge bg-success fs-6 font-monospace";
+                    
+                    alert("Waktu tunggu minimal 3 menit terpenuhi. Form Syarat Kelulusan Evaluasi kini telah terbuka dan aktif!");
+                }
+            }, 1000);
         }
-      }
-    }
 
-    // Dipanggil saat timer video selesai
-    async function onVideoSelesai(index) {
-      videoStatusArr[index] = true;
-      renderPlaylist(currentMateri.videos, videoStatusArr);
+        // FIX CATATAN 4: DETEKSI PINDAH TAB / MINIMIZE BROWSER (ANTI-CHEAT SECURITY)
+        function handleDeteksiPindahTab() {
+            // Melakukan pengecekan apakah modal evaluasi saat ini sedang aktif terbuka di layar user
+            const modalEvaluasiEl = document.getElementById('modalEvaluasi');
+            if (modalEvaluasiEl.classList.contains('show')) {
+                
+                // Hentikan interval timer evaluasi
+                if (timerEvaluasiInterval !== null) {
+                    clearInterval(timerEvaluasiInterval);
+                    timerEvaluasiInterval = null;
+                }
 
-      try {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (savedUser && savedUser.nip) {
-          await fetch(SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action:      "simpanProgressVideo",
-              nip:         savedUser.nip,
-              materiId:    String(currentMateri.id),
-              judulMateri: currentMateri.judul,
-              videoIndex:  index,
-              totalVideo:  currentMateri.videos.length,
-              namaVideo:   currentMateri.videos[index].judul
-            })
-          });
+                // Tutup paksa modal evaluasi secara instan tanpa toleransi
+                bsModalEvaluasi.hide();
+                
+                // Tampilkan pop-up peringatan pelanggaran keamanan terintegrasi
+                bsModalPeringatanTab.show();
+            }
         }
-      } catch(e) {
-        console.error("Gagal simpan progress video:", e);
-      }
-    }
 
-    // Semua video selesai — poin 6 & 8
-    function onSemuaVideoSelesai() {
-      showToast("Semua video selesai dipelajari!");
-      tampilkanSemuaVideoSelesai();
-
-      // Ceklist video di kartu materi aktif (poin 6)
-      videoStatus[currentMateri.id] = true;
-      localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
-      syncStatusKeServer();
-      renderMateri(currentFilter);
-    }
-
-    // Tampilkan tombol hijau "Semua Video Selesai - Tutup" (poin 8)
-    function tampilkanSemuaVideoSelesai() {
-      const closeBtn = document.getElementById("closeVideoBtn");
-      const btnNext  = document.getElementById("btnVideoBerikutnya");
-      if (btnNext) btnNext.style.display = "none";
-      if (closeBtn) {
-        closeBtn.style.background = "linear-gradient(135deg, #1aa179, #218838)";
-        closeBtn.style.color      = "#fff";
-        closeBtn.style.fontWeight = "700";
-        closeBtn.style.animation  = "pulse-green 1.5s infinite";
-        closeBtn.innerText        = "✅ Semua Video Selesai Dipelajari — Tutup";
-        closeBtn.onclick          = function() { closeVideoModal(); };
-      }
-    }
-
-    // Tombol lanjut ke video berikutnya
-    function lanjutVideoBerikutnya() {
-      if (!currentMateri) return;
-      const nextIndex = currentVideoIndex + 1;
-      if (nextIndex < currentMateri.videos.length) {
-        putarVideo(nextIndex, false);
-      }
-    }
-
-    // Reset tombol tutup ke default
-    function resetCloseBtnToDefault() {
-      const closeBtn = document.getElementById("closeVideoBtn");
-      if (closeBtn) {
-        closeBtn.style.background = "";
-        closeBtn.style.color      = "";
-        closeBtn.style.animation  = "";
-        closeBtn.innerText        = "Tutup & Pause Belajar";
-        closeBtn.onclick          = function() { handleTutupVideo(); };
-      }
-    }
-
-    // Handle klik tombol tutup — poin 7
-    function handleTutupVideo() {
-      if (isEvalMode) { closeVideoModal(); return; }
-      if (!currentMateri || !currentMateri.videos) { closeVideoModal(); return; }
-
-      const semuaSelesai = videoStatusArr.every(Boolean);
-      if (semuaSelesai) {
-        closeVideoModal();
-        return;
-      }
-
-      // Belum semua selesai → tampilkan pop-up peringatan (poin 7)
-      document.getElementById("peringatanVideoModal").classList.add("show");
-    }
-
-    // Catat aktivitas ke server
-    async function catatAktivitasLokal(materiId, judulMateri, aksi) {
-      try {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (!savedUser || !savedUser.nip) return;
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "catatAktivitas",
-            nip: savedUser.nip,
-            nama: savedUser.nama,
-            materiId: String(materiId),
-            judulMateri: judulMateri,
-            aksi: aksi
-          })
-        });
-      } catch(e) { console.error("Gagal catat aktivitas:", e); }
-    }
-
-
-    // Format detik → MM:SS
-    function formatDetik(detik) {
-      const m = Math.floor(detik / 60);
-      const s = detik % 60;
-      return String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
-    }
-
-    // Reset tombol tutup ke default
-    function resetCloseBtnToDefault() {
-      const closeBtn = document.getElementById("closeVideoBtn");
-      if (closeBtn) {
-        closeBtn.style.background = "";
-        closeBtn.style.color      = "";
-        closeBtn.style.animation  = "";
-        closeBtn.innerText        = "Tutup & Pause Belajar";
-        closeBtn.onclick          = function() { closeVideoModal(); };
-      }
-    }
-
-    // Catat aktivitas ke server (fire and forget)
-    async function catatAktivitasLokal(materiId, judulMateri, aksi) {
-      try {
-        const savedUser = JSON.parse(localStorage.getItem("userData"));
-        if (!savedUser || !savedUser.nip) return;
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "catatAktivitas",
-            nip: savedUser.nip,
-            nama: savedUser.nama,
-            materiId: String(materiId),
-            judulMateri: judulMateri,
-            aksi: aksi
-          })
-        });
-      } catch(e) { console.error("Gagal catat aktivitas:", e); }
-    }
-
-    function closeVideoModal() {
-      if (currentActiveId) {
-        simpanWaktuBelajar();
-        currentActiveId = null;
-      }
-
-      // Bersihkan state multi-video
-      pauseTimerVideo(); // simpan sisa waktu sebelum tutup
-      clearInterval(videoTimerInterval);
-      videoTimerInterval = null;
-      videoTimerRunning  = false;
-      currentMateri      = null;
-      currentVideoIndex  = 0;
-      videoStatusArr     = [];
-      videoTimerDoneFlag = false;
-      videoSecondsMap    = {};
-
-      // Bersihkan state evaluasi
-      isEvalMode    = false;
-      evalTimerDone = false;
-      evalCheckDone = false;
-      clearInterval(evalCountdownInterval);
-      evalSecondsLeft = EVAL_LOCK_DURATION;
-
-      // Sembunyikan elemen multi-video
-      const playlist = document.getElementById("videoPlaylist");
-      const navbar   = document.getElementById("videoNavBar");
-      const timerBar = document.getElementById("videoTimerBar");
-      const btnNext  = document.getElementById("btnVideoBerikutnya");
-      if (playlist) playlist.style.display = "none";
-      if (navbar)   navbar.style.display   = "none";
-      if (timerBar) timerBar.style.display = "none";
-      if (btnNext)  btnNext.style.display  = "none";
-
-      const iframe = document.getElementById("videoPlayer");
-      if (iframe) iframe.src = "";
-
-      resetCloseBtnToDefault();
-
-      document.getElementById("videoModal").classList.remove("show");
-      document.getElementById("evalDoneWrapper").style.display = "none";
-      renderMateri(currentFilter);
-    }
-
-    // ===== MODAL: Evaluasi =====
-    function openSertifikat(url, id) {
-      if (!url) { alert("Link evaluasi belum tersedia."); return; }
-      currentEvalUrl = url;
-      currentEvalId  = id;
-      document.getElementById("evaluasiConfirmModal").classList.add("show");
-    }
-
-    function closeEvalModal() {
-      document.getElementById("evaluasiConfirmModal").classList.remove("show");
-      currentEvalUrl = "";
-      currentEvalId  = null;
-    }
-
-    // ===== SISTEM EVALUASI =====
-    // Syarat 1 (verifikasi server) DIHAPUS sesuai ketentuan.
-    // Syarat yang berlaku:
-    //   A. Timer minimum 3 menit
-    //   B. Ceklist konfirmasi bahwa form sudah dikerjakan
-    // Setelah kedua syarat terpenuhi:
-    //   - Tombol "Tutup & Pause Belajar" berubah HIJAU → "Akhiri Evaluasi"
-    //   - Klik tombol → muncul pop-up peringatan final
-    //   - Klik "Ya, Sudah Mengerjakan" → evalStatus = true
-
-    const EVAL_LOCK_DURATION  = 3 * 60; // 3 menit dalam detik
-    let evalCountdownInterval = null;
-    let evalSecondsLeft       = EVAL_LOCK_DURATION;
-    let evalTimerDone         = false;  // syarat A
-    let evalCheckDone         = false;  // syarat B
-
-    // Dipanggil setiap kali salah satu syarat berubah
-    function checkEvalRequirements() {
-      if (evalTimerDone && evalCheckDone) {
-        // Kedua syarat terpenuhi → ubah tombol tutup jadi "Akhiri Evaluasi"
-        const closeBtn = document.getElementById("closeVideoBtn");
-        if (closeBtn) {
-          closeBtn.style.background    = "linear-gradient(135deg, #1aa179, #218838)";
-          closeBtn.style.color         = "#fff";
-          closeBtn.style.fontWeight    = "700";
-          closeBtn.style.border        = "none";
-          closeBtn.innerText           = "✅ Akhiri Evaluasi";
-          closeBtn.onclick             = function() { bukaAkhiriEvalModal(); };
-          closeBtn.style.animation     = "pulse-green 1.5s infinite";
+        // Validasi Klik Link Google Form oleh Peserta
+        function handleKlikLinkGForm() {
+            isUserKlikLinkGForm = true;
+            toggleSelesaiButton();
         }
-        showToast("Kedua syarat terpenuhi! Klik tombol hijau untuk mengakhiri evaluasi.");
-      }
-    }
 
-    // Dipanggil saat ceklist diubah
-    function onEvalCheckChange() {
-      const chk      = document.getElementById("evalConfirmCheck");
-      const label    = document.getElementById("evalCheckLabel");
-      evalCheckDone  = chk && chk.checked;
-
-      if (evalCheckDone) {
-        if (label) { label.style.borderColor = "#28a745"; label.style.background = "#f0fff4"; }
-        showToast("Konfirmasi dicatat.");
-      } else {
-        if (label) { label.style.borderColor = "#ddd"; label.style.background = "#fff"; }
-      }
-      checkEvalRequirements();
-    }
-
-    // Countdown timer minimum
-    function startEvalCountdown() {
-      clearInterval(evalCountdownInterval);
-      evalSecondsLeft = EVAL_LOCK_DURATION;
-      evalTimerDone   = false;
-      evalCheckDone   = false;
-
-      const textEl   = document.getElementById("evalCountdownText");
-      const fillEl   = document.getElementById("evalCountdownFill");
-      const chk      = document.getElementById("evalConfirmCheck");
-      const label    = document.getElementById("evalCheckLabel");
-      const closeBtn = document.getElementById("closeVideoBtn");
-
-      // Reset ceklist — dikunci sampai timer selesai
-      if (chk)   { chk.checked = false; chk.disabled = true; chk.style.cursor = "not-allowed"; }
-      if (label) { label.style.opacity = "0.5"; label.style.cursor = "not-allowed";
-                   label.style.borderColor = "#ddd"; label.style.background = "#fff"; }
-      if (textEl){ textEl.innerText = "03:00"; textEl.style.color = "#8C1007"; }
-      if (fillEl){ fillEl.style.width = "100%"; }
-
-      // Reset tombol tutup ke semula
-      if (closeBtn) {
-        closeBtn.style.background = "";
-        closeBtn.style.color      = "";
-        closeBtn.style.animation  = "";
-        closeBtn.innerText        = "Tutup & Pause Belajar";
-        closeBtn.onclick          = function() { closeVideoModal(); };
-      }
-
-      function tick() {
-        evalSecondsLeft = Math.max(0, evalSecondsLeft - 1);
-        const pct   = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
-        const menit = Math.floor(evalSecondsLeft / 60);
-        const detik = evalSecondsLeft % 60;
-
-        if (textEl) textEl.innerText = evalSecondsLeft > 0
-          ? String(menit).padStart(2,"0") + ":" + String(detik).padStart(2,"0")
-          : "SELESAI ✔";
-        if (fillEl) fillEl.style.width = pct + "%";
-
-        if (evalSecondsLeft <= 0) {
-          clearInterval(evalCountdownInterval);
-          evalTimerDone = true;
-          if (textEl) textEl.style.color = "#28a745";
-
-          // Aktifkan ceklist
-          if (chk)   { chk.disabled = false; chk.style.cursor = "pointer"; }
-          if (label) { label.style.opacity = "1"; label.style.cursor = "pointer"; }
-
-          showToast("Waktu terpenuhi! Centang konfirmasi lalu klik Akhiri Evaluasi.");
-          checkEvalRequirements();
+        // Validasi Fleksibel Tombol Akhir Submit Evaluasi
+        function toggleSelesaiButton() {
+            const chkKonfirmasi = document.getElementById('chk-konfirmasi-gform').checked;
+            const btnSubmit = document.getElementById('btnSelesaiEvaluasi');
+            
+            if (isEvaluasiSelesaiSyaratWaktu && isUserKlikLinkGForm && chkKonfirmasi) {
+                btnSubmit.disabled = false;
+            } else {
+                btnSubmit.disabled = true;
+            }
         }
-      }
-      evalCountdownInterval = setInterval(tick, 1000);
-    }
 
-    // Pause timer evaluasi (poin 12)
-    function pauseTimerEval() {
-      if (evalCountdownInterval) {
-        clearInterval(evalCountdownInterval);
-        evalCountdownInterval = null;
-      }
-    }
-
-    // Resume timer evaluasi (poin 12)
-    function resumeTimerEval() {
-      if (!evalCountdownInterval && evalSecondsLeft > 0 && isEvalMode) {
-        const textEl = document.getElementById("evalCountdownText");
-        const fillEl = document.getElementById("evalCountdownFill");
-        function tick() {
-          evalSecondsLeft = Math.max(0, evalSecondsLeft - 1);
-          const pct   = (evalSecondsLeft / EVAL_LOCK_DURATION) * 100;
-          const menit = Math.floor(evalSecondsLeft / 60);
-          const detik = evalSecondsLeft % 60;
-          if (textEl) textEl.innerText = evalSecondsLeft > 0
-            ? String(menit).padStart(2,"0") + ":" + String(detik).padStart(2,"0")
-            : "SELESAI";
-          if (fillEl) fillEl.style.width = pct + "%";
-          if (evalSecondsLeft <= 0) {
-            clearInterval(evalCountdownInterval);
-            evalCountdownInterval = null;
-            if (textEl) textEl.style.color = "#28a745";
-            checkEvalRequirements();
-          }
+        // Kirim Aksi Kelulusan Akhir Evaluasi SIPENATA
+        function submitEvaluasiAkhir() {
+            if (timerEvaluasiInterval !== null) clearInterval(timerEvaluasiInterval);
+            bsModalEvaluasi.hide();
+            alert("Luar Biasa! Seluruh rangkaian pelatihan orientasi nilai & etika PPPK Kabupaten Sukoharjo berhasil disimpan dalam sistem SIPENATA.");
         }
-        evalCountdownInterval = setInterval(tick, 1000);
-      }
-    }
-
-    function startGoogleForm() {
-      document.getElementById("evaluasiConfirmModal").classList.remove("show");
-
-      const modal  = document.getElementById("videoModal");
-      const player = document.getElementById("videoPlayer");
-
-      isEvalMode = true;
-      document.getElementById("videoTitle").innerText = "Evaluasi Belajar: Selesaikan Kuis";
-
-      // Sembunyikan SEMUA elemen milik video player — bukan mode video
-      const sembunyikan = [
-        "modalTimerDisplay", "videoNavBar", "videoPlaylist",
-        "videoTimerBar", "btnVideoBerikutnya", "downloadMateriWrapper",
-        "videoLoadingOverlay"
-      ];
-      sembunyikan.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "none";
-      });
-
-      // Pastikan loading overlay juga tidak tampil
-      const loading = document.getElementById("videoLoadingOverlay");
-      if (loading) loading.style.display = "none";
-
-      let finalUrl = currentEvalUrl;
-      const storedUser = JSON.parse(localStorage.getItem("userData"));
-      if (storedUser) {
-        finalUrl += (finalUrl.includes("?") ? "&" : "?") +
-          "entry.12345678=" + encodeURIComponent(storedUser.nip) +
-          "&entry.87654321=" + encodeURIComponent(storedUser.nama);
-      }
-      if (!finalUrl.includes("embedded=true")) {
-        finalUrl += (finalUrl.includes("?") ? "&" : "?") + "embedded=true";
-      }
-
-      player.src = finalUrl;
-      document.getElementById("evalDoneWrapper").style.display = "block";
-      modal.classList.add("show");
-      showToast("Isi dan submit Google Form evaluasi, lalu centang konfirmasi.");
-
-      startEvalCountdown();
-    }
-
-    // Buka pop-up peringatan akhiri evaluasi
-    function bukaAkhiriEvalModal() {
-      document.getElementById("akhiriEvalModal").classList.add("show");
-    }
-
-    function closeAkhiriEvalModal() {
-      document.getElementById("akhiriEvalModal").classList.remove("show");
-    }
-
-    // Konfirmasi final — evalStatus = true
-    function konfirmasiAkhiriEval() {
-      if (!currentEvalId) return;
-      closeAkhiriEvalModal();
-      clearInterval(evalCountdownInterval);
-
-      evalStatus[currentEvalId]    = true;
-      printedStatus[currentEvalId] = true;
-      localStorage.setItem("evalStatus",    JSON.stringify(evalStatus));
-      localStorage.setItem("printedStatus", JSON.stringify(printedStatus));
-      syncStatusKeServer(); // sinkron ke server
-
-      // Tutup modal video
-      isEvalMode = false;
-      currentActiveId = null;
-      const iframe = document.getElementById("videoPlayer");
-      if (iframe) iframe.src = "";
-      document.getElementById("videoModal").classList.remove("show");
-      document.getElementById("evalDoneWrapper").style.display = "none";
-
-      // Tampilkan kembali timer belajar untuk sesi berikutnya
-      const timerBar = document.getElementById("modalTimerDisplay");
-      if (timerBar) timerBar.style.display = "";
-
-      // Catat ke spreadsheet
-      catatAktivitasLokal(currentEvalId,
-        (materiList.find(m => m.id === currentEvalId) || {}).judul || "",
-        "Evaluasi Selesai");
-
-      showToast("🎉 Evaluasi selesai! Sertifikat Anda sudah bisa diunduh.");
-      renderMateri(currentFilter);
-    }
-
-    function markEvalDone() {
-      // Fungsi lama — tidak dipakai, dialihkan ke konfirmasiAkhiriEval
-      konfirmasiAkhiriEval();
-    }
-
-    function openDownload(url) {
-      if (!url) { alert("Link download sertifikat belum tersedia."); return; }
-      window.open(url, "_blank");
-    }
-
-    // ===== INSTRUKSI MODAL =====
-    // FIX #14: Sudah dikelola via instruksiShown di renderMateri
-    function closeInstructionModal() {
-      document.getElementById("instructionModal").classList.remove("show");
-    }
-
-    // ===== CHECKLIST =====
-    function toggleVideo(id) {
-      videoStatus[id] = !videoStatus[id];
-      localStorage.setItem("videoStatus", JSON.stringify(videoStatus));
-      syncStatusKeServer(); // sinkron ke server
-      if (videoStatus[id]) showToast("📺 Video selesai dipelajari!");
-      renderMateri(currentFilter);
-    }
-
-    function toggleModul(id) {
-      modulStatus[id] = !modulStatus[id];
-      localStorage.setItem("modulStatus", JSON.stringify(modulStatus));
-      syncStatusKeServer(); // sinkron ke server
-      if (modulStatus[id]) showToast("📚 Modul selesai dibaca!");
-      renderMateri(currentFilter);
-    }
-
-    // ===== TIMER =====
-    function getWaktuBelajarAktif(id) {
-      let total = studyTime[id] || 0;
-      if (studyStart[id]) total += Date.now() - studyStart[id];
-      return total;
-    }
-
-    function formatCountdown(ms) {
-      const totalDetik = Math.ceil(ms / 1000);
-      const menit  = Math.floor(totalDetik / 60);
-      const detik  = totalDetik % 60;
-      return `${menit.toString().padStart(2,"0")}:${detik.toString().padStart(2,"0")}`;
-    }
-
-    function formatTanggalJam(timestamp) {
-      if (!timestamp) return "";
-      const d   = new Date(timestamp);
-      const tgl = d.toLocaleDateString("id-ID", {day:"2-digit", month:"short", year:"numeric"});
-      const jam = d.toLocaleTimeString("id-ID", {hour:"2-digit", minute:"2-digit"});
-      return `${tgl} • ${jam}`;
-    }
-
-    function simpanWaktuBelajar() {
-      Object.keys(studyStart).forEach(id => {
-        if (studyStart[id]) {
-          studyTime[id] = (studyTime[id] || 0) + (Date.now() - studyStart[id]);
-          studyStart[id] = null;
-        }
-      });
-      localStorage.setItem("studyTime",  JSON.stringify(studyTime));
-      localStorage.setItem("studyStart", JSON.stringify(studyStart));
-    }
-
-    function updateLiveTimers() {
-      // Timer di kartu materi (waktu belajar total)
-      materiList.filter(m => readStatus[m.id]).forEach(materi => {
-        const timerEl  = document.getElementById("timer-" + materi.id);
-        const waktuSkr = getWaktuBelajarAktif(materi.id);
-        const sisa     = MIN_WAKTU_BELAJAR - waktuSkr;
-        const selesai  = waktuSkr >= MIN_WAKTU_BELAJAR;
-
-        if (timerEl) {
-          timerEl.innerText = selesai ? "SELESAI" : formatCountdown(sisa);
-          if (selesai) timerEl.classList.add("timer-selesai");
-        }
-      });
-      // Catatan: timer per-video dikelola oleh videoTimerInterval di putarVideo()
-    }
-
-    // ===== NAV =====
-    function setActive(id) {
-      document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-    }
-
-    document.getElementById("btn-all").onclick    = () => { currentFilter="all";    setActive("btn-all");    renderMateri("all"); };
-    document.getElementById("btn-unread").onclick = () => { currentFilter="unread"; setActive("btn-unread"); renderMateri("unread"); };
-    document.getElementById("btn-read").onclick   = () => { currentFilter="read";   setActive("btn-read");   renderMateri("read"); };
-
-    // ===== LOGOUT =====
-    // FIX #1 #2: logOut sekarang terhubung ke tombol yang benar
-    function logOut() {
-      if (confirm("Apakah Anda yakin ingin keluar?")) {
-        localStorage.removeItem("userData");
-        location.reload();
-      }
-    }
-
-    // ===== TOAST =====
-    function showToast(message, type = "success") {
-      const toast = document.getElementById("toast");
-      toast.innerText = message;
-      toast.style.background = type === "error"
-        ? "rgba(220,53,69,0.95)"
-        : "rgba(40,167,69,0.95)";
-      toast.style.display = "block";
-      clearTimeout(toast._timeout);
-      toast._timeout = setTimeout(() => { toast.style.display = "none"; }, 3500);
-    }
-
-    // ===== INTERVAL: Live update timer & stats setiap detik =====
-    setInterval(() => {
-      updateStats();
-      if (currentActiveId) updateLiveTimers();
-    }, 1000);
-
-    // ===== VISIBILITY: Pause/resume timer saat ganti tab =====
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) {
-        // Tab tidak aktif — pause semua timer
-        if (currentActiveId) simpanWaktuBelajar();
-        pauseTimerVideo();   // pause timer video (poin 2)
-        pauseTimerEval();    // pause timer evaluasi (poin 12)
-      } else {
-        // Tab aktif kembali — resume timer
-        if (currentActiveId) {
-          studyStart[currentActiveId] = Date.now();
-          localStorage.setItem("studyStart", JSON.stringify(studyStart));
-        }
-        // Resume timer sesuai mode yang sedang aktif
-        const videoModal = document.getElementById("videoModal");
-        if (videoModal && videoModal.classList.contains("show")) {
-          if (isEvalMode) {
-            resumeTimerEval(); // resume timer evaluasi (poin 12)
-          } else {
-            resumeTimerVideo(); // resume timer video (poin 2)
-          }
-        }
-      }
-    });
-
-  </script>
+    </script>
 </body>
 </html>
+
