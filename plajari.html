@@ -218,25 +218,19 @@
 
     /* Tombol status di menu Semua Materi */
     .card button.btn-status-belajar {
-      background: linear-gradient(135deg, #f39c12, #e67e22);
-      color: #fff;
-      cursor: default;
-      opacity: 1;
+      background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+      color: #fff !important;
+      cursor: default !important;
+      opacity: 1 !important;
+      pointer-events: none;   /* tidak bisa diklik, tapi tampilan normal */
     }
 
     .card button.btn-status-selesai {
-      background: linear-gradient(135deg, #1aa179, #218838);
-      color: #fff;
-      cursor: default;
-      opacity: 1;
-    }
-
-    /* Override disabled agar warna tetap */
-    .card button.btn-status-belajar:disabled,
-    .card button.btn-status-selesai:disabled {
-      background: inherit !important;
-      opacity: 1 !important;
+      background: linear-gradient(135deg, #1aa179, #218838) !important;
+      color: #fff !important;
       cursor: default !important;
+      opacity: 1 !important;
+      pointer-events: none;   /* tidak bisa diklik, tapi tampilan normal */
     }
 
     .card button.start:hover {
@@ -1311,9 +1305,9 @@
       {id:1, judul:"Keuangan Daerah", img:"https://drive.google.com/thumbnail?id=1PuJIEptjTUfZe9mXqxyHooR_7izGfCnE&sz=w400",
        modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
        videos:[
-         {judul:"Bagian 1 - Pengantar Pengelolaan Keuangan Daerah",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - Perbendaharaan dan Penatausahaan",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - Anggaran Perencanaan Belanja Daerah",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
+         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
+         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
+         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
        sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
        download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
       {id:2, judul:"English for Workplace", img:"https://drive.google.com/thumbnail?id=1GUxuGKrAuvVdo2yUlW07qVAbsrZY_snC&sz=w400",
@@ -1683,8 +1677,18 @@
             <div class="label-time">
               ⏳ Waktu belajar:
               <span id="timer-${materi.id}"
-                class="${(videoSelesaiStatus[materi.id] || timeOk) ? 'timer-selesai' : ''}">
-                ${(videoSelesaiStatus[materi.id] || timeOk) ? 'SELESAI' : formatCountdown(sisa)}
+                class="${videoSelesaiStatus[materi.id] ? 'timer-selesai' : ''}">
+                ${videoSelesaiStatus[materi.id] ? 'SELESAI' : (() => {
+                  // Tampilkan sisa waktu dari localStorage jika ada
+                  try {
+                    const m = JSON.parse(localStorage.getItem('vidSecondsMap_' + materi.id) || '{}');
+                    const s = JSON.parse(localStorage.getItem('vidProgress_' + materi.id) || '[]');
+                    let idx = s.findIndex(x => !x);
+                    if (idx === -1) idx = 0;
+                    const sisa2 = m[idx] !== undefined ? m[idx] : VIDEO_MIN_SECONDS;
+                    return sisa2 > 0 ? formatDetik(sisa2) : 'SELESAI';
+                  } catch(e) { return formatDetik(VIDEO_MIN_SECONDS); }
+                })()}
               </span>
             </div>
 
@@ -1745,9 +1749,9 @@
           if (!sedangBelajar) {
             html += "<button class=\"start\" onclick=\"openModal(" + materi.id + ")\">Mulai Belajar</button>";
           } else if (!sudahSelesai) {
-            html += "<button class=\"btn-status-belajar\" disabled>📖 Sedang Dipelajari</button>";
+            html += "<button class=\"btn-status-belajar\">📖 Sedang Dipelajari</button>";
           } else {
-            html += "<button class=\"btn-status-selesai\" disabled>✅ Sudah Selesai Dipelajari</button>";
+            html += "<button class=\"btn-status-selesai\">✅ Sudah Selesai Dipelajari</button>";
           }
         }
 
@@ -2160,6 +2164,14 @@
     async function onVideoSelesai(index) {
       videoStatusArr[index] = true;
       renderPlaylist(currentMateri.videos, videoStatusArr);
+
+      // Simpan videoStatusArr ke localStorage agar timer kartu bisa membaca
+      if (currentMateri) {
+        localStorage.setItem(
+          "vidProgress_" + currentMateri.id,
+          JSON.stringify(videoStatusArr)
+        );
+      }
 
       // studyTime sudah ditangani oleh pauseTimerVideo (elapsed time actual)
 
@@ -2781,24 +2793,60 @@
         const timerEl = document.getElementById("timer-" + materi.id);
         if (!timerEl) return;
 
-        // Jika materi ini sedang terbuka di modal video
-        if (currentActiveId === materi.id && videoTimerRunning &&
-            currentMateri && !isEvalMode) {
-          // Tampilkan sisa waktu video yang sedang berjalan
-          const sisa = videoSecondsLeft;
-          const selesai = sisa <= 0 || videoSelesaiStatus[materi.id];
-          timerEl.innerText = selesai ? "SELESAI" : formatDetik(sisa);
-          if (selesai) timerEl.classList.add("timer-selesai");
-          else timerEl.classList.remove("timer-selesai");
-        } else {
-          // Modal tutup — tampilkan waktu total belajar seperti biasa
-          const waktuSkr = getWaktuBelajarAktif(materi.id);
-          const sisa     = MIN_WAKTU_BELAJAR - waktuSkr;
-          const selesai  = videoSelesaiStatus[materi.id] || waktuSkr >= MIN_WAKTU_BELAJAR;
-          timerEl.innerText = selesai ? "SELESAI" : formatCountdown(sisa);
-          if (selesai) timerEl.classList.add("timer-selesai");
-          else timerEl.classList.remove("timer-selesai");
+        // Sudah selesai semua → SELESAI permanen
+        if (videoSelesaiStatus[materi.id]) {
+          timerEl.innerText = "SELESAI";
+          timerEl.classList.add("timer-selesai");
+          return;
         }
+
+        // Modal video sedang terbuka untuk materi ini & timer jalan
+        if (currentActiveId === materi.id && currentMateri && !isEvalMode) {
+          if (videoTimerRunning) {
+            // Timer video aktif — tampilkan sisa detik video yang sedang jalan
+            timerEl.innerText = videoSecondsLeft > 0
+              ? formatDetik(videoSecondsLeft)
+              : "SELESAI";
+            if (videoSecondsLeft <= 0) timerEl.classList.add("timer-selesai");
+            else timerEl.classList.remove("timer-selesai");
+          } else {
+            // Timer video di-pause (ganti tab dll)
+            // Tampilkan sisa waktu video terakhir dari map
+            const savedSisa = videoSecondsMap[currentVideoIndex] !== undefined
+              ? videoSecondsMap[currentVideoIndex]
+              : VIDEO_MIN_SECONDS;
+            timerEl.innerText = savedSisa > 0 ? formatDetik(savedSisa) : "SELESAI";
+            if (savedSisa <= 0) timerEl.classList.add("timer-selesai");
+            else timerEl.classList.remove("timer-selesai");
+          }
+          return;
+        }
+
+        // Modal tutup — hitung dari localStorage vidSecondsMap
+        // Ambil sisa waktu video yang sedang/terakhir dipelajari
+        try {
+          const savedMap = localStorage.getItem("vidSecondsMap_" + materi.id);
+          if (savedMap) {
+            const map = JSON.parse(savedMap);
+            // Cari video yang belum selesai (statusnya belum true)
+            const savedStatus = localStorage.getItem("vidProgress_" + materi.id);
+            const statusArr   = savedStatus ? JSON.parse(savedStatus) : [];
+            // Temukan index video yang belum selesai
+            let activeIdx = statusArr.findIndex(s => !s);
+            if (activeIdx === -1) activeIdx = 0;
+            const sisaDetik = map[activeIdx] !== undefined
+              ? map[activeIdx]
+              : VIDEO_MIN_SECONDS;
+            timerEl.innerText = sisaDetik > 0 ? formatDetik(sisaDetik) : "SELESAI";
+            if (sisaDetik <= 0) timerEl.classList.add("timer-selesai");
+            else timerEl.classList.remove("timer-selesai");
+            return;
+          }
+        } catch(e) {}
+
+        // Fallback: belum ada data map → tampilkan VIDEO_MIN_SECONDS
+        timerEl.innerText = formatDetik(VIDEO_MIN_SECONDS);
+        timerEl.classList.remove("timer-selesai");
       });
     }
 
