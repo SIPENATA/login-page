@@ -216,6 +216,29 @@
       color: #fff;
     }
 
+    /* Tombol status di menu Semua Materi */
+    .card button.btn-status-belajar {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: #fff;
+      cursor: default;
+      opacity: 1;
+    }
+
+    .card button.btn-status-selesai {
+      background: linear-gradient(135deg, #1aa179, #218838);
+      color: #fff;
+      cursor: default;
+      opacity: 1;
+    }
+
+    /* Override disabled agar warna tetap */
+    .card button.btn-status-belajar:disabled,
+    .card button.btn-status-selesai:disabled {
+      background: inherit !important;
+      opacity: 1 !important;
+      cursor: default !important;
+    }
+
     .card button.start:hover {
       background: linear-gradient(135deg, #1aa179, #218838) !important;
       transform: scale(1.03);
@@ -730,111 +753,96 @@
     #videoPlaylist {
       display: none;
       flex-direction: row;
-      flex-wrap: wrap;            /* wrap ke baris baru, tidak scroll */
-      gap: 6px;
+      flex-wrap: nowrap;
+      gap: 5px;
       margin-bottom: 8px;
+      overflow-x: auto;
+      padding-bottom: 3px;
     }
+
+    /* Scrollbar tipis */
+    #videoPlaylist::-webkit-scrollbar { height: 3px; }
+    #videoPlaylist::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
     .vid-item {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;        /* keterangan ke samping */
       align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 8px 10px;
-      border-radius: 10px;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 8px;
       background: #f0f4f8;
-      font-size: 11px;
+      border: 1.5px solid #e0e8f0;
       cursor: default;
-      border: 2px solid #e0e8f0;
-      text-align: center;
-      flex: 1 1 calc(50% - 6px);  /* 2 kolom default */
-      min-width: 80px;
-      max-width: calc(50% - 3px);
+      flex-shrink: 0;
+      width: calc(25% - 4px);     /* 4 per baris visible */
+      min-width: 110px;
+      max-width: 150px;
+      overflow: hidden;           /* cegah konten keluar */
       transition: all 0.2s ease;
-      line-height: 1.3;
-    }
-
-    /* 3 kolom jika lebih dari 2 video */
-    #videoPlaylist.cols-3 .vid-item {
-      flex: 1 1 calc(33.33% - 8px);
-      max-width: calc(33.33% - 4px);
-    }
-
-    /* 4 kolom jika lebih dari 3 video */
-    #videoPlaylist.cols-4 .vid-item {
-      flex: 1 1 calc(25% - 7px);
-      max-width: calc(25% - 5px);
-    }
-
-    .vid-item:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-sizing: border-box;
     }
 
     .vid-item.active {
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      background: #dbeafe;
       border-color: #2d6a8f;
-      color: #1B3C53;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(45,106,143,0.2);
     }
 
     .vid-item.done {
-      background: linear-gradient(135deg, #f0fff4, #ecfdf5);
+      background: #f0fff4;
       border-color: #28a745;
-      color: #218838;
       cursor: pointer;
     }
 
-    .vid-item.done:hover {
-      background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+    .vid-item:hover:not(.active) {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     .vid-item .vid-num {
-      width: 26px;
-      height: 26px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #1B3C53, #2d6a8f);
+      background: #1B3C53;
       color: #fff;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      margin-bottom: 2px;
+      flex-shrink: 0;             /* jangan mengecil */
     }
 
-    .vid-item.done .vid-num {
-      background: linear-gradient(135deg, #28a745, #1aa179);
-    }
+    .vid-item.done   .vid-num { background: #28a745; }
+    .vid-item.active .vid-num { background: #2d6a8f; }
 
-    .vid-item.active .vid-num {
-      background: linear-gradient(135deg, #2d6a8f, #1B3C53);
-      box-shadow: 0 0 0 3px rgba(45,106,143,0.2);
+    .vid-item .vid-info {
+      flex: 1;
+      min-width: 0;               /* penting agar text-overflow bekerja */
+      overflow: hidden;
     }
 
     .vid-item .vid-judul {
       font-size: 10px;
-      color: #555;
-      line-height: 1.3;
-      word-break: break-word;
-      white-space: normal;
-      max-width: 100%;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;    /* potong teks dengan ... jika terlalu panjang */
+      display: block;
     }
 
-    .vid-item.active .vid-judul { color: #1B3C53; font-weight: 600; }
+    .vid-item.active .vid-judul { color: #1B3C53; }
     .vid-item.done   .vid-judul { color: #218838; }
 
     .vid-item .vid-status {
       font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
       color: #999;
+      white-space: nowrap;
+      display: block;
     }
     .vid-item.done   .vid-status { color: #28a745; }
-    .vid-item.active .vid-status { color: #2d6a8f; }
+    .vid-item.active .vid-status { color: #2d6a8f; font-weight: 600; }
 
     /* Tombol lanjut video */
     #btnVideoBerikutnya {
@@ -1023,15 +1031,26 @@
 
   <!-- Modal Konfirmasi Mulai Belajar -->
   <div id="confirmModal" class="modal-overlay">
-    <div class="modal-box">
-      <h3>Konfirmasi Mulai Belajar</h3>
-      <p>
-        Apakah Anda yakin ingin memulai pembelajaran?<br>
-        Materi akan ditandai sebagai <b>Sudah Dibaca</b>.
+    <div class="modal-box" style="max-width:420px;">
+      <div style="font-size:46px; margin-bottom:10px;">📚</div>
+      <h3 style="color:#1B3C53; margin-bottom:8px;">Mulai Belajar?</h3>
+      <p style="font-size:14px; color:#555; margin-bottom:14px;">
+        Anda akan memulai pembelajaran materi ini.
       </p>
+      <div style="background:#eef4fb; border:1.5px solid #d0dce6; border-radius:10px;
+                  padding:12px 14px; margin-bottom:16px; text-align:left;">
+        <div style="font-size:13px; font-weight:700; color:#1B3C53; margin-bottom:6px;">
+          ℹ️ Informasi:
+        </div>
+        <ul style="margin:0; padding-left:18px; font-size:12px; color:#555; line-height:1.9;">
+          <li>Materi akan masuk ke tab <b>"Belum Selesai Dipelajari"</b>.</li>
+          <li>Selesaikan semua <b>video, modul,</b> dan <b>evaluasi</b> untuk menyelesaikan materi.</li>
+          <li>Progress Anda akan <b>tersimpan otomatis</b> dan bisa dilanjutkan kapan saja.</li>
+        </ul>
+      </div>
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeModal()">Batal</button>
-        <button class="btn-confirm" onclick="confirmStart()">Ya, Mulai</button>
+        <button class="btn-confirm" onclick="confirmStart()">Ya, Mulai Belajar</button>
       </div>
     </div>
   </div>
@@ -1721,17 +1740,14 @@
 
         // Tombol di filter "all" berdasarkan status materi
         if (filter === "all") {
-          const sudahSelesai = evalStatus[materi.id] === true;
-          const sedangBelajar = readStatus[materi.id] === true;
+          const sudahSelesai  = evalStatus[materi.id]  === true;
+          const sedangBelajar = readStatus[materi.id]  === true;
           if (!sedangBelajar) {
-            // Belum pernah diklik mulai belajar
-            html += '<button class="start" onclick="openModal(' + materi.id + ')">Mulai Belajar</button>';
-          } else if (sedangBelajar && !sudahSelesai) {
-            // Sudah mulai tapi belum selesai
-            html += '<button class="btn-status-belajar" disabled style="background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;cursor:default;width:calc(100% - 30px);margin:0 15px 15px;padding:10px;border:none;border-radius:8px;font-family:Montserrat;font-weight:700;">📖 Sedang Dipelajari</button>';
+            html += "<button class=\"start\" onclick=\"openModal(" + materi.id + ")\">Mulai Belajar</button>";
+          } else if (!sudahSelesai) {
+            html += "<button class=\"btn-status-belajar\" disabled>📖 Sedang Dipelajari</button>";
           } else {
-            // Sudah selesai semua
-            html += '<button class="btn-status-selesai" disabled style="background:linear-gradient(135deg,#1aa179,#218838);color:#fff;cursor:default;width:calc(100% - 30px);margin:0 15px 15px;padding:10px;border:none;border-radius:8px;font-family:Montserrat;font-weight:700;">✅ Sudah Selesai Dipelajari</button>';
+            html += "<button class=\"btn-status-selesai\" disabled>✅ Sudah Selesai Dipelajari</button>";
           }
         }
 
@@ -1806,12 +1822,11 @@
 
       closeModal();
       showToast("✅ Berhasil! Materi ditambahkan ke 'Belum Selesai Dipelajari'");
-      // Poin 7: Arahkan ke tab belum selesai
-      currentFilter = "unread";
+      // Arahkan ke tab belum selesai
+      currentFilter     = "unread";
+      lastMovedMateriId = selectedMateriId; // untuk trigger instruksi
+      hasAutoScrolled   = false;
       setActive("btn-unread");
-      // Poin 9: Tidak auto-scroll, render saja
-      lastMovedMateriId = null;
-      hasAutoScrolled   = true;
       renderMateri("unread");
     }
 
@@ -1932,11 +1947,6 @@
       playlist.innerHTML = "";
       playlist.style.display = "flex";
 
-      // Set class kolom berdasarkan jumlah video
-      playlist.classList.remove("cols-3", "cols-4");
-      if (videos.length >= 4)      playlist.classList.add("cols-4");
-      else if (videos.length >= 3) playlist.classList.add("cols-3");
-
       if (navbar) navbar.style.display = "flex";
 
       const semuaSelesai = statusArr.every(Boolean);
@@ -1952,17 +1962,16 @@
 
         if (!isDone && !isActive && !semuaSelesai) div.style.opacity = "0.5";
 
-        // Judul diperpendek jika terlalu panjang
-        const judulPendek = vid.judul.length > 20
-          ? vid.judul.substring(0, 18) + "…"
-          : vid.judul;
+        const statusTeks = isDone ? "Selesai ✔" : (isActive ? "▶ Diputar" : "Belum");
 
-        const statusTeks = isDone ? "Selesai ✔" : (isActive ? "Sedang Diputar" : "Belum");
-
+        // Struktur row: nomor | info(judul+status)
+        // vid-info pakai min-width:0 agar ellipsis bekerja
         div.innerHTML =
           '<div class="vid-num">' + (isDone ? "✓" : (idx + 1)) + '</div>' +
-          '<div class="vid-judul">' + judulPendek + '</div>' +
-          '<div class="vid-status">' + statusTeks + '</div>';
+          '<div class="vid-info">' +
+            '<span class="vid-judul">' + vid.judul + '</span>' +
+            '<span class="vid-status">' + statusTeks + '</span>' +
+          '</div>';
 
         if (bisa) {
           div.style.cursor = "pointer";
@@ -2768,19 +2777,29 @@
     }
 
     function updateLiveTimers() {
-      // Timer di kartu materi (waktu belajar total)
       materiList.filter(m => readStatus[m.id]).forEach(materi => {
-        const timerEl  = document.getElementById("timer-" + materi.id);
-        const waktuSkr = getWaktuBelajarAktif(materi.id);
-        const sisa     = MIN_WAKTU_BELAJAR - waktuSkr;
-        const selesai  = waktuSkr >= MIN_WAKTU_BELAJAR;
+        const timerEl = document.getElementById("timer-" + materi.id);
+        if (!timerEl) return;
 
-        if (timerEl) {
+        // Jika materi ini sedang terbuka di modal video
+        if (currentActiveId === materi.id && videoTimerRunning &&
+            currentMateri && !isEvalMode) {
+          // Tampilkan sisa waktu video yang sedang berjalan
+          const sisa = videoSecondsLeft;
+          const selesai = sisa <= 0 || videoSelesaiStatus[materi.id];
+          timerEl.innerText = selesai ? "SELESAI" : formatDetik(sisa);
+          if (selesai) timerEl.classList.add("timer-selesai");
+          else timerEl.classList.remove("timer-selesai");
+        } else {
+          // Modal tutup — tampilkan waktu total belajar seperti biasa
+          const waktuSkr = getWaktuBelajarAktif(materi.id);
+          const sisa     = MIN_WAKTU_BELAJAR - waktuSkr;
+          const selesai  = videoSelesaiStatus[materi.id] || waktuSkr >= MIN_WAKTU_BELAJAR;
           timerEl.innerText = selesai ? "SELESAI" : formatCountdown(sisa);
           if (selesai) timerEl.classList.add("timer-selesai");
+          else timerEl.classList.remove("timer-selesai");
         }
       });
-      // Catatan: timer per-video dikelola oleh videoTimerInterval di putarVideo()
     }
 
     // ===== NAV =====
