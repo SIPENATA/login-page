@@ -219,14 +219,14 @@
     /* Tombol status di menu Semua Materi */
     .card button.btn-status-belajar {
       background: linear-gradient(135deg, #f39c12, #e67e22);
-      color: #6CA651;
+      color: #fff;
       cursor: default;
       opacity: 1;
     }
 
     .card button.btn-status-selesai {
       background: linear-gradient(135deg, #1aa179, #218838);
-      color: #F6850C;
+      color: #fff;
       cursor: default;
       opacity: 1;
     }
@@ -1100,7 +1100,7 @@
       <!-- Timer per video -->
       <div id="videoTimerBar" style="display:flex;">
         <span>⏱ Waktu minimal video ini:</span>
-        <span id="videoTimerText">00:10</span>
+        <span id="videoTimerText">05:00</span>
       </div>
 
       <!-- Timer lama (untuk mode materi biasa / eval) -->
@@ -1308,38 +1308,53 @@
     // Field 'modul' : link download modul/bahan ajar
     // Field 'link'  : masih dipakai sebagai link preview utama (opsional)
     const materiList = [
-      {id:1, judul:"Keuangan Daerah", img:"https://drive.google.com/thumbnail?id=1PuJIEptjTUfZe9mXqxyHooR_7izGfCnE&sz=w400",
+      {id:1, judul:"Penyusunan Probis", img:"../gambarmateri/probis.jpg",
        modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
        videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
+         {judul:"Bagian 1 - Pengantar Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
+         {judul:"Bagian 2 - Penyusunan Probis",  link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"},
+         {judul:"Bagian 3 - Evaluasi & Pelaporan", link:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo/preview"}
+       ],
        sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
        download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:2, judul:"English for Workplace", img:"https://drive.google.com/thumbnail?id=1GUxuGKrAuvVdo2yUlW07qVAbsrZY_snC&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:3, judul:"Arsip Dinamis", img:"https://drive.google.com/thumbnail?id=1p9EbDimewgkqZImhrqpBgJ_fbEpmYzjk&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
-      {id:4, judul:"Cara Budidaya Ikan", img:"https://drive.google.com/thumbnail?id=1Bt-LYOwmNuNX3aX5FkPfmlR_FNt7IBnj&sz=w400",
-       modul:"https://sukodrive.sukoharjokab.go.id/s/8cki26fks84BkAo",
-       videos:[
-         {judul:"Bagian 1 - coba 1",  link:"https://www.youtube.com/embed/f3J-I7gtDn0?si=Sm0prFbLE9vVktn_"},
-         {judul:"Bagian 2 - coba 2",  link:"https://www.youtube.com/embed/yxWtqCMoUBw?si=Ad0GBT6iuWaVITR3"},
-         {judul:"Bagian 3 - coba 3",  link:"https://www.youtube.com/embed/ezvwwmrtGQ4?si=WlEKx7AJvM4VjWtY"}],
-       sertifikat:"https://docs.google.com/forms/d/e/1FAIpQLSf-9cmbsosbqx65AMaFdQtVhoNd_-_zT5tPvYc4F9YT4DVrSA/viewform?embedded=true",
-       download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:2, judul:"Manajemen Risiko", img:"https://via.placeholder.com/300x160?text=Materi+2",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:3, judul:"Public Speaking", img:"https://via.placeholder.com/300x160?text=Materi+3",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:4, judul:"Pelatihan IT Dasar", img:"https://via.placeholder.com/300x160?text=Materi+4",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:5, judul:"Komunikasi Efektif", img:"https://via.placeholder.com/300x160?text=Materi+5",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:6, judul:"Manajemen Kepegawaian", img:"https://via.placeholder.com/300x160?text=Materi+6",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:7, judul:"Pelayanan Publik", img:"https://via.placeholder.com/300x160?text=Materi+7",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:8, judul:"Literasi Digital", img:"https://via.placeholder.com/300x160?text=Materi+8",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:9, judul:"Anti Korupsi", img:"https://via.placeholder.com/300x160?text=Materi+9",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:10, judul:"Manajemen Keuangan", img:"https://via.placeholder.com/300x160?text=Materi+10",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:11, judul:"Kedisiplinan", img:"https://via.placeholder.com/300x160?text=Materi+11",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:12, judul:"Teamwork & Kolaborasi", img:"https://via.placeholder.com/300x160?text=Materi+12",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:13, judul:"Kreativitas & Inovasi", img:"https://via.placeholder.com/300x160?text=Materi+13",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:14, judul:"Administrasi", img:"https://via.placeholder.com/300x160?text=Materi+14",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:15, judul:"Analisis Data", img:"https://via.placeholder.com/300x160?text=Materi+15",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:16, judul:"Manajemen Bangkom", img:"https://via.placeholder.com/300x160?text=Materi+16",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:17, judul:"Kearsipan", img:"https://via.placeholder.com/300x160?text=Materi+17",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:18, judul:"K3 (Keselamatan Kerja)", img:"https://via.placeholder.com/300x160?text=Materi+18",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:19, judul:"Protokol dan Humas", img:"https://via.placeholder.com/300x160?text=Materi+19",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"},
+      {id:20, judul:"Cyber Security", img:"https://via.placeholder.com/300x160?text=Materi+20",
+       videos:[{judul:"Video 1", link:""}], link:"https://drive.google.com/", modul:"", sertifikat:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital", download:"https://www.sipenata.sukoharjokab.go.id/bangkom/ajukan-sertifikat-digital"}
     ];
 
     // ===== STATE =====
@@ -1365,7 +1380,7 @@
     let isEvalMode        = false; // FIX #7: flag apakah modal sedang mode evaluasi
 
     // FIX #9: konstanta waktu belajar minimum — 5 menit, komentar sekarang benar
-    const MIN_WAKTU_BELAJAR = 1 * 60 * 1000; // 5 menit (dalam milidetik)
+    const MIN_WAKTU_BELAJAR = 5 * 60 * 1000; // 5 menit (dalam milidetik)
 
     let currentFilter = "all";
     const container   = document.getElementById("materi-container");
@@ -1842,7 +1857,7 @@
     let videoTimerStartTime  = 0;       // timestamp saat timer video mulai jalan
     let videoSelesaiStatus   = JSON.parse(localStorage.getItem("videoSelesaiStatus")) || {};
     // videoSelesaiStatus[id] = true berarti peserta sudah klik "Semua Video Selesai - Tutup" : {index: seconds}
-    const VIDEO_MIN_SECONDS  = 1 * 60; // 5 menit per video
+    const VIDEO_MIN_SECONDS  = 5 * 60; // 5 menit per video
 
     // ===== MODAL: Video / Materi =====
     async function markOpened(id) {
@@ -2433,7 +2448,7 @@
     //   - Klik tombol → muncul pop-up peringatan final
     //   - Klik "Ya, Sudah Mengerjakan" → evalStatus = true
 
-    const EVAL_LOCK_DURATION  = 1 * 60; // 3 menit dalam detik
+    const EVAL_LOCK_DURATION  = 3 * 60; // 3 menit dalam detik
     let evalCountdownInterval = null;
     let evalSecondsLeft       = EVAL_LOCK_DURATION;
     let evalTimerDone         = false;  // syarat A
