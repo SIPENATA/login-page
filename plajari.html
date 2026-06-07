@@ -1846,7 +1846,7 @@
     let videoTimerStartTime  = 0;       // timestamp saat timer video mulai jalan
     let videoSelesaiStatus   = JSON.parse(localStorage.getItem("videoSelesaiStatus")) || {};
     // videoSelesaiStatus[id] = true berarti peserta sudah klik "Semua Video Selesai - Tutup" : {index: seconds}
-    const VIDEO_MIN_SECONDS  = 5 * 60; // 5 menit per video
+    const VIDEO_MIN_SECONDS  = 1 * 60; // 5 menit per video
 
     // ===== MODAL: Video / Materi =====
     async function markOpened(id) {
