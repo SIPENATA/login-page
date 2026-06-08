@@ -915,6 +915,148 @@
       #userAccount { padding: 6px 12px; }
       #displayUserName { font-size: 12px; }
     }
+
+    /* ===== GANTI PASSWORD ===== */
+    #btnGantiPwdMenu {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Montserrat;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    #btnGantiPwdMenu:hover { background: rgba(255,255,255,0.15); }
+
+    #modalGantiPassword {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10002;
+      padding: 16px;
+    }
+    .gpwd-box {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+      animation: gpwdSlide 0.25s ease;
+    }
+    @keyframes gpwdSlide {
+      from { transform: translateY(28px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .gpwd-header {
+      background: linear-gradient(135deg, #1B3C53, #2d6a8f);
+      color: #fff;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .gpwd-header h3 { margin: 0; font-size: 15px; font-weight: 700; }
+    .gpwd-close {
+      background: none; border: none; color: #fff;
+      font-size: 22px; cursor: pointer; line-height: 1; padding: 0;
+    }
+    .gpwd-body  { padding: 20px 22px; }
+    .gpwd-footer {
+      padding: 14px 22px;
+      border-top: 1px solid #e9ecef;
+      display: flex; gap: 10px; justify-content: flex-end;
+    }
+    .gpwd-label {
+      font-size: 12px; font-weight: 700; color: #1B3C53;
+      display: block; margin-bottom: 5px;
+    }
+    .gpwd-row { margin-bottom: 14px; }
+    .gpwd-input-wrap { position: relative; display: flex; align-items: center; }
+    .gpwd-input-wrap input {
+      flex: 1;
+      padding: 10px 38px 10px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #d0dce6;
+      font-family: Montserrat;
+      font-size: 13px;
+      background: #f7fafd;
+      transition: border-color 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .gpwd-input-wrap input:focus {
+      outline: none;
+      border-color: #1B3C53;
+      box-shadow: 0 0 0 3px rgba(27,60,83,0.1);
+    }
+    .gpwd-eye {
+      position: absolute; right: 10px;
+      background: none; border: none; cursor: pointer;
+      color: #8a9bb0; font-size: 14px; padding: 0; line-height: 1;
+    }
+    .gpwd-eye:hover { color: #1B3C53; }
+    .gpwd-strength-bar {
+      height: 5px; background: #e9ecef;
+      border-radius: 99px; margin-top: 6px; overflow: hidden;
+    }
+    .gpwd-strength-fill {
+      height: 100%; border-radius: 99px;
+      transition: width 0.3s, background 0.3s;
+    }
+    .gpwd-strength-label { font-size: 11px; display: block; margin-top: 3px; }
+    .gpwd-alert-err {
+      background: #fef2f2; border: 1px solid #fca5a5;
+      color: #b91c1c; border-radius: 8px;
+      padding: 9px 12px; font-size: 12px; margin-bottom: 10px;
+    }
+    .gpwd-alert-ok {
+      background: #f0fdf4; border: 1px solid #86efac;
+      color: #166534; border-radius: 8px;
+      padding: 9px 12px; font-size: 12px; margin-bottom: 10px;
+    }
+    .gpwd-btn-ok {
+      background: linear-gradient(135deg, #1B3C53, #2d6a8f);
+      color: #fff; border: none;
+      padding: 10px 20px; border-radius: 8px;
+      font-family: Montserrat; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .gpwd-btn-ok:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gpwd-btn-ok:hover:not(:disabled) { opacity: 0.88; }
+    .gpwd-btn-batal {
+      background: #f1f5f9; color: #475569;
+      border: 1px solid #cbd5e1;
+      padding: 10px 18px; border-radius: 8px;
+      font-family: Montserrat; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .gpwd-btn-batal:hover { background: #e2e8f0; }
+
+    /* Login: input password pakai wrapper yang sama */
+    .login-pwd-wrap { position: relative; display: flex; align-items: center; }
+    .login-pwd-wrap input {
+      width: 100%; box-sizing: border-box;
+      padding: 10px 38px 10px 36px;
+      border-radius: 8px; border: 1.5px solid #d0dce6;
+      font-family: Montserrat; font-size: 14px;
+      background: #f7fafd; transition: border-color 0.2s;
+    }
+    .login-pwd-eye {
+      position: absolute; right: 10px;
+      background: none; border: none; cursor: pointer;
+      color: #8a9bb0; font-size: 14px; padding: 0; line-height: 1;
+    }
+    .login-pwd-hint {
+      font-size: 11px; color: #7b91a7;
+      margin-top: 4px; display: block; text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -953,22 +1095,25 @@
           </div>
           <div id="nipHint" class="input-hint">⚠ NIP hanya boleh berisi angka.</div>
 
-          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin:14px 0 5px;">Nama Depan</label>
-          <div style="position:relative;">
-            <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; align-items:center;">
+          <label style="font-size: 13px; font-weight: 600; color:#1B3C53; display:block; margin:14px 0 5px;">Password</label>
+          <div class="login-pwd-wrap" style="position:relative;">
+            <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; align-items:center; z-index:1;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2d6a8f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
             </span>
-            <input type="text" id="userName" placeholder="Masukkan Nama Depan"
-                   style="width:100%; box-sizing:border-box; padding:10px 10px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
+            <input type="password" id="userName" placeholder="Masukkan password Anda"
+                   autocomplete="current-password"
+                   style="width:100%; box-sizing:border-box; padding:10px 38px 10px 36px; border-radius:8px; border:1.5px solid #d0dce6; font-family:Montserrat; font-size:14px; background:#f7fafd; transition: border-color 0.2s;">
+            <button type="button" class="login-pwd-eye" onclick="toggleLoginPwd(this)" title="Tampilkan/sembunyikan">👁</button>
           </div>
+          <small class="login-pwd-hint">Password default: nama depan Anda (huruf kapital/kecil tidak dibedakan)</small>
         </div>
 
         <!-- Info -->
         <div style="margin:16px 0; padding:10px 12px; background:#eef4fb; border-radius:8px; border-left:3px solid #2d6a8f; font-size:11px; color:#2d6a8f; line-height:1.6;">
-          ℹ️ Pastikan NIP dan Nama sesuai dengan data kepegawaian yang terdaftar.
+          ℹ️ Login menggunakan <b>NIP</b> dan <b>Password</b>. Password awal = nama depan Anda. Setelah login, Anda dapat menggantinya melalui menu <b>Ganti Password</b>.
         </div>
 
         <button id="loginBtn" onclick="saveLoginData()"
@@ -982,6 +1127,7 @@
   <!-- FIX #1 #2 #3: userAccount HTML diperbaiki — struktur benar, logOut terhubung -->
   <div id="userAccount" style="display: none;">
     <span id="displayUserName"></span>
+    <button id="btnGantiPwdMenu" onclick="bukaModalGantiPassword()">🔐 Ganti Password</button>
     <button id="logOutBtn" onclick="logOut()">Keluar</button>
   </div>
 
@@ -1292,6 +1438,59 @@
     </div>
   </div>
 
+  <!-- ===== MODAL GANTI PASSWORD ===== -->
+  <div id="modalGantiPassword" style="display:none;" onclick="tutupModalGantiPasswordOverlay(event)">
+    <div class="gpwd-box" onclick="event.stopPropagation()">
+
+      <div class="gpwd-header">
+        <h3>🔐 Ganti Password</h3>
+        <button class="gpwd-close" onclick="tutupModalGantiPassword()">&times;</button>
+      </div>
+
+      <div class="gpwd-body">
+        <div id="gpwdErr" class="gpwd-alert-err" style="display:none;"></div>
+        <div id="gpwdOk"  class="gpwd-alert-ok"  style="display:none;"></div>
+
+        <div class="gpwd-row">
+          <label class="gpwd-label">Password Lama</label>
+          <div class="gpwd-input-wrap">
+            <input type="password" id="gpwdLama" placeholder="Masukkan password saat ini" autocomplete="current-password">
+            <button type="button" class="gpwd-eye" onclick="gpwdToggle('gpwdLama',this)">👁</button>
+          </div>
+        </div>
+
+        <div class="gpwd-row">
+          <label class="gpwd-label">Password Baru</label>
+          <div class="gpwd-input-wrap">
+            <input type="password" id="gpwdBaru" placeholder="Masukkan password baru" autocomplete="new-password" oninput="gpwdKekuatan()">
+            <button type="button" class="gpwd-eye" onclick="gpwdToggle('gpwdBaru',this)">👁</button>
+          </div>
+          <div class="gpwd-strength-bar" id="gpwdBar" style="display:none;">
+            <div class="gpwd-strength-fill" id="gpwdBarFill"></div>
+          </div>
+          <small class="gpwd-strength-label" id="gpwdBarLabel"></small>
+        </div>
+
+        <div class="gpwd-row" style="margin-bottom:0;">
+          <label class="gpwd-label">Konfirmasi Password Baru</label>
+          <div class="gpwd-input-wrap">
+            <input type="password" id="gpwdKonfirmasi" placeholder="Ulangi password baru" autocomplete="new-password">
+            <button type="button" class="gpwd-eye" onclick="gpwdToggle('gpwdKonfirmasi',this)">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gpwd-footer">
+        <button class="gpwd-btn-batal" onclick="tutupModalGantiPassword()">Batal</button>
+        <button class="gpwd-btn-ok" id="gpwdSubmitBtn" onclick="submitGantiPassword()">
+          <span id="gpwdSubmitTxt">Simpan Password</span>
+          <span id="gpwdSubmitSpinner" style="display:none;">⏳</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
@@ -1389,14 +1588,14 @@
     // ===== LOGIN =====
     async function saveLoginData() {
       const nipRaw  = document.getElementById("userNIP").value;
-      const namaRaw = document.getElementById("userName").value;
+      const pwdRaw  = document.getElementById("userName").value;
 
-      if (!nipRaw || !namaRaw) {
-        showToast("⚠️ NIP dan Nama harus diisi!");
+      if (!nipRaw || !pwdRaw) {
+        showToast("⚠️ NIP dan Password harus diisi!");
         return;
       }
 
-      // FIX #8: Validasi format NIP sebelum kirim
+      // Validasi format NIP sebelum kirim
       if (/\D/.test(nipRaw)) {
         showToast("⚠️ NIP hanya boleh berisi angka!");
         document.getElementById("userNIP").classList.add("input-error");
@@ -1409,12 +1608,12 @@
       btn.classList.add("loading");
 
       try {
-        const cleanNip  = nipRaw.trim();
-        const cleanNama = namaRaw.trim();
+        const cleanNip = nipRaw.trim();
+        const cleanPwd = pwdRaw.trim();
 
         const response = await fetch(SCRIPT_URL, {
           method: "POST",
-          body: JSON.stringify({ action: "login", nip: cleanNip, nama: cleanNama })
+          body: JSON.stringify({ action: "login", nip: cleanNip, password: cleanPwd })
         });
 
         const result = await response.json();
@@ -1450,16 +1649,21 @@
 
           showToast("✅ Login Berhasil! Selamat datang, " + result.nama);
           setTimeout(() => location.reload(), 800);
+
+        } else if (result.status === "wrong_password") {
+          showToast("❌ Password salah. Coba lagi atau hubungi admin jika lupa password.");
+          btn.innerText = "Masuk & Belajar";
+          btn.disabled = false;
+          btn.classList.remove("loading");
+
         } else {
-          // FIX #10: Pesan error lebih spesifik
-          showToast("❌ NIP atau Nama tidak ditemukan di database.");
+          showToast("❌ NIP tidak terdaftar di database.");
           btn.innerText = "Masuk & Belajar";
           btn.disabled = false;
           btn.classList.remove("loading");
         }
       } catch (e) {
         console.error(e);
-        // FIX #10: Bedakan pesan error koneksi
         showToast("⚠️ Gagal terhubung ke server. Periksa koneksi internet Anda.");
         btn.innerText = "Masuk & Belajar";
         btn.disabled = false;
@@ -2937,6 +3141,144 @@
       }
     });
 
+    // ===== GANTI PASSWORD =====
+    function bukaModalGantiPassword() {
+      document.getElementById("gpwdLama").value        = "";
+      document.getElementById("gpwdBaru").value        = "";
+      document.getElementById("gpwdKonfirmasi").value  = "";
+      document.getElementById("gpwdErr").style.display = "none";
+      document.getElementById("gpwdOk").style.display  = "none";
+      document.getElementById("gpwdBar").style.display = "none";
+      document.getElementById("gpwdBarLabel").textContent = "";
+      document.getElementById("modalGantiPassword").style.display = "flex";
+      setTimeout(() => document.getElementById("gpwdLama").focus(), 80);
+    }
+
+    function tutupModalGantiPassword() {
+      document.getElementById("modalGantiPassword").style.display = "none";
+    }
+
+    function tutupModalGantiPasswordOverlay(event) {
+      if (event.target === document.getElementById("modalGantiPassword")) {
+        tutupModalGantiPassword();
+      }
+    }
+
+    function gpwdToggle(inputId, btn) {
+      const el = document.getElementById(inputId);
+      if (el.type === "password") { el.type = "text";     btn.textContent = "🙈"; }
+      else                        { el.type = "password"; btn.textContent = "👁"; }
+    }
+
+    function toggleLoginPwd(btn) {
+      const el = document.getElementById("userName");
+      if (el.type === "password") { el.type = "text";     btn.textContent = "🙈"; }
+      else                        { el.type = "password"; btn.textContent = "👁"; }
+    }
+
+    function gpwdKekuatan() {
+      const pwd   = document.getElementById("gpwdBaru").value;
+      const bar   = document.getElementById("gpwdBar");
+      const fill  = document.getElementById("gpwdBarFill");
+      const label = document.getElementById("gpwdBarLabel");
+      if (!pwd) { bar.style.display = "none"; label.textContent = ""; return; }
+      bar.style.display = "block";
+      let skor = 0;
+      if (pwd.length >= 6)              skor++;
+      if (pwd.length >= 10)             skor++;
+      if (/[A-Z]/.test(pwd))            skor++;
+      if (/[0-9]/.test(pwd))            skor++;
+      if (/[^a-zA-Z0-9]/.test(pwd))     skor++;
+      const lv = [
+        {pct:"20%", color:"#ef4444", txt:"Sangat lemah"},
+        {pct:"40%", color:"#f97316", txt:"Lemah"},
+        {pct:"60%", color:"#eab308", txt:"Sedang"},
+        {pct:"80%", color:"#22c55e", txt:"Kuat"},
+        {pct:"100%",color:"#15803d", txt:"Sangat kuat"}
+      ][Math.min(skor, 4)];
+      fill.style.width      = lv.pct;
+      fill.style.background = lv.color;
+      label.textContent     = lv.txt;
+      label.style.color     = lv.color;
+    }
+
+    async function submitGantiPassword() {
+      const pwdLama   = document.getElementById("gpwdLama").value.trim();
+      const pwdBaru   = document.getElementById("gpwdBaru").value.trim();
+      const pwdKonfirm= document.getElementById("gpwdKonfirmasi").value.trim();
+      const errBox    = document.getElementById("gpwdErr");
+      const okBox     = document.getElementById("gpwdOk");
+      const btn       = document.getElementById("gpwdSubmitBtn");
+      const txt       = document.getElementById("gpwdSubmitTxt");
+      const spin      = document.getElementById("gpwdSubmitSpinner");
+
+      errBox.style.display = "none";
+      okBox.style.display  = "none";
+
+      const tampilErr = (msg) => { errBox.textContent = msg; errBox.style.display = "block"; };
+
+      if (!pwdLama)    { tampilErr("Password lama tidak boleh kosong."); return; }
+      if (!pwdBaru)    { tampilErr("Password baru tidak boleh kosong."); return; }
+      if (pwdBaru !== pwdKonfirm) { tampilErr("Konfirmasi password baru tidak cocok."); return; }
+      if (pwdBaru.toLowerCase() === pwdLama.toLowerCase()) {
+        tampilErr("Password baru tidak boleh sama dengan password lama."); return;
+      }
+
+      txt.style.display  = "none";
+      spin.style.display = "inline";
+      btn.disabled       = true;
+
+      try {
+        const savedUser = JSON.parse(localStorage.getItem("userData"));
+        if (!savedUser || !savedUser.nip) { tampilErr("Sesi tidak valid. Silakan login ulang."); return; }
+
+        const res  = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body:   JSON.stringify({
+            action:       "gantiPassword",
+            nip:          savedUser.nip,
+            passwordLama: pwdLama,
+            passwordBaru: pwdBaru
+          })
+        });
+        const data = await res.json();
+
+        if (data.status === "saved") {
+          okBox.textContent   = "✅ Password berhasil diubah! Gunakan password baru saat login berikutnya.";
+          okBox.style.display = "block";
+          document.getElementById("gpwdLama").value       = "";
+          document.getElementById("gpwdBaru").value       = "";
+          document.getElementById("gpwdKonfirmasi").value = "";
+          document.getElementById("gpwdBar").style.display  = "none";
+          document.getElementById("gpwdBarLabel").textContent = "";
+          showToast("🔐 Password berhasil diubah!");
+          setTimeout(() => tutupModalGantiPassword(), 2500);
+
+        } else if (data.status === "wrong_password") {
+          tampilErr("Password lama yang Anda masukkan salah.");
+        } else if (data.status === "not_found") {
+          tampilErr("Data akun tidak ditemukan. Silakan login ulang.");
+        } else {
+          tampilErr("Gagal menyimpan: " + (data.message || "kesalahan tidak diketahui"));
+        }
+      } catch(err) {
+        tampilErr("Koneksi gagal. Periksa jaringan dan coba lagi.");
+      } finally {
+        txt.style.display  = "inline";
+        spin.style.display = "none";
+        btn.disabled       = false;
+      }
+    }
+
+    // Enter key di form login
+    document.addEventListener("DOMContentLoaded", function() {
+      const nipEl = document.getElementById("userNIP");
+      const pwdEl = document.getElementById("userName");
+      if (nipEl) nipEl.addEventListener("keydown", e => { if (e.key === "Enter") saveLoginData(); });
+      if (pwdEl) pwdEl.addEventListener("keydown", e => { if (e.key === "Enter") saveLoginData(); });
+    });
+
   </script>
+
 </body>
 </html>
